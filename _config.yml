@@ -41,8 +41,8 @@ social:
     - https://x.com/joanr # change to your Twitter homepage
     - https://github.com/joanrs # change to your GitHub homepage
     # Uncomment below to add more social links
-     - https://www.instagram.com/jr.growth
-     - https://www.linkedin.com/in/joanrs
+    - https://www.instagram.com/jr.growth
+    - https://www.linkedin.com/in/joanrs
 
 # Site Verification Settings
 webmaster_verifications:
