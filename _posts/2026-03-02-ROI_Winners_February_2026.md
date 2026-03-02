@@ -13,7 +13,6 @@ image:
             <th>Name</th>
             <th>MktCap</th>
             <th>List</th>
-            
             <th>Feb</th>
             <th>Anual</th>
         </tr>
