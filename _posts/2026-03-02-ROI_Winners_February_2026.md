@@ -5,8 +5,9 @@ categories: [Markets]
 tags: [ROI]
 image:
 ---
-<div style="overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 6px; margin: 1.5em 0;">
-  <table style="width:100%; border-collapse: collapse; font-size: 12px;">
+<div class="ghost-table-wrapper">
+  <div class="ghost-table-container">
+    <table class="ghost-table">
      <thead>
         <tr>
             <th>Ticker</th>
@@ -781,4 +782,5 @@ image:
             </tbody>
         </table>
     </div>
+</div>
 
