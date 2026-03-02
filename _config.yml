@@ -77,7 +77,7 @@ analytics:
 pageviews:
   provider: goatcounter
   goatcounter:
-    id: joanrs
+    id: "joanrs"
 
 # Prefer color scheme setting.
 #
