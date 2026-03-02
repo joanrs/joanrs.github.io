@@ -7,9 +7,19 @@ image:
 ---
 <div style="overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 6px; margin: 1.5em 0;">
   <table style="width:100%; border-collapse: collapse; font-size: 12px;">
-            </thead>
-            <tbody>
-                <tr>
+     <thead>
+        <tr>
+            <th>Ticker</th>
+            <th>Name</th>
+            <th>MktCap</th>
+            <th>List</th>
+            
+            <th>Feb</th>
+            <th>Anual</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
 <td><span class="ticker-badge">PPTA</span></td>
 <td>Perpetua Res.</td>
 <td><span class="market-cap">$3.58B</span></td>
