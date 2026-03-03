@@ -5,6 +5,37 @@ categories: [Markets]
 tags: [ROI]
 image:
 ---
+<style>
+div.table-wrapper {
+  overflow-x: visible !important;
+  overflow: visible !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+.no-scroll-table-wrapper {
+  width: 100% !important;
+  overflow-x: hidden !important;
+}
+.no-scroll-table {
+  width: 100% !important;
+  min-width: 0 !important;
+  table-layout: fixed !important;
+  font-size: 0.72rem;
+}
+.no-scroll-table th,
+.no-scroll-table td {
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 3px 4px;
+  max-width: 0;
+}
+.no-scroll-table td:nth-child(2) { white-space: normal; }
+.ticker-badge { font-size: 0.65rem; font-family: monospace; background: #1e293b; color: #e2e8f0; padding: 1px 3px; border-radius: 3px; }
+.tag-l { display: inline-block; font-size: 0.58rem; font-weight: 600; color: #fff; padding: 1px 3px; border-radius: 3px; margin: 1px; }
+.market-cap { font-size: 0.65rem; color: #94a3b8; }
+.pos { color: #22c55e; font-size: 0.68rem; font-weight: 600; }
+.neg { color: #ef4444; font-size: 0.68rem; font-weight: 600; }
+</style>
 <div class="no-scroll-table-wrapper">
     <table class="no-scroll-table">
      <thead>
