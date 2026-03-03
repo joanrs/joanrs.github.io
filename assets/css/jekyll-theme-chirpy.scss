@@ -12,14 +12,12 @@
    FIX SCROLL HORIZONTAL — Chirpy Starter
    ============================================= */
 
-/* 1. Neutraliza el wrapper que Chirpy mete automáticamente
-      alrededor de las tablas (.table-wrapper o similar) */
-.post-content .table-wrapper,
-.content .table-wrapper,
-div.table-wrapper {
+.table-wrapper {
   overflow-x: visible !important;
   overflow:   visible !important;
   width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
 }
 
 /* 2. Tu wrapper personalizado */
