@@ -5,7 +5,7 @@ categories: [Markets]
 tags: [ROI]
 image:
 ---
-<div class="no-scroll-table-wrapper"">
+<div class="no-scroll-table-wrapper">
     <table class="no-scroll-table">
      <thead>
         <tr>
