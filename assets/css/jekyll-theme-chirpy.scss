@@ -103,13 +103,41 @@
     font-size: 0.85rem !important;
   }
 }
+// Fuerza NO scroll en TODAS las tablas del sitio (incluyendo Markdown y HTML)
 .post-content table,
 .table-wrapper,
+.table-wrapper table,
 table {
   overflow-x: hidden !important;
   max-width: 100% !important;
+  width: 100% !important;
+  table-layout: auto !important; // o fixed si prefieres columnas uniformes
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto;
 }
-body, html {
+
+// Tus celdas individuales también rompen texto
+.post-content td,
+.post-content th,
+td, th {
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important; // clave para anular white-space: nowrap si existe
+  max-width: 0; // ayuda a shrink
+}
+
+// Si Chirpy envuelve en .table-wrapper con overflow auto, lo matamos
+.table-wrapper {
   overflow-x: hidden !important;
+  overflow: hidden !important;
+}
+
+// Opcional: reduce padding en móvil para que quepa más
+@media (max-width: 768px) {
+  td, th {
+    padding: 0.5rem 0.4rem !important;
+    font-size: 0.9rem !important;
+  }
 }
 </style>
