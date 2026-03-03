@@ -2,7 +2,7 @@
 title: "El País de los 2 Empleos"
 date: 2026-03-02 09:00:00 +0100
 categories: [España]
-tags: [Economia]
+tags: [Empleo]
 image:
 ---
 #### 1. El Diccionario para entender
