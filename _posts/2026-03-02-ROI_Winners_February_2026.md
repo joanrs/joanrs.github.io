@@ -5,9 +5,8 @@ categories: [Markets]
 tags: [ROI]
 image:
 ---
-<div class="ghost-table-wrapper">
-  <div class="ghost-table-container">
-    <table class="ghost-table">
+<div class="no-scroll-table-wrapper"">
+    <table class="no-scroll-table">
      <thead>
         <tr>
             <th>Ticker</th>
@@ -780,7 +779,6 @@ image:
 <td><span class="neg">-14.08% 📉</span></td>
 </tr>
             </tbody>
-        </table>
-    </div>
+    </table>
 </div>
 
