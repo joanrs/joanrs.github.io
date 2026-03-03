@@ -9,13 +9,12 @@
    ========================================================================== */
 <style>
 /* ==========================================================================
-   Estilo: Stack Table - Usa tus clases existentes (market-cap, tag-l, pos, neg, etc.)
-   Sin scroll horizontal nunca
+   Estilo: Stack Table - Sin scroll horizontal, sin data-label ni :before
    ========================================================================== */
 
 .no-scroll-table-wrapper {
   margin: 1.8rem 0;
-  overflow-x: hidden;                /* Impide scroll forzado */
+  overflow-x: hidden;
   font-family: system-ui, sans-serif;
   color: #1f2937;
 }
@@ -31,7 +30,7 @@
 .no-scroll-table td {
   padding: 0.7rem 0.6rem;
   border: 1px solid #e5e7eb;
-  text-align: center;                /* mantiene tu preferencia center */
+  text-align: center;
 }
 
 .no-scroll-table th {
@@ -47,7 +46,7 @@
   background: #fafafa;
 }
 
-/* Tus clases existentes se mantienen intactas */
+/* Tus clases existentes */
 .ticker-badge {
   font-weight: 800;
   color: #1e40af;
@@ -103,7 +102,7 @@
   }
 
   .no-scroll-table thead {
-    display: none;                    /* Oculta cabecera en móvil */
+    display: none;                    /* Oculta cabecera */
   }
 
   .no-scroll-table tbody,
@@ -125,29 +124,19 @@
     border: none;
     padding: 0.5rem 0;
     text-align: left !important;
-    position: relative;
-  }
-
-  /* Muestra el nombre de la columna (usa data-label) */
-  .no-scroll-table td:before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: #374151;
-    display: block;
-    margin-bottom: 0.3rem;
-    font-size: 0.82rem;
-    text-transform: uppercase;
-  }
-
-  /* Ajustes para que el texto no desborde */
-  .no-scroll-table td {
     word-break: break-word;
     overflow-wrap: break-word;
   }
 
-  /* Centramos visualmente los valores importantes en stack */
+  /* Sin :before ni data-label → solo valores */
+  .no-scroll-table td {
+    margin-bottom: 0.4rem;
+  }
+
+  /* Ajuste visual para valores importantes */
   .pos, .neg, .neu, .ticker-badge, .tag-l {
     margin: 0.3rem 0;
+    display: inline-block;
   }
 }
 </style>
