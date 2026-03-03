@@ -14,10 +14,12 @@
 
 /* 1. Neutraliza el wrapper que Chirpy mete automáticamente
       alrededor de las tablas (.table-wrapper o similar) */
-.table-wrapper,
-.post-content .table-wrapper {
+.post-content .table-wrapper,
+.content .table-wrapper,
+div.table-wrapper {
   overflow-x: visible !important;
   overflow:   visible !important;
+  width: 100% !important;
 }
 
 /* 2. Tu wrapper personalizado */
