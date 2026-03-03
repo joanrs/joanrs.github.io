@@ -9,40 +9,42 @@
    ========================================================================== */
 <style>
 /* ==========================================================================
-   Estilo FINAL: Stack Table - Fuerza NO scroll horizontal
+   Estilo FINAL: Stack Table - Fuerza NO scroll horizontal en Chirpy
    ========================================================================== */
 
+/* Base del wrapper y tabla */
 .no-scroll-table-wrapper {
   margin: 1.8rem 0;
-  overflow-x: hidden !important;     /* Más fuerte */
+  overflow-x: hidden !important;
   max-width: 100% !important;
   width: 100% !important;
-  font-family: system-ui, sans-serif;
-  color: #1f2937;
 }
 
 .no-scroll-table {
   width: 100% !important;
   max-width: 100% !important;
-  table-layout: fixed !important;    /* Clave: fija columnas y fuerza fit */
   border-collapse: collapse;
   font-size: 0.92rem;
   line-height: 1.4;
-  word-break: break-word !important; /* Rompe palabras largas */
+  table-layout: auto !important;
+  word-break: break-word !important;
   overflow-wrap: break-word !important;
 }
 
+/* Celdas base */
 .no-scroll-table th,
 .no-scroll-table td {
   padding: 0.7rem 0.5rem;
   border: 1px solid #e5e7eb;
   text-align: center;
-  word-break: break-word !important;
+  word-break: break-all !important;
   overflow-wrap: break-word !important;
-  hyphens: auto;                     /* Mejora ruptura en idiomas con guiones */
-  max-width: 0;                      /* Fuerza shrink */
+  white-space: normal !important;
+  hyphens: auto;
+  max-width: 0;
 }
 
+/* Cabecera */
 .no-scroll-table th {
   background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
   font-weight: 600;
@@ -52,22 +54,48 @@
   letter-spacing: 0.4px;
 }
 
-/* Tus clases sin cambios */
+/* Tus clases originales */
 .ticker-badge { font-weight: 800; color: #1e40af; }
-.market-cap { color: #64748b; font-family: monospace; font-size: 0.88rem; }
-.tag-l { padding: 0.18rem 0.4rem; border-radius: 9999px; color: white; font-size: 0.78rem; font-weight: 600; margin: 0 0.15rem; display: inline-block; }
-.pos { color: #15803d; background-color: #dcfce7; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 4px; display: inline-block; }
-.neg { color: #b91c1c; background-color: #fee2e2; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 4px; display: inline-block; }
+.market-cap   { color: #64748b; font-family: monospace; font-size: 0.88rem; }
+.tag-l        { padding: 0.18rem 0.4rem; border-radius: 9999px; color: white; font-size: 0.78rem; font-weight: 600; margin: 0 0.15rem; display: inline-block; }
+.pos          { color: #15803d; background-color: #dcfce7; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 4px; display: inline-block; }
+.neg          { color: #b91c1c; background-color: #fee2e2; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 4px; display: inline-block; }
 
-/* === Stack vertical agresivo (breakpoint 768px para tablets/móviles) === */
+/* OVERRIDES GLOBALES PARA CHIRPY (mata scroll en cualquier tabla) */
+.post-content table,
+.table-wrapper,
+.table-wrapper table,
+table {
+  overflow-x: hidden !important;
+  overflow: hidden !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  table-layout: auto !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+.post-content td,
+.post-content th,
+td,
+th {
+  word-break: break-all !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  max-width: 0;
+  padding: 0.6rem 0.4rem !important;
+}
+
+/* Stack vertical en móvil */
 @media (max-width: 768px) {
-  .no-scroll-table-wrapper {
+  .no-scroll-table-wrapper,
+  .no-scroll-table {
     overflow-x: hidden !important;
   }
 
   .no-scroll-table {
     border: 0;
-    table-layout: auto !important;   /* Permite flex en stack */
   }
 
   .no-scroll-table thead {
@@ -90,54 +118,17 @@
     padding: 0.6rem 0;
     text-align: left !important;
     margin-bottom: 0.5rem;
-    word-break: break-all !important;  /* Más agresivo para tickers largos */
-    white-space: normal !important;
-  }
-
-  /* Reduce tamaño para que quepa mejor */
-  .no-scroll-table td {
     font-size: 0.9rem;
   }
 
   .ticker-badge, .tag-l, .pos, .neg, .market-cap {
     font-size: 0.85rem !important;
+    padding: 0.12rem 0.3rem !important;
   }
 }
-// Fuerza NO scroll en TODAS las tablas del sitio (incluyendo Markdown y HTML)
-.post-content table,
-.table-wrapper,
-.table-wrapper table,
-table {
+
+/* Seguridad extra: evita scroll en todo el body */
+body, html {
   overflow-x: hidden !important;
-  max-width: 100% !important;
-  width: 100% !important;
-  table-layout: auto !important; // o fixed si prefieres columnas uniformes
-  word-break: break-word !important;
-  overflow-wrap: break-word !important;
-  hyphens: auto;
-}
-
-// Tus celdas individuales también rompen texto
-.post-content td,
-.post-content th,
-td, th {
-  word-break: break-word !important;
-  overflow-wrap: break-word !important;
-  white-space: normal !important; // clave para anular white-space: nowrap si existe
-  max-width: 0; // ayuda a shrink
-}
-
-// Si Chirpy envuelve en .table-wrapper con overflow auto, lo matamos
-.table-wrapper {
-  overflow-x: hidden !important;
-  overflow: hidden !important;
-}
-
-// Opcional: reduce padding en móvil para que quepa más
-@media (max-width: 768px) {
-  td, th {
-    padding: 0.5rem 0.4rem !important;
-    font-size: 0.9rem !important;
-  }
 }
 </style>
