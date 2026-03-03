@@ -8,120 +8,146 @@
    Estilo alternativo: Clean Stack Table - Sin scroll horizontal
    ========================================================================== */
 <style>
-.stack-table-wrapper {
-  margin: 2rem 0;
-  overflow-x: hidden;          /* Impide scroll horizontal forzado */
-  font-family: system-ui, -apple-system, sans-serif;
+/* ==========================================================================
+   Estilo: Stack Table - Usa tus clases existentes (market-cap, tag-l, pos, neg, etc.)
+   Sin scroll horizontal nunca
+   ========================================================================== */
+
+.no-scroll-table-wrapper {
+  margin: 1.8rem 0;
+  overflow-x: hidden;                /* Impide scroll forzado */
+  font-family: system-ui, sans-serif;
   color: #1f2937;
 }
 
-.stack-table {
+.no-scroll-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
-  line-height: 1.4;
+  font-size: 0.94rem;
+  line-height: 1.45;
 }
 
-.stack-table th,
-.stack-table td {
-  padding: 0.75rem 0.5rem;
+.no-scroll-table th,
+.no-scroll-table td {
+  padding: 0.7rem 0.6rem;
   border: 1px solid #e5e7eb;
-  text-align: left;            /* Mejor legibilidad que center en stack */
-  vertical-align: top;
+  text-align: center;                /* mantiene tu preferencia center */
 }
 
-.stack-table th {
-  background: #f1f5f9;
+.no-scroll-table th {
+  background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
   font-weight: 600;
   color: #111827;
+  font-size: 0.82rem;
   text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
 }
 
-.stack-table tr:nth-child(even) {
-  background: #f9fafb;
+.no-scroll-table tr:nth-child(even) {
+  background: #fafafa;
 }
 
-/* Colores para % (más suaves que el original) */
-.pos { color: #166534; font-weight: 600; }
-.neg { color: #991b1b; font-weight: 600; }
-.neu { color: #4b5563; }
+/* Tus clases existentes se mantienen intactas */
+.ticker-badge {
+  font-weight: 800;
+  color: #1e40af;
+}
 
-/* Etiquetas pequeñas */
+.market-cap {
+  color: #64748b;
+  font-family: monospace;
+  font-size: 0.88rem;
+}
+
 .tag-l {
-  font-size: 0.75rem;
-  padding: 0.2rem 0.45rem;
-  border-radius: 1rem;
+  padding: 0.18rem 0.4rem;
+  border-radius: 9999px;
   color: white;
-  margin-right: 0.25rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin: 0 0.15rem;
   display: inline-block;
 }
 
-/* Ticker destacado */
-.ticker-badge {
-  font-weight: 700;
-  color: #1d4ed8;
-  font-size: 1.05rem;
+.pos {
+  color: #15803d;
+  background-color: #dcfce7;
+  font-weight: 600;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  display: inline-block;
 }
 
-/* Market cap pequeño */
-.market-cap {
-  color: #6b7280;
-  font-size: 0.85rem;
-  font-family: ui-monospace, monospace;
+.neg {
+  color: #b91c1c;
+  background-color: #fee2e2;
+  font-weight: 600;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  display: inline-block;
 }
 
-/* === Modo stack en móvil (breakpoint ~640px o ajusta a tu gusto) === */
-@media (max-width: 640px) {
-  .stack-table {
+.neu {
+  color: #4b5563;
+  background-color: #f3f4f6;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* === Modo stack vertical en pantallas ≤ 680px === */
+@media (max-width: 680px) {
+  .no-scroll-table {
     border: 0;
-    font-size: 0.92rem;
+    font-size: 0.93rem;
   }
 
-  .stack-table thead {
-    display: none;               /* Ocultamos cabecera en móvil */
+  .no-scroll-table thead {
+    display: none;                    /* Oculta cabecera en móvil */
   }
 
-  .stack-table tr {
+  .no-scroll-table tbody,
+  .no-scroll-table tr,
+  .no-scroll-table td {
     display: block;
-    margin-bottom: 1.5rem;
+  }
+
+  .no-scroll-table tr {
+    margin-bottom: 1.4rem;
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
     background: white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    padding: 1rem 0.8rem;
   }
 
-  .stack-table td {
-    display: block;
+  .no-scroll-table td {
     border: none;
     padding: 0.5rem 0;
-    position: relative;
     text-align: left !important;
+    position: relative;
   }
 
-  /* Añadimos pseudo-elemento con el nombre de la columna */
-  .stack-table td:before {
+  /* Muestra el nombre de la columna (usa data-label) */
+  .no-scroll-table td:before {
     content: attr(data-label);
     font-weight: 600;
     color: #374151;
     display: block;
-    margin-bottom: 0.25rem;
-    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.82rem;
     text-transform: uppercase;
   }
 
-  /* Ajustes finos para que no desborde texto */
-  .stack-table td {
+  /* Ajustes para que el texto no desborde */
+  .no-scroll-table td {
     word-break: break-word;
     overflow-wrap: break-word;
   }
 
-  /* Centramos % y badges si quieres */
-  .pos, .neg, .neu, .tag-l {
-    display: inline-block;
-    margin-top: 0.25rem;
+  /* Centramos visualmente los valores importantes en stack */
+  .pos, .neg, .neu, .ticker-badge, .tag-l {
+    margin: 0.3rem 0;
   }
 }
 </style>
