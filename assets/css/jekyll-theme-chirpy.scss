@@ -9,110 +9,74 @@
    ========================================================================== */
 <style>
 /* ==========================================================================
-   Estilo: Stack Table - Sin scroll horizontal, sin data-label ni :before
+   Estilo FINAL: Stack Table - Fuerza NO scroll horizontal
    ========================================================================== */
 
 .no-scroll-table-wrapper {
   margin: 1.8rem 0;
-  overflow-x: hidden;
+  overflow-x: hidden !important;     /* Más fuerte */
+  max-width: 100% !important;
+  width: 100% !important;
   font-family: system-ui, sans-serif;
   color: #1f2937;
 }
 
 .no-scroll-table {
-  width: 100%;
+  width: 100% !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;    /* Clave: fija columnas y fuerza fit */
   border-collapse: collapse;
-  font-size: 0.94rem;
-  line-height: 1.45;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  word-break: break-word !important; /* Rompe palabras largas */
+  overflow-wrap: break-word !important;
 }
 
 .no-scroll-table th,
 .no-scroll-table td {
-  padding: 0.7rem 0.6rem;
+  padding: 0.7rem 0.5rem;
   border: 1px solid #e5e7eb;
   text-align: center;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto;                     /* Mejora ruptura en idiomas con guiones */
+  max-width: 0;                      /* Fuerza shrink */
 }
 
 .no-scroll-table th {
   background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
   font-weight: 600;
   color: #111827;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
 
-.no-scroll-table tr:nth-child(even) {
-  background: #fafafa;
-}
+/* Tus clases sin cambios */
+.ticker-badge { font-weight: 800; color: #1e40af; }
+.market-cap { color: #64748b; font-family: monospace; font-size: 0.88rem; }
+.tag-l { padding: 0.18rem 0.4rem; border-radius: 9999px; color: white; font-size: 0.78rem; font-weight: 600; margin: 0 0.15rem; display: inline-block; }
+.pos { color: #15803d; background-color: #dcfce7; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 4px; display: inline-block; }
+.neg { color: #b91c1c; background-color: #fee2e2; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 4px; display: inline-block; }
 
-/* Tus clases existentes */
-.ticker-badge {
-  font-weight: 800;
-  color: #1e40af;
-}
+/* === Stack vertical agresivo (breakpoint 768px para tablets/móviles) === */
+@media (max-width: 768px) {
+  .no-scroll-table-wrapper {
+    overflow-x: hidden !important;
+  }
 
-.market-cap {
-  color: #64748b;
-  font-family: monospace;
-  font-size: 0.88rem;
-}
-
-.tag-l {
-  padding: 0.18rem 0.4rem;
-  border-radius: 9999px;
-  color: white;
-  font-size: 0.78rem;
-  font-weight: 600;
-  margin: 0 0.15rem;
-  display: inline-block;
-}
-
-.pos {
-  color: #15803d;
-  background-color: #dcfce7;
-  font-weight: 600;
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
-  display: inline-block;
-}
-
-.neg {
-  color: #b91c1c;
-  background-color: #fee2e2;
-  font-weight: 600;
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
-  display: inline-block;
-}
-
-.neu {
-  color: #4b5563;
-  background-color: #f3f4f6;
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
-  display: inline-block;
-}
-
-/* === Modo stack vertical en pantallas ≤ 680px === */
-@media (max-width: 680px) {
   .no-scroll-table {
     border: 0;
-    font-size: 0.93rem;
+    table-layout: auto !important;   /* Permite flex en stack */
   }
 
   .no-scroll-table thead {
-    display: none;                    /* Oculta cabecera */
-  }
-
-  .no-scroll-table tbody,
-  .no-scroll-table tr,
-  .no-scroll-table td {
-    display: block;
+    display: none;
   }
 
   .no-scroll-table tr {
-    margin-bottom: 1.4rem;
+    display: block;
+    margin-bottom: 1.5rem;
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
     background: white;
@@ -121,22 +85,22 @@
   }
 
   .no-scroll-table td {
+    display: block;
     border: none;
-    padding: 0.5rem 0;
+    padding: 0.6rem 0;
     text-align: left !important;
-    word-break: break-word;
-    overflow-wrap: break-word;
+    margin-bottom: 0.5rem;
+    word-break: break-all !important;  /* Más agresivo para tickers largos */
+    white-space: normal !important;
   }
 
-  /* Sin :before ni data-label → solo valores */
+  /* Reduce tamaño para que quepa mejor */
   .no-scroll-table td {
-    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
   }
 
-  /* Ajuste visual para valores importantes */
-  .pos, .neg, .neu, .ticker-badge, .tag-l {
-    margin: 0.3rem 0;
-    display: inline-block;
+  .ticker-badge, .tag-l, .pos, .neg, .market-cap {
+    font-size: 0.85rem !important;
   }
 }
 </style>
