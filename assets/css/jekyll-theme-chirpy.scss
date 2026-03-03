@@ -4,138 +4,124 @@
 
 /* Tus estilos custom aquí (al final del archivo) */
 
+/* ==========================================================================
+   Estilo alternativo: Clean Stack Table - Sin scroll horizontal
+   ========================================================================== */
 <style>
-.ghost-table-wrapper {
-    margin: 1.5em 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: #1a1f23;
-    width: 100%;
-    line-height: 1.2;
+.stack-table-wrapper {
+  margin: 2rem 0;
+  overflow-x: hidden;          /* Impide scroll horizontal forzado */
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #1f2937;
 }
 
-.ghost-table-wrapper * {
-    box-sizing: border-box;
+.stack-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  line-height: 1.4;
 }
 
-.ghost-table-container {
-    width: 100%;
-    overflow-x: auto;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
+.stack-table th,
+.stack-table td {
+  padding: 0.75rem 0.5rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;            /* Mejor legibilidad que center en stack */
+  vertical-align: top;
 }
 
-.ghost-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    font-size: 12px;
-    table-layout: auto;
+.stack-table th {
+  background: #f1f5f9;
+  font-weight: 600;
+  color: #111827;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
 }
 
-.ghost-table th {
-    background-color: #1e40af;
-    color: white;
-    padding: 4px 2px;
-    text-align: center;
-    font-weight: 600;
-    border: 1px solid #1e3a8a;
-    word-break: break-word;
+.stack-table tr:nth-child(even) {
+  background: #f9fafb;
 }
 
-.ghost-table td {
-    padding: 4px 2px;
-    border: 1px solid #f0f0f0;
-    text-align: center;
-    word-break: break-word;
-}
+/* Colores para % (más suaves que el original) */
+.pos { color: #166534; font-weight: 600; }
+.neg { color: #991b1b; font-weight: 600; }
+.neu { color: #4b5563; }
 
-.ghost-table tr:hover {
-    background-color: #f9fafb;
-}
-
-.ticker-badge {
-    font-weight: 800;
-    color: #1e40af;
-}
-
-.pos {
-    color: #15803d;
-    background-color: #dcfce7;
-    font-weight: 600;
-    padding: 1px 3px;
-    border-radius: 3px;
-    display: inline-block;
-}
-
-.neg {
-    color: #b91c1c;
-    background-color: #fee2e2;
-    font-weight: 600;
-    padding: 1px 3px;
-    border-radius: 3px;
-    display: inline-block;
-}
-
-.neu {
-    color: #4b5563;
-    background-color: #f3f4f6;
-    padding: 1px 3px;
-    border-radius: 3px;
-    display: inline-block;
-}
-
+/* Etiquetas pequeñas */
 .tag-l {
-    padding: 1px 4px;
-    border-radius: 10px;
-    color: white;
-    font-size: 9px;
-    font-weight: 600;
-    margin: 1px;
-    display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 1rem;
+  color: white;
+  margin-right: 0.25rem;
+  display: inline-block;
 }
 
+/* Ticker destacado */
+.ticker-badge {
+  font-weight: 700;
+  color: #1d4ed8;
+  font-size: 1.05rem;
+}
+
+/* Market cap pequeño */
 .market-cap {
-    color: #64748b;
-    font-family: monospace;
-    font-size: 10px;
+  color: #6b7280;
+  font-size: 0.85rem;
+  font-family: ui-monospace, monospace;
 }
 
-.col-real_name {
-    color: #64748b;
-    font-weight: 400;
-    font-size: 11px;
-}
+/* === Modo stack en móvil (breakpoint ~640px o ajusta a tu gusto) === */
+@media (max-width: 640px) {
+  .stack-table {
+    border: 0;
+    font-size: 0.92rem;
+  }
 
-@media (max-width: 600px) {
+  .stack-table thead {
+    display: none;               /* Ocultamos cabecera en móvil */
+  }
 
-    .ghost-table th,
-    .ghost-table td {
-        font-size: 10.5px !important;
-        line-height: 1.2 !important;
-        padding: 3px 0px !important;
-        text-align: center !important;
-    }
+  .stack-table tr {
+    display: block;
+    margin-bottom: 1.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 1rem;
+  }
 
-    .ticker-badge,
-    .market-cap,
-    .pos,
-    .neg,
-    .neu {
-        font-size: inherit !important;
-    }
+  .stack-table td {
+    display: block;
+    border: none;
+    padding: 0.5rem 0;
+    position: relative;
+    text-align: left !important;
+  }
 
-    .tag-l {
-        font-size: 9px !important;
-        padding: 1px 3px !important;
-    }
-}
+  /* Añadimos pseudo-elemento con el nombre de la columna */
+  .stack-table td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #374151;
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
 
-@media (max-width: 400px) {
+  /* Ajustes finos para que no desborde texto */
+  .stack-table td {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
 
-    .ghost-table th,
-    .ghost-table td {
-        font-size: 9.5px !important;
-        padding: 2px 0px !important;
-    }
+  /* Centramos % y badges si quieres */
+  .pos, .neg, .neu, .tag-l {
+    display: inline-block;
+    margin-top: 0.25rem;
+  }
 }
 </style>
