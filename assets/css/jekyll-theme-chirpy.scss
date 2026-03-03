@@ -103,4 +103,13 @@
     font-size: 0.85rem !important;
   }
 }
+.post-content table,
+.table-wrapper,
+table {
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+}
+body, html {
+  overflow-x: hidden !important;
+}
 </style>
