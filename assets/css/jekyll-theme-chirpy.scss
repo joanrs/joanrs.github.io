@@ -8,123 +8,141 @@
    Estilo alternativo: Clean Stack Table - Sin scroll horizontal
    ========================================================================== */
 
+/* =============================================
+   NO-SCROLL TABLE — Jekyll Chirpy Starter
+   Pega esto en assets/css/jekyll-theme-chirpy.scss
+   o en _sass/custom.scss (si tienes override)
+   ============================================= */
 
-/* Base del wrapper y tabla */
 .no-scroll-table-wrapper {
-  margin: 1.8rem 0;
-  overflow-x: hidden !important;
-  max-width: 100% !important;
-  width: 100% !important;
+  width: 100%;
+  overflow-x: hidden; /* bloquea scroll horizontal */
 }
 
 .no-scroll-table {
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 100%;
+  table-layout: fixed;       /* anchos fijos, sin desbordamiento */
   border-collapse: collapse;
-  font-size: 0.92rem;
-  line-height: 1.4;
-  table-layout: auto !important;
-  word-break: break-word !important;
-  overflow-wrap: break-word !important;
+  font-size: 0.78rem;        /* reduce tamaño base en móvil */
+  word-break: break-word;
 }
 
-/* Celdas base */
+/* Anchos de columna (ajusta según tus necesidades) */
+.no-scroll-table th:nth-child(1),
+.no-scroll-table td:nth-child(1) { width: 14%; } /* Ticker */
+
+.no-scroll-table th:nth-child(2),
+.no-scroll-table td:nth-child(2) { width: 28%; } /* Name */
+
+.no-scroll-table th:nth-child(3),
+.no-scroll-table td:nth-child(3) { width: 14%; } /* MktCap */
+
+.no-scroll-table th:nth-child(4),
+.no-scroll-table td:nth-child(4) { width: 20%; } /* List (tags) */
+
+.no-scroll-table th:nth-child(5),
+.no-scroll-table td:nth-child(5) { width: 12%; } /* Feb */
+
+.no-scroll-table th:nth-child(6),
+.no-scroll-table td:nth-child(6) { width: 12%; } /* Anual */
+
+/* Celdas */
 .no-scroll-table th,
 .no-scroll-table td {
-  padding: 0.7rem 0.5rem;
-  border: 1px solid #e5e7eb;
+  padding: 4px 5px;
   text-align: center;
-  word-break: break-all !important;
-  overflow-wrap: break-word !important;
-  white-space: normal !important;
-  hyphens: auto;
-  max-width: 0;
+  vertical-align: middle;
+  overflow: hidden;
+  white-space: nowrap;        /* evita saltos de línea en números */
 }
 
-/* Cabecera */
-.no-scroll-table th {
-  background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+/* Columna Name: permite wrap */
+.no-scroll-table td:nth-child(2) {
+  text-align: left;
+  white-space: normal;
+}
+
+/* Badges de ticker */
+.ticker-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  font-family: monospace;
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1px 4px;
+  border-radius: 3px;
+  letter-spacing: 0.03em;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Market cap */
+.market-cap {
+  font-size: 0.72rem;
   font-weight: 600;
-  color: #111827;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  color: #94a3b8;
 }
 
-/* Tus clases originales */
-.ticker-badge { font-weight: 800; color: #1e40af; }
-.market-cap   { color: #64748b; font-family: monospace; font-size: 0.88rem; }
-.tag-l        { padding: 0.18rem 0.4rem; border-radius: 9999px; color: white; font-size: 0.78rem; font-weight: 600; margin: 0 0.15rem; display: inline-block; }
-.pos          { color: #15803d; background-color: #dcfce7; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 4px; display: inline-block; }
-.neg          { color: #b91c1c; background-color: #fee2e2; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 4px; display: inline-block; }
-
-/* OVERRIDES GLOBALES PARA CHIRPY (mata scroll en cualquier tabla) */
-.post-content table,
-.table-wrapper,
-.table-wrapper table,
-table {
-  overflow-x: hidden !important;
-  overflow: hidden !important;
-  max-width: 100% !important;
-  width: 100% !important;
-  table-layout: auto !important;
-  word-break: break-word !important;
-  overflow-wrap: break-word !important;
-  white-space: normal !important;
+/* Tags de categoría */
+.tag-l {
+  display: inline-block;
+  font-size: 0.60rem;
+  font-weight: 600;
+  color: #fff;
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin: 1px 1px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.post-content td,
-.post-content th,
-td,
-th {
-  word-break: break-all !important;
-  overflow-wrap: break-word !important;
-  white-space: normal !important;
-  max-width: 0;
-  padding: 0.6rem 0.4rem !important;
+/* Porcentajes positivos y negativos */
+.pos {
+  color: #22c55e;
+  font-weight: 600;
+  font-size: 0.72rem;
+  white-space: nowrap;
 }
 
-/* Stack vertical en móvil */
-@media (max-width: 768px) {
-  .no-scroll-table-wrapper,
+.neg {
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+/* Responsive: móvil pequeño (<480px) */
+@media (max-width: 480px) {
   .no-scroll-table {
-    overflow-x: hidden !important;
+    font-size: 0.65rem;
   }
 
-  .no-scroll-table {
-    border: 0;
-  }
-
-  .no-scroll-table thead {
-    display: none;
-  }
-
-  .no-scroll-table tr {
-    display: block;
-    margin-bottom: 1.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.5rem;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-    padding: 1rem 0.8rem;
-  }
-
+  .no-scroll-table th,
   .no-scroll-table td {
-    display: block;
-    border: none;
-    padding: 0.6rem 0;
-    text-align: left !important;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
+    padding: 3px 2px;
   }
 
-  .ticker-badge, .tag-l, .pos, .neg, .market-cap {
-    font-size: 0.85rem !important;
-    padding: 0.12rem 0.3rem !important;
+  .ticker-badge {
+    font-size: 0.58rem;
+    padding: 1px 2px;
   }
-}
 
-/* Seguridad extra: evita scroll en todo el body */
-body, html {
-  overflow-x: hidden !important;
+  .tag-l {
+    font-size: 0.52rem;
+    padding: 1px 2px;
+  }
+
+  .pos, .neg {
+    font-size: 0.62rem;
+  }
+
+  /* En móvil muy pequeño, oculta MktCap si hace falta espacio */
+  /* Descomenta si necesitas más espacio:
+  .no-scroll-table th:nth-child(3),
+  .no-scroll-table td:nth-child(3) { display: none; }
+  */
 }
