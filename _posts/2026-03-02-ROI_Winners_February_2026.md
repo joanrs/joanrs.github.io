@@ -21,13 +21,16 @@ div.table-wrapper {
   min-width: 0 !important;
   table-layout: fixed !important;
   font-size: 0.72rem;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
 }
 .no-scroll-table th,
 .no-scroll-table td {
   overflow: hidden;
   white-space: nowrap;
-  padding: 3px 4px;
+  padding: 2px 2px !important;
   max-width: 0;
+  margin: 0 !important;
 }
 .no-scroll-table td:nth-child(2) { white-space: normal; }
 .ticker-badge { font-size: 0.65rem; font-family: monospace; background: #1e293b; color: #e2e8f0; padding: 1px 3px; border-radius: 3px; }
