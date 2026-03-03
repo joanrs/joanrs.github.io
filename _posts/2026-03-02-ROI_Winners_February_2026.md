@@ -22,37 +22,37 @@ div.table-wrapper {
   table-layout: fixed !important;
   border-collapse: collapse !important;
   border-spacing: 0 !important;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
 }
-.no-scroll-table th:nth-child(1),
-.no-scroll-table td:nth-child(1) { width: 13%; }
-
-.no-scroll-table th:nth-child(2),
-.no-scroll-table td:nth-child(2) { width: 25%; white-space: normal; text-align: left; }
-
-.no-scroll-table th:nth-child(3),
-.no-scroll-table td:nth-child(3) { width: 13%; }
-
-.no-scroll-table th:nth-child(4),
-.no-scroll-table td:nth-child(4) { width: 19%; }
-
-.no-scroll-table th:nth-child(5),
-.no-scroll-table td:nth-child(5) { width: 15%; }
-
-.no-scroll-table th:nth-child(6),
-.no-scroll-table td:nth-child(6) { width: 15%; }
-
-.no-scroll-table th,
-.no-scroll-table td {
+table.no-scroll-table > thead > tr > th,
+table.no-scroll-table > tbody > tr > td {
+  padding: 2px 0px !important;
+  margin: 0 !important;
   overflow: hidden;
   white-space: nowrap;
-  padding: 2px 1px !important;
-  max-width: 0;
-  margin: 0 !important;
   text-align: center;
+  box-sizing: border-box !important;
 }
+table.no-scroll-table > thead > tr > th:nth-child(1),
+table.no-scroll-table > tbody > tr > td:nth-child(1) { width: 13%; }
+
+table.no-scroll-table > thead > tr > th:nth-child(2),
+table.no-scroll-table > tbody > tr > td:nth-child(2) { width: 26%; white-space: normal; text-align: left; padding-left: 2px !important; }
+
+table.no-scroll-table > thead > tr > th:nth-child(3),
+table.no-scroll-table > tbody > tr > td:nth-child(3) { width: 12%; }
+
+table.no-scroll-table > thead > tr > th:nth-child(4),
+table.no-scroll-table > tbody > tr > td:nth-child(4) { width: 18%; }
+
+table.no-scroll-table > thead > tr > th:nth-child(5),
+table.no-scroll-table > tbody > tr > td:nth-child(5) { width: 15%; }
+
+table.no-scroll-table > thead > tr > th:nth-child(6),
+table.no-scroll-table > tbody > tr > td:nth-child(6) { width: 16%; }
+
 .ticker-badge {
-  font-size: 0.60rem;
+  font-size: 0.58rem;
   font-family: monospace;
   background: #1e293b;
   color: #e2e8f0;
@@ -65,7 +65,7 @@ div.table-wrapper {
 }
 .tag-l {
   display: inline-block;
-  font-size: 0.55rem;
+  font-size: 0.53rem;
   font-weight: 600;
   color: #fff;
   padding: 1px 2px;
@@ -75,9 +75,9 @@ div.table-wrapper {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.market-cap { font-size: 0.62rem; color: #94a3b8; }
-.pos { color: #22c55e; font-size: 0.65rem; font-weight: 600; }
-.neg { color: #ef4444; font-size: 0.65rem; font-weight: 600; }
+.market-cap { font-size: 0.60rem; color: #94a3b8; }
+.pos { color: #22c55e; font-size: 0.63rem; font-weight: 600; }
+.neg { color: #ef4444; font-size: 0.63rem; font-weight: 600; }
 </style>
 <div class="no-scroll-table-wrapper">
     <table class="no-scroll-table">
