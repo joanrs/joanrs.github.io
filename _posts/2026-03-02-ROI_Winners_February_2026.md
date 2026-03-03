@@ -20,24 +20,64 @@ div.table-wrapper {
   width: 100% !important;
   min-width: 0 !important;
   table-layout: fixed !important;
-  font-size: 0.72rem;
   border-collapse: collapse !important;
   border-spacing: 0 !important;
+  font-size: 0.72rem;
 }
+.no-scroll-table th:nth-child(1),
+.no-scroll-table td:nth-child(1) { width: 13%; }
+
+.no-scroll-table th:nth-child(2),
+.no-scroll-table td:nth-child(2) { width: 25%; white-space: normal; text-align: left; }
+
+.no-scroll-table th:nth-child(3),
+.no-scroll-table td:nth-child(3) { width: 13%; }
+
+.no-scroll-table th:nth-child(4),
+.no-scroll-table td:nth-child(4) { width: 19%; }
+
+.no-scroll-table th:nth-child(5),
+.no-scroll-table td:nth-child(5) { width: 15%; }
+
+.no-scroll-table th:nth-child(6),
+.no-scroll-table td:nth-child(6) { width: 15%; }
+
 .no-scroll-table th,
 .no-scroll-table td {
   overflow: hidden;
   white-space: nowrap;
-  padding: 2px 2px !important;
+  padding: 2px 1px !important;
   max-width: 0;
   margin: 0 !important;
+  text-align: center;
 }
-.no-scroll-table td:nth-child(2) { white-space: normal; }
-.ticker-badge { font-size: 0.65rem; font-family: monospace; background: #1e293b; color: #e2e8f0; padding: 1px 3px; border-radius: 3px; }
-.tag-l { display: inline-block; font-size: 0.58rem; font-weight: 600; color: #fff; padding: 1px 3px; border-radius: 3px; margin: 1px; }
-.market-cap { font-size: 0.65rem; color: #94a3b8; }
-.pos { color: #22c55e; font-size: 0.68rem; font-weight: 600; }
-.neg { color: #ef4444; font-size: 0.68rem; font-weight: 600; }
+.ticker-badge {
+  font-size: 0.60rem;
+  font-family: monospace;
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1px 2px;
+  border-radius: 3px;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tag-l {
+  display: inline-block;
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: #fff;
+  padding: 1px 2px;
+  border-radius: 3px;
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.market-cap { font-size: 0.62rem; color: #94a3b8; }
+.pos { color: #22c55e; font-size: 0.65rem; font-weight: 600; }
+.neg { color: #ef4444; font-size: 0.65rem; font-weight: 600; }
 </style>
 <div class="no-scroll-table-wrapper">
     <table class="no-scroll-table">
