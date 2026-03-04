@@ -18,7 +18,7 @@ order: 4
         <span class="col-real_name"> jr.growth</span>
     </a><br><br>
     <a href="https://market-analyze.vercel.app" target="_blank">
-        <span class="col-real_name">Financial Reports From My Project Market-Analyze</span>
+        <span class="col-real_name">Financial Reports From My Project: Market-Analyze</span>
     </a>
 </div>
 
