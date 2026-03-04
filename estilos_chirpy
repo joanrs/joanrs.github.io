@@ -1,0 +1,24 @@
+<style>
+.ghost-table-container {
+    width: 100%;
+    overflow-x: visible !important;
+    overflow: visible !important;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+}
+div.table-wrapper {
+    overflow-x: visible !important;
+    overflow: visible !important;
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+.ghost-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    background: white;
+    font-size: 12px;
+    table-layout: fixed !important;
+    min-width: 0 !important;
+}
+</style>
