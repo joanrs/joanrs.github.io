@@ -6,7 +6,6 @@ tags: [WTD]
 image:
 ---
 <style>
-
 div.table-wrapper {
   overflow-x: visible !important;
   overflow: visible !important;
@@ -79,10 +78,8 @@ table.no-scroll-table > tbody > tr > td:nth-child(6) { width: 16%; }
 .market-cap { font-size: 0.60rem; color: #94a3b8; }
 .pos { color: #22c55e; font-size: 0.63rem; font-weight: 600; }
 .neg { color: #ef4444; font-size: 0.63rem; font-weight: 600; }
-</style>
-<div class="ghost-table-wrapper">
-<div class="ghost-table-container">
-        <table class="ghost-table">
+<div class="no-scroll-table-wrapper">
+    <table class="no-scroll-table">
             <thead>
                 <tr>
                     <th>Ticker</th>
@@ -939,4 +936,3 @@ table.no-scroll-table > tbody > tr > td:nth-child(6) { width: 16%; }
             </tbody>
         </table>
     </div>
-</div>
