@@ -1,0 +1,60 @@
+backend:
+  name: git-gateway
+
+# ✅ Modo LOCAL — no necesita GitHub OAuth
+local_backend: true
+
+media_folder: "assets/img/posts"
+public_folder: "/assets/img/posts"
+
+# ─── COLECCIONES ───────────────────────────────────────────────────────────────
+
+collections:
+
+  # Posts del blog
+  - name: "posts"
+    label: "📝 Posts"
+    folder: "_posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    editor:
+      preview: false
+    fields:
+      - { label: "Título", name: "title", widget: "string" }
+      - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD HH:mm:ss ZZ", date_format: "YYYY-MM-DD", time_format: "HH:mm:ss" }
+      - label: "Categorías"
+        name: "categories"
+        widget: "list"
+        field:
+          label: "Categoría"
+          name: "category"
+          widget: "select"
+          options: ["Aula", "Crypto", "España", "Informes", "Markets"]
+      - label: "Etiquetas"
+        name: "tags"
+        widget: "list"
+        field:
+          label: "Tag"
+          name: "tag"
+          widget: "select"
+          options: ["Anual", "Conceptos", "Empleo", "ROI", "WTD"]
+      - { label: "Imagen de portada", name: "image", widget: "image", required: false }
+      - { label: "Math (LaTeX)", name: "math", widget: "boolean", default: false, required: false }
+      - { label: "TOC", name: "toc", widget: "boolean", default: true, required: false }
+      - { label: "Contenido", name: "body", widget: "markdown" }
+
+  # Páginas estáticas (_tabs)
+  # Los archivos de _tabs no tienen 'title' en el front-matter,
+  # usan 'icon' como identificador principal
+  - name: "tabs"
+    label: "📄 Páginas (Tabs)"
+    folder: "_tabs"
+    create: false
+    identifier_field: "icon"   # <- campo que SÍ existe en todos los archivos de _tabs
+    editor:
+      preview: false
+    fields:
+      - { label: "Título", name: "title", widget: "string", required: false }
+      - { label: "Icono (FontAwesome)", name: "icon", widget: "string", hint: "Ej: fas fa-info-circle" }
+      - { label: "Orden", name: "order", widget: "number", required: false }
+      - { label: "Contenido", name: "body", widget: "markdown", required: false }

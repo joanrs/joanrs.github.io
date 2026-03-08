@@ -1,1 +1,3 @@
 bundle exec jekyll serve
+
+echo "=== CATEGORÍAS ===" && grep -h "^categories:" /home/joan/devgpt/joanrs.github.io/_posts/*.md | sort -u && echo "" && echo "=== TAGS ===" && grep -h "^tags:" /home/joan/devgpt/joanrs.github.io/_posts/*.md | sort -u
