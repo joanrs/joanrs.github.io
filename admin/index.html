@@ -4,11 +4,87 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
-  <title>Decap CMS | Análisis Mercado Tecnológico</title>
+  <title>Sveltia CMS | Análisis Mercado Tecnológico</title>
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #fdfdfd; color: #334155; margin: 0; }
+    
+    /* Panel de Previsualización: Limpio y profesional */
+    .sveltia-cms-preview-pane { 
+      padding: 40px; 
+      line-height: 1.8; 
+      font-size: 17px; 
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+    }
+    
+    /* Títulos estilo Blog */
+    h1, h2, h3 { color: #1e293b; margin-top: 1.5em; }
+    
+    /* MathJax SVG adjustments */
+    mjx-container[display="true"] {
+      margin: 2em 0 !important;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  </style>
+
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  
+  <!-- MathJax 3 - Cambiamos a SVG para evitar problemas de fuentes rotas -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      options: {
+        enableMenu: false
+      }
+    };
+  </script>
+  <!-- Usamos tex-svg que es mucho más robusto para previsualizaciones -->
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
-  <!-- Include the script that builds the page and powers Decap CMS -->
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script type="module">
+    let timer;
+    const updateMath = () => {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise()
+          .then(() => console.log("✅ Math rendered successfully"))
+          .catch(err => console.log("❌ MathJax error:", err));
+      }
+    };
+
+    // Observador con debounce: renderiza cuando dejas de escribir
+    const observer = new MutationObserver((mutations) => {
+      // Solo disparamos si el cambio no es de MathJax mismo (evita bucles)
+      const isMathJaxChange = mutations.some(m => 
+        m.target.nodeName.startsWith('MJX') || 
+        (m.target.classList && m.target.classList.contains('MathJax'))
+      );
+      
+      if (!isMathJaxChange) {
+        clearTimeout(timer);
+        timer = setTimeout(updateMath, 1500); 
+      }
+    });
+
+    window.addEventListener('load', () => {
+      observer.observe(document.body, { childList: true, subtree: true });
+      // Renderizado inicial forzado tras un pequeño delay
+      setTimeout(updateMath, 2000);
+    });
+  </script>
+
+  <!-- Cargamos Sveltia CMS -->
+  <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js" type="module"></script>
 </body>
 </html>

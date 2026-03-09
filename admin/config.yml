@@ -1,8 +1,6 @@
 backend:
-  name: git-gateway
-
-# ✅ Modo LOCAL — no necesita GitHub OAuth
-local_backend: true
+  name: github
+  repo: joanrs/joanrs.github.io
 
 media_folder: "assets/img/posts"
 public_folder: "/assets/img/posts"
@@ -18,7 +16,7 @@ collections:
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     editor:
-      preview: false
+      preview: true
     fields:
       - { label: "Título", name: "title", widget: "string" }
       - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD HH:mm:ss ZZ", date_format: "YYYY-MM-DD", time_format: "HH:mm:ss" }
@@ -52,7 +50,7 @@ collections:
     create: false
     identifier_field: "icon"   # <- campo que SÍ existe en todos los archivos de _tabs
     editor:
-      preview: false
+      preview: true
     fields:
       - { label: "Título", name: "title", widget: "string", required: false }
       - { label: "Icono (FontAwesome)", name: "icon", widget: "string", hint: "Ej: fas fa-info-circle" }

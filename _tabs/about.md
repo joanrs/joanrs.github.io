@@ -3,7 +3,7 @@
 icon: fas fa-info-circle
 order: 4
 ---
-
+Empresas Tecnológicas. Análisis de Mercados Financieros Tecnológicos. Inteligencia Artificial. Análisis de Datos Financieros. Análisis de Adquisiciones, Acuerdos etc ... 
 <div>
     <a href="https://x.com/joanr" target="_blank">
         <i class="fab fa-x-twitter"></i>
