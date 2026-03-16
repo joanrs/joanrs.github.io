@@ -2,7 +2,7 @@
 title: "ROI Winners March W2 2026"
 date: 2026-03-14 09:00:00 +0100
 categories: [Markets]
-tags: [WTD]
+tags: [ROI,WTD]
 image:
 ---
 

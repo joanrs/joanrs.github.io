@@ -7,7 +7,7 @@ image:
 ---
 <iframe src="/tabla_ghost_2026_Feb_Winners.html" 
 width="100%" 
-  height="2800px" 
+  height="3000px" 
   frameborder="0"
   scrolling="no"
   style="border:none; display:block;">
