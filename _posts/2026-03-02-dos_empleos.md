@@ -3,7 +3,8 @@ title: "El País de los 2 Empleos"
 date: 2026-03-02 09:00:00 +0100
 categories: [España]
 tags: [Empleo]
-image:
+image: /assets/img/posts/spain.jpg
+
 ---
 #### 1. El Diccionario para entender
 
@@ -46,12 +47,12 @@ No es maquillaje, sino un **avance en derechos**:
 
 #### 6. Antes vs. Ahora
 
-| Concepto | Antes (Contrato Temporal) | Ahora (Fijo-Discontinuo) |
-| :--- | :--- | :--- |
-| **Vínculo con la empresa** | Se rompía al terminar la tarea. | Se mantiene (el trabajador es "fijo"). |
-| **En las listas del paro** | Aparecía como parado oficial. | Aparece como "demandante inactivo". |
-| **Indemnización** | Mínima o inexistente por fin de contrato. | Se acumula antigüedad desde el primer día. |
-| **Estadística mensual** | Subía el paro de forma brusca. | El paro se mantiene estable (parece mejor). |
+| Concepto                   | Antes (Contrato Temporal)                 | Ahora (Fijo-Discontinuo)                    |
+| :------------------------- | :---------------------------------------- | :------------------------------------------ |
+| **Vínculo con la empresa** | Se rompía al terminar la tarea.           | Se mantiene (el trabajador es "fijo").      |
+| **En las listas del paro** | Aparecía como parado oficial.             | Aparece como "demandante inactivo".         |
+| **Indemnización**          | Mínima o inexistente por fin de contrato. | Se acumula antigüedad desde el primer día.  |
+| **Estadística mensual**    | Subía el paro de forma brusca.            | El paro se mantiene estable (parece mejor). |
 
 No es un "engaño" ilegal, porque se siguen las normas de contabilidad que existen desde hace décadas. Sin embargo, **es cierto que la cifra de "Paro Registrado" ha perdido utilidad** para entender cuánta gente está realmente sin trabajar hoy mismo.
 
@@ -155,11 +156,11 @@ Si tienes un trabajo remoto o puedes conseguir empleo allí, estas ciudades te p
 
 #### 20. Esfuerzo Financiero (Alquiler vs. Sueldo)
 
-| Tipo de Ciudad | Ejemplo | Gasto Alquiler/Sueldo | Sensación Real |
-| :--- | :--- | :--- | :--- |
-| **Tensionada** | Madrid, Barcelona, Palma | **> 70%** | Asfixia, pluriempleo necesario. |
-| **Equilibrada** | Valencia, Zaragoza, Bilbao | **40% - 50%** | Estilo de vida cómodo, pero sin excesos. |
-| **Asequible** | Lugo, Jaén, Cáceres | **< 30%** | Capacidad de ahorro y vida tranquila. |
+| Tipo de Ciudad  | Ejemplo                    | Gasto Alquiler/Sueldo | Sensación Real                           |
+| :-------------- | :------------------------- | :-------------------- | :--------------------------------------- |
+| **Tensionada**  | Madrid, Barcelona, Palma   | **> 70%**             | Asfixia, pluriempleo necesario.          |
+| **Equilibrada** | Valencia, Zaragoza, Bilbao | **40% - 50%**         | Estilo de vida cómodo, pero sin excesos. |
+| **Asequible**   | Lugo, Jaén, Cáceres        | **< 30%**             | Capacidad de ahorro y vida tranquila.    |
 
 #### 21. Conclusión Final
 

@@ -3,7 +3,7 @@ title: "Sector Cloud AI"
 date: 2026-03-10 09:00:00 +0100
 categories: [Cloud AI]
 tags: [Nebius]
-image:
+image: /assets/img/posts/nebius-coreweave.jpg
 ---
 
 Las principales competidoras cotizadas de CoreWeave (CRWV), proveedora de nube GPU para IA y HPC, son otros proveedores de infraestructura en la nube especializada en computación de alto rendimiento y servicios de IA. Incluyen hiperescaladores como Amazon (AWS), Microsoft (Azure) y Google Cloud, junto a especialistas en data centers como Applied Digital y Oracle. 

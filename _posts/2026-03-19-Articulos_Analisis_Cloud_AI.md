@@ -3,7 +3,7 @@ title: "Artículos de Análisis de Empresas: Nebius"
 date: 2026-03-19 09:00:00 +0100
 categories: [Cloud AI]
 tags: [Nebius]
-image:
+image: /assets/img/posts/nebius.png
 ---
 <a href="https://finance.yahoo.com/news/nebius-stock-jumps-27b-meta-132500857.html">Nebius Stock Jumps on $27B Meta AI Infrastructure Agreement<br>17-3-2026</a>
 

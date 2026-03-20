@@ -3,7 +3,7 @@ title: "De Apache a V8 Isolates"
 date: 2026-03-09 09:00:00 +0100
 categories: [Middle Tech]
 tags: [Cloudflare]
-image:
+image: /assets/img/posts/v8.jpg
 ---
   
 Hay varias formas de servir HTML estático para una red local. Te explico las opciones más prácticas:
