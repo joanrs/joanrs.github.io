@@ -1,0 +1,16 @@
+<!-- Categories panel -->
+{% if site.categories.size > 0 %}
+<section>
+  <h2 class="panel-heading">Categorías populares</h2>
+  <div class="d-flex flex-wrap mt-3 mb-1 me-3">
+    {% assign sorted_categories = site.categories | sort %} {% for category in
+    sorted_categories %} {% assign cat_name = category[0] %} {% assign cat_count
+    = category[1] | size %} {% assign url = cat_name | slugify | prepend:
+    '/categories/' | append: '/' %}
+    <a class="post-tag btn btn-outline-primary" href="{{ url | relative_url }}">
+      {{ cat_name }} ({{ cat_count }})
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
