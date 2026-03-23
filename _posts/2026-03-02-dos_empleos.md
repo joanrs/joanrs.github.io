@@ -4,7 +4,6 @@ date: 2026-03-02 09:00:00 +0100
 categories: [España]
 tags: [Empleo]
 image: /assets/img/posts/spain.jpg
-
 ---
 #### 1. El Diccionario para entender
 
