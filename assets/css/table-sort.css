@@ -1,0 +1,27 @@
+.ghost-table th {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.ghost-table th:hover {
+  background-color: #2563eb;
+}
+
+.ghost-table th::after {
+  content: " ↕";
+  font-size: 0.8em;
+  opacity: 0.3;
+  margin-left: 4px;
+}
+
+.ghost-table th.sort-asc::after {
+  content: " ↑";
+  opacity: 1;
+}
+
+.ghost-table th.sort-desc::after {
+  content: " ↓";
+  opacity: 1;
+}
