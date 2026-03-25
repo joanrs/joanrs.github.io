@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/assets/css/table-sort.css" />
+<script src="/assets/js/table-sort.js" defer></script>
 <style>
   .ghost-table-wrapper {
     margin: 1.5em 0;
@@ -117,11 +119,11 @@
     <table class="ghost-table">
       <thead>
         <tr>
-          <th class="col-ticker">Ticker</th>
-          <th class="col-real_name">Nombre</th>
-          <th class="col-market_cap">MktCap</th>
-          <th class="col-list_name">Lista</th>
-          <th class="col-year">Anual</th>
+          <th class="col-ticker" data-type="string">Ticker</th>
+          <th class="col-real_name" data-type="string">Nombre</th>
+          <th class="col-market_cap" data-type="number">MktCap</th>
+          <th class="col-list_name" data-type="string">Lista</th>
+          <th class="col-year" data-type="number">Anual</th>
         </tr>
       </thead>
       <tbody>

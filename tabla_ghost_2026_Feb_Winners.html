@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+<link rel="stylesheet" href="/assets/css/table-sort.css" />
+<script src="/assets/js/table-sort.js" defer></script>
 <div style="text-align: center; margin-bottom: 20px;">
     <span class="ticker-badge"> Winners ROI February 2026 </span>
     <a href="https://x.com/joanr" target="_blank" style="text-decoration: none; color: inherit; margin: 0 10px;">
@@ -154,13 +156,13 @@
         <table class="ghost-table">
             <thead>
                 <tr>
-                    <th>Ticker</th>
-                    <th>Name</th>
-                    <th>MktCap</th>
-                    <th>List</th>
-                    <th>Jan</th>
-                    <th>Feb</th>
-                    <th>Anual</th>
+                    <th data-type="string">Ticker</th>
+                    <th data-type="string">Name</th>
+                    <th data-type="number">MktCap</th>
+                    <th data-type="string">List</th>
+                    <th data-type="number">Jan</th>
+                    <th data-type="number">Feb</th>
+                    <th data-type="number">Anual</th>
                 </tr>
             </thead>
             <tbody>

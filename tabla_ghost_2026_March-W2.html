@@ -2,6 +2,8 @@
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
 />
+<link rel="stylesheet" href="/assets/css/table-sort.css" />
+<script src="/assets/js/table-sort.js" defer></script>
 <div style="text-align: center; margin-bottom: 20px">
   <span class="ticker-badge"> Sectors ROI W2 March 2026 </span>
   <a
@@ -153,12 +155,12 @@
     <table class="ghost-table">
       <thead>
         <tr>
-          <th>Ticker</th>
-          <th>Nombre</th>
-          <th>MktCap</th>
-          <th>Lista</th>
-          <th>Mar</th>
-          <th>Anual</th>
+          <th data-type="string">Ticker</th>
+          <th data-type="string">Nombre</th>
+          <th data-type="number">MktCap</th>
+          <th data-type="string">Lista</th>
+          <th data-type="number">Mar</th>
+          <th data-type="number">Anual</th>
         </tr>
       </thead>
       <tbody>
