@@ -1,5 +1,5 @@
 ---
-title: "ROI Winners March W3 2026"
+title: "ROI March W3 2026"
 date: 2026-03-21 09:00:00 +0100
 categories: [Markets]
 tags: [ROI,WTD]

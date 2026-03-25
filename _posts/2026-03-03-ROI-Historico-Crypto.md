@@ -1,5 +1,5 @@
 ---
-title: ROI Histórico Crypto (03/2026)
+title: ROI Historical Crypto (03/2026)
 date: 2026-03-03 09:00:00 +0100
 categories: [Crypto]
 tags: [ROI]
