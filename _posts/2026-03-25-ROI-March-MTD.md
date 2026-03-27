@@ -1,5 +1,5 @@
 ---
-title: "ROI W4TD March 2026"
+title: "ROI MTD March 2026"
 date: 2026-03-25 08:00:00 +0100
 categories: [Markets]
 tags: [ROI,WTD]
@@ -14,14 +14,6 @@ image: /assets/img/posts/roi.jpg
   style="border:none; display:block;">
 </iframe>
 
- <iframe 
-  src="/actual_export.html" 
-  width="100%" 
-  height="3000px" 
-  frameborder="0"
-  scrolling="no"
-  style="border:none; display:block;">
-</iframe>
 
 
 
