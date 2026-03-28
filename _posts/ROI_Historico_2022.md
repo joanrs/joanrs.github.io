@@ -2,7 +2,7 @@
 title: "ROI Histórico 2022"
 date: 2026-01-09 09:00:00 +0100
 categories: [Markets]
-tags: [ROI]
+tags: [ROI, Anual]
 image:
 ---
 <style>

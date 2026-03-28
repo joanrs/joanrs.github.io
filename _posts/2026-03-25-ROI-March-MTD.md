@@ -2,7 +2,7 @@
 title: "ROI MTD March 2026"
 date: 2026-03-25 08:00:00 +0100
 categories: [Markets]
-tags: [ROI,WTD]
+tags: [ROI,Month]
 image: /assets/img/posts/roi.jpg
 ---
   <iframe 

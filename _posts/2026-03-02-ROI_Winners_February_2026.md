@@ -2,7 +2,7 @@
 title: "ROI February 2026"
 date: 2026-03-02 09:00:00 +0100
 categories: [Markets]
-tags: [ROI]
+tags: [ROI, Month]
 image: /assets/img/posts/roi.jpg
 ---
 <iframe src="/tabla_ghost_2026_Feb_Winners.html" 
