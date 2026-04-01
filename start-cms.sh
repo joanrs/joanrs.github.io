@@ -8,3 +8,5 @@ echo "👉 Accede al CMS en: http://localhost:4000/admin/"
 echo ""
 
 bundle exec jekyll serve --livereload
+
+# ./tools/remove_links.sh _posts/hype.md
