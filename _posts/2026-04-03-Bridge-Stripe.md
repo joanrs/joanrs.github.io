@@ -1,7 +1,7 @@
 ---
 title: "Stripe, Bridge y Tempo"
 date: 2026-04-03 10:00:00 +0100
-categories: []
+categories: [Mid Tech]
 tags: [Bridge,Stripe]
 image: /assets/img/posts/stripe.jpg
 ---
