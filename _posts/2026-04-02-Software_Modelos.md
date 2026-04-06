@@ -137,7 +137,7 @@ Ninguno de ellos puede montar ni mantener una infraestructura técnica. Shopify 
 - Envíos integrados
 - App móvil para gestionar pedidos
 
-Por $29-$299/mes. Para ellos es **ridículamente barato** comparado con la alternativa.
+Por \\$29-\\$299/mes. Para ellos es **ridículamente barato** comparado con la alternativa.
 
 ---
 
@@ -174,7 +174,7 @@ El modelo es brutalmente inteligente: **ganan más dinero cuanto más éxito tie
 |                         | MongoDB                    | Shopify                            |
 | ----------------------- | -------------------------- | ---------------------------------- |
 | Usuario objetivo        | Developers                 | No-técnicos                        |
-| Entrada                 | Gratis/barato              | Barato ($29/mes)                   |
+| Entrada                 | Gratis/barato              | Barato (\\$29/mes)                 |
 | Adopción                | Bottom-up (dev individual) | Bottom-up (emprendedor individual) |
 | Crecimiento de ingresos | Más uso = más paga         | Más ventas = más paga              |
 | Moat                    | Muy difícil migrar tu BD   | Muy difícil migrar tu tienda       |
@@ -262,7 +262,7 @@ Ese patrón — **empresa que acumula datos valiosos como subproducto de su nego
 
 ---
 
-# y Tencent ?
+# Y Tencent ?
 
 ---
 
@@ -417,7 +417,7 @@ Antes comprabas software una vez (licencia). Ahora pagas cada mes. Para la empre
 CRM (gestión de clientes). Antes Oracle vendía software de CRM por millones en licencia única. Salesforce dijo "págame $150/usuario/mes y te lo doy en el navegador sin instalar nada". Las empresas aceptaron porque era más barato entrar. Luego no pueden salir — todos sus datos de clientes están ahí dentro.
 
 **Figma**
-Herramienta de diseño. Gratis para uso individual, cobras por equipos (~$12-45/editor/mes). Adobe lo compró intentando adquirirlo por $20B — reguladores lo bloquearon. Una empresa de diseño que prácticamente eliminó a Adobe Illustrator y XD entre diseñadores jóvenes en pocos años.
+Herramienta de diseño. Gratis para uso individual, cobras por equipos \\$12 a 45/editor/mes. Adobe lo compró intentando adquirirlo por \\$20B — reguladores lo bloquearon. Una empresa de diseño que prácticamente eliminó a Adobe Illustrator y XD entre diseñadores jóvenes en pocos años.
 
 **Notion / Linear / Slack**
 El mismo patrón: gratis individualmente, cobras cuando lo adopta un equipo en una empresa. Se llama **product-led growth** — el producto se vende solo porque el usuario individual lo lleva a su empresa.
@@ -429,10 +429,10 @@ El mismo patrón: gratis individualmente, cobras cuando lo adopta un equipo en u
 Cuantos más usuarios, mejores los datos. Mejores los datos, mejor el producto. Mejor el producto, más usuarios. Bucle infinito.
 
 **Waze**
-Gratis para conductores. Cada conductor es un sensor que reporta tráfico en tiempo real. Con millones de sensores tienes el mejor mapa de tráfico del mundo. Google lo compró por $1.1B en 2013. El "producto" lo fabricaban los propios usuarios sin saberlo.
+Gratis para conductores. Cada conductor es un sensor que reporta tráfico en tiempo real. Con millones de sensores tienes el mejor mapa de tráfico del mundo. Google lo compró por \\$1.1B en 2013. El "producto" lo fabricaban los propios usuarios sin saberlo.
 
 **Duolingo**
-Gratis aprender idiomas. Pero cada vez que corriges un ejercicio, estás entrenando sus modelos de IA. Y sus datos sobre cómo aprenden millones de personas son un activo enorme. Monetizan con premium (sin anuncios) y con su certificado de inglés que universidades aceptan a $49 — compite con el TOEFL que cuesta $200+.
+Gratis aprender idiomas. Pero cada vez que corriges un ejercicio, estás entrenando sus modelos de IA. Y sus datos sobre cómo aprenden millones de personas son un activo enorme. Monetizan con premium (sin anuncios) y con su certificado de inglés que universidades aceptan a \\$49 — compite con el TOEFL que cuesta \\$200+.
 
 **Glassdoor / LinkedIn**
 Los usuarios suben su CV y experiencias gratis. El negocio es vender esos datos a recruiters y empresas que quieren contratar.
