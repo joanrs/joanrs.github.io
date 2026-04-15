@@ -106,4 +106,4 @@ Solo **una obsesión**: entender cómo funciona el mundo de verdad, no como dice
 | Capital allocation > ingresos activos | Tu blog/newsletter como activo que escala                     |
 | Never stop learning                   | El hábito de leer como ventaja compuesta                      |
 
-Munger es el arquetipo del inversor que más se alinea con tu perfil: analítico, multidisciplinar, independiente y con visión de largo plazo.
+Munger es el arquetipo del inversor que más se alinea con el perfil: analítico, multidisciplinar, independiente y con visión de largo plazo.
