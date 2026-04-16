@@ -11,7 +11,7 @@ image: /assets/img/posts/munger.jpg
 
 Charlie estudiaba Matemáticas en la Universidad de Michigan en 1941. Cuando Japón ataca Pearl Harbor, lo deja todo, se alista en el Cuerpo Aéreo del Ejército y lo entrenan como **meteorólogo**.
 
-La clave del slide: mientras otros vivían la guerra como caos, Charlie la vivió como un **problema de sistemas**. Patrones climáticos, distribuciones de probabilidad, tomar decisiones con información incompleta bajo presión extrema. Esa mentalidad lo definiría para siempre.
+Mientras otros vivían la guerra como caos, Charlie la vivió como un **problema de sistemas**. Patrones climáticos, distribuciones de probabilidad, tomar decisiones con información incompleta bajo presión extrema. Esa mentalidad lo definiría para siempre.
 
 ---
 
@@ -31,11 +31,11 @@ Munger leía de **todo**: física, biología, psicología, historia, ingeniería
 
 Su concepto central: el **"latticework of mental models"** (entramado de modelos mentales). La idea es que cada disciplina ha descubierto verdades fundamentales sobre cómo funciona el mundo. Quien conecta el mayor número de esas verdades **ve lo que los demás no ven**.
 
-> Para ti como inversor y analista: esto es exactamente el marco que justifica estudiar psicología del mercado, macro, tecnología y finanzas al mismo tiempo en lugar de especializarse solo en una cosa.
+> Para un inversor y analista: este es exactamente el marco que justifica estudiar psicología del mercado, macro, tecnología y finanzas al mismo tiempo en lugar de especializarse solo en una cosa.
 
 ---
 
-## Candies: el trade que cambió a Buffett
+## See's Candies: el trade que cambió a Buffett
 
 1972. Charlie convenció a Warren Buffett de comprar **See's Candies por 25 millones de dólares**. Buffett lo veía caro.
 
@@ -52,11 +52,11 @@ Este trade redefinió la filosofía de Buffett: pasó de comprar empresas barata
 
 ## La filosofía de Berkshire Hathaway
 
-Durante 45 años, Berkshire Hathaway compoundó al **20% anual**. No siendo los más ruidosos ni los que más operaban.
+Durante 45 años, Berkshire Hathaway consiguió el **20% anual**. No siendo los más ruidosos ni los que más operaban.
 
 El método de Munger resumido en dos palabras:
 1. **Invert** — pensar al revés. En lugar de "¿cómo tengo éxito?", preguntarse "¿qué me llevaría al fracaso?" y evitarlo.
-2. **Wait** — encontrar negocios con moat real y luego esperar más tiempo del que cualquier competidor es capaz de aguantar.
+2. **Wait** — encontrar negocios con moat real ( foso económico, o economic moat, en inglés se refiere a las ventajas competitivas que una empresa tiene y que dificultan que otras le roben mercado) y luego esperar más tiempo del que cualquier competidor es capaz de aguantar.
 
 > La paciencia como ventaja competitiva. Algo que encaja perfectamente con tu enfoque de medio-largo plazo.
 
@@ -93,17 +93,5 @@ El remate del hilo:
 Solo **una obsesión**: entender cómo funciona el mundo de verdad, no como dicen los libros. Y nunca dejar de aprender.
 
 *"He went to bed smarter every night for 99 years. That was the whole strategy."*
-
----
-
-## 🧠 Lo que puedes llevarte tú de esto
-
-| Concepto Munger                       | Aplicación práctica                                           |
-| ------------------------------------- | ------------------------------------------------------------- |
-| Latticework of mental models          | Tu libro de inversión en Obsidian ya va en esa dirección      |
-| Pricing power / moat                  | Criterio clave al analizar activos en market-analyze          |
-| Invert                                | Antes de entrar en una posición, pregunta qué puede salir mal |
-| Capital allocation > ingresos activos | Tu blog/newsletter como activo que escala                     |
-| Never stop learning                   | El hábito de leer como ventaja compuesta                      |
 
 Munger es el arquetipo del inversor que más se alinea con el perfil: analítico, multidisciplinar, independiente y con visión de largo plazo.
