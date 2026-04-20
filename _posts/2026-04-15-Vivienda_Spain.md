@@ -52,8 +52,50 @@ Dicho esto, aplicar a Smith de forma acrítica tiene límites reales en este con
 
 ---
 
-### Resumen
+### Veamoslo con más profundidad
+
+**1. El problema de la demanda no es solo demanda "normal"**
+
+Hay un factor que Smith no anticipó bien: el capital financiero global compitiendo por activos residenciales en ciudades concretas. Los fondos de inversión, SOCIMIs, y el turismo residencial (Golden Visa, nómadas digitales, jubilados europeos) generan una demanda que no responde a salarios locales. Un trabajador español en Madrid compite por el mismo piso con un inversor de Fráncfort que lo ve como reserva de valor. Ahí la mano invisible no equilibra bienestar general, concentra riqueza.
+
+**2. El lado financiero de la oferta, no solo burocrático**
+
+Además de la burocracia como freno principal, pero hay otro cuello de botella: **la financiación promotora**. Tras 2008, la banca española endureció brutalmente los criterios para financiar promociones residenciales. Hoy muchos proyectos necesitan prevender el 50-60% antes de obtener crédito promotor. Eso ralentiza el arranque de obra incluso cuando la licencia está concedida. Smith asumiría mercados de capital fluidos; el nuestro tiene cicatrices del crash inmobiliario.
+
+**3. El mercado de alquiler vacacional como competidor directo**
+
+Airbnb y similares han retirado stock del mercado de alquiler residencial en ciudades como Barcelona, Málaga, Sevilla o San Sebastián de forma masiva. No es solo turismo: es una reasignación de uso del parque existente hacia un uso más rentable. La mano invisible funciona perfectamente ahí, el problema es que optimiza para el propietario individual, no para la función social del barrio. Esto requiere regulación de uso del suelo, no de precio.
+
+**4. La trampa demográfica y geográfica**
+
+España tiene un problema de concentración: el 80% de la demanda presiona sobre un 5% del territorio (Madrid, Barcelona, costa mediterránea, capitales de provincia). El interior se despuebla. La mano invisible no va a construir vivienda asequible en Soria porque nadie quiere vivir en Soria. Esto no lo resuelve el mercado; requiere política territorial activa, que es una conversación diferente.
+
+**5. El coste de construcción como variable ignorada**
+
+Los materiales y la mano de obra han subido brutalmente post-COVID. El coste de construcción en España ronda ya los 1.500-2.000€/m² en muchas zonas, lo que hace que construir para alquiler asequible sea directamente inviable sin subvención. Aquí Smith diría que el precio de mercado debería subir para cubrir costes... pero eso es exactamente lo que hace inasequible la vivienda para rentas medias. El círculo se cierra mal.
+
+---
+
+### La tensión filosófica de fondo
+
+El verdadero límite del marco smithiano aquí es que **la vivienda no es un bien ordinario**:
+
+- Es simultáneamente bien de consumo, activo de inversión y derecho social
+- Tiene coste de cambio altísimo (no puedes "dejar de consumirla" si sube el precio)
+- Su localización es irreproducible (un piso en Salamanca no sustituye a uno en Gràcia)
+
+Smith diseñó su teoría para mercados de bienes reproducibles y homogéneos. La vivienda urbana en ubicaciones demandadas se parece más a un monopolio natural que a un mercado competitivo.
+
+---
+
+### Conclusión añadida
 
 El caso español es casi un experimento natural que valida a Smith en lo negativo: **cuando artificialmente impides que la oferta responda a precios, los precios no bajan, suben más**. El problema no es que el mercado falle en España, es que no se le ha dejado funcionar. La burocracia urbanística es el mayor subsidio encubierto que existe al precio de la vivienda, porque garantiza escasez estructural.
 
 La solución no es más mercado *sin más*, pero sin desatascar la oferta cualquier política de vivienda es cosmética.
+
+Hay que reconocer que incluso liberalizando la oferta completamente, **el mercado libre no garantiza vivienda asequible para rentas bajas y medias en las ciudades más demandadas**. Ahí Smith necesita a Pigou (corrección de externalidades), a Rawls (justicia distributiva) y a política pública activa de parque público de alquiler, como existe en Viena o Amsterdam.
+
+La mano invisible es necesaria. No es suficiente.
+
+
