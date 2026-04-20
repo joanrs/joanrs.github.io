@@ -88,7 +88,7 @@ Smith diseñó su teoría para mercados de bienes reproducibles y homogéneos. L
 
 ---
 
-### Conclusión añadida
+### Conclusión
 
 El caso español es casi un experimento natural que valida a Smith en lo negativo: **cuando artificialmente impides que la oferta responda a precios, los precios no bajan, suben más**. El problema no es que el mercado falle en España, es que no se le ha dejado funcionar. La burocracia urbanística es el mayor subsidio encubierto que existe al precio de la vivienda, porque garantiza escasez estructural.
 
