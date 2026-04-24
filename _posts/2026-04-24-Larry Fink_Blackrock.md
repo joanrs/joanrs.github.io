@@ -7,7 +7,7 @@ image: /assets/img/posts/blackrock.jpg
 ---
 
 
-# Quién es Larry Fink, su historia, como creo y que es Blackrock
+# Quién es Larry Fink, su historia y que es Blackrock
 
 ---
 ## Larry Fink: El hombre que gestiona más dinero que nadie en el mundo
