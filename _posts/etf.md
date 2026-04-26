@@ -1,11 +1,3 @@
----
-title: "ROI ETF April 2026"
-date: 2026-04-26 7:30:00 +0100
-categories: [ETF]
-tags: [ROI]
-image: /assets/img/posts/etf.png
----
-
 ## Por qué van tan bien los ETF de semiconductores
 
 Hay varias razones estructurales y coyunturales:
@@ -38,12 +30,3 @@ Las comisiones típicas (TER) de un ETF de semis son 0,35% anual — frente al 1
 
 **En la práctica:** cuando compras SMH o SOXX, no estás apostando por ningún chip en concreto — estás comprando *el sector entero* tal como el mercado lo valora, automáticamente rebalanceado. Si NVIDIA sube mucho, pesa más. Si Intel cae, pesa menos. Tú no haces nada.
 
-
-<iframe 
-  src="/gestio_passiva_abril_2026.html" 
-  width="100%" 
-  height="2000px" 
-  frameborder="0"
-  scrolling="no"
-  style="border:none; display:block;">
-</iframe>
