@@ -8,7 +8,7 @@ image: /assets/img/posts/roi.jpg
 <iframe 
   src="/tabla_ghost_April_2026.html?v=040526" 
   width="100%" 
-  height="4200px" 
+  height="4000px" 
   frameborder="0"
   scrolling="no"
   style="border:none; display:block;">
