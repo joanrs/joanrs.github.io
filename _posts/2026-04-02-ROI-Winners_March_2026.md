@@ -1,5 +1,5 @@
 ---
-title: "ROI Winners March 2026"
+title: "ROI March 2026"
 date: 2026-04-2 08:00:00 +0100
 categories: [Markets]
 tags: [ROI, Month]
