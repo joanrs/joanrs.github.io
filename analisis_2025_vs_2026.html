@@ -707,13 +707,6 @@
     tb1.appendChild(tr);
   });
 
-  const tb2 = document.getElementById("fallenRows");
-  fallen.forEach((r) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td><strong>${r.t}</strong></td><td style="color:var(--color-text-secondary);font-size:12px">${r.n}</td><td>${fmt(r.y25)}</td><td style="color:var(--color-text-secondary);font-size:12px">${r.note}</td>`;
-    tb2.appendChild(tr);
-  });
-
   const tb3 = document.getElementById("newRows");
   newEntries.forEach((r) => {
     const tr = document.createElement("tr");
