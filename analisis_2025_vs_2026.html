@@ -1,38 +1,160 @@
-
 <style>
-.wrap { padding: 1rem 0; font-family: var(--font-sans); }
-.section-title { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin: 1.75rem 0 0.6rem; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 0.5rem; }
-.card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; }
-.card .label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 3px; }
-.card .val { font-size: 19px; font-weight: 500; }
-.card .sub { font-size: 11px; color: var(--color-text-tertiary); margin-top: 3px; line-height: 1.4; }
-.pos { color: #15803d; } .neg { color: #b91c1c; } .neu { color: var(--color-text-secondary); }
-.chart-wrap { position: relative; width: 100%; margin: 0.75rem 0; }
-.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--color-text-secondary); margin-bottom: 0.5rem; }
-.legend span { display: flex; align-items: center; gap: 5px; }
-.dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-.divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.5rem 0; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th { font-weight: 500; font-size: 11px; color: var(--color-text-secondary); text-align: left; padding: 5px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); }
-td { padding: 5px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: middle; }
-.badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 500; }
-.b-stor { background:#e0d8fc; color:#3C3489; }
-.b-semi { background:#fde8e8; color:#7c2020; }
-.b-dc   { background:#d6f5e8; color:#085041; }
-.b-bt  { background:#fef3c7; color:#854F0B; }
-.b-sp  { background:#fce7f3; color:#831843; }
-.b-cr  { background:#dcfce7; color:#166534; }
-.b-rar { background:#ede9fe; color:#4c1d95; }
-.b-priv { background:#e0f2fe; color:#075985; }
-.b-oth { background: var(--color-background-secondary); color: var(--color-text-secondary); }
-.trend-up { color: #15803d; font-size: 13px; }
-.trend-down { color: #b91c1c; font-size: 13px; }
-.trend-neu { color: #888; font-size: 13px; }
+  .wrap {
+    padding: 1rem 0;
+    font-family: var(--font-sans);
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 1.75rem 0 0.6rem;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 0.5rem;
+  }
+  .card {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 0.75rem 1rem;
+  }
+  .card .label {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-bottom: 3px;
+  }
+  .card .val {
+    font-size: 19px;
+    font-weight: 500;
+  }
+  .card .sub {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+  .pos {
+    color: #15803d;
+  }
+  .neg {
+    color: #b91c1c;
+  }
+  .neu {
+    color: var(--color-text-secondary);
+  }
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    margin: 0.75rem 0;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.5rem;
+  }
+  .legend span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--color-border-tertiary);
+    margin: 1.5rem 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    font-weight: 500;
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    text-align: left;
+    padding: 5px 8px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  td {
+    padding: 5px 8px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    color: var(--color-text-primary);
+    vertical-align: middle;
+  }
+  .badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .b-stor {
+    background: #e0d8fc;
+    color: #3c3489;
+  }
+  .b-semi {
+    background: #fde8e8;
+    color: #7c2020;
+  }
+  .b-dc {
+    background: #d6f5e8;
+    color: #085041;
+  }
+  .b-bt {
+    background: #fef3c7;
+    color: #854f0b;
+  }
+  .b-sp {
+    background: #fce7f3;
+    color: #831843;
+  }
+  .b-cr {
+    background: #dcfce7;
+    color: #166534;
+  }
+  .b-rar {
+    background: #ede9fe;
+    color: #4c1d95;
+  }
+  .b-priv {
+    background: #e0f2fe;
+    color: #075985;
+  }
+  .b-oth {
+    background: var(--color-background-secondary);
+    color: var(--color-text-secondary);
+  }
+  .trend-up {
+    color: #15803d;
+    font-size: 13px;
+  }
+  .trend-down {
+    color: #b91c1c;
+    font-size: 13px;
+  }
+  .trend-neu {
+    color: #888;
+    font-size: 13px;
+  }
 </style>
 
 <div class="wrap">
-  <h2 class="sr-only">Análisis comparativo de ROI sectorial 2025 vs 2026 (Mayo)</h2>
+  <h2 class="sr-only">
+    Análisis comparativo de ROI sectorial 2025 vs 2026 (Mayo)
+  </h2>
 
   <div class="section-title">Contexto — rendimiento de los índices</div>
   <div class="cards">
@@ -58,21 +180,41 @@ td { padding: 5px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); 
     </div>
   </div>
 
-  <hr class="divider">
+  <hr class="divider" />
 
-  <div class="section-title">Continuidad de liderazgo — ¿qué sigue funcionando?</div>
+  <div class="section-title">
+    Continuidad de liderazgo — ¿qué sigue funcionando?
+  </div>
   <div class="legend">
-    <span><span class="dot" style="background:#6366f1"></span>2025 anual</span>
-    <span><span class="dot" style="background:#f59e0b; border: 1.5px dashed #f59e0b; background:transparent;"></span>2026 anual (en curso)</span>
+    <span><span class="dot" style="background: #6366f1"></span>2025 anual</span>
+    <span
+      ><span
+        class="dot"
+        style="
+          background: #f59e0b;
+          border: 1.5px dashed #f59e0b;
+          background: transparent;
+        "
+      ></span
+      >2026 anual (en curso)</span
+    >
   </div>
-  <div class="chart-wrap" style="height:340px;">
-    <canvas id="continuityChart" role="img" aria-label="Gráfico comparando ROI anual 2025 vs 2026 por sectores clave. Storage lidera ambos años. Raras y Privacy destacan en 2025. Semis sólidos en ambos.">Storage, Semis y Raras lideraron 2025. Storage y Semis continúan en 2026.</canvas>
+  <div class="chart-wrap" style="height: 340px">
+    <canvas
+      id="continuityChart"
+      role="img"
+      aria-label="Gráfico comparando ROI anual 2025 vs 2026 por sectores clave. Storage lidera ambos años. Raras y Privacy destacan en 2025. Semis sólidos en ambos."
+      >Storage, Semis y Raras lideraron 2025. Storage y Semis continúan en
+      2026.</canvas
+    >
   </div>
 
-  <hr class="divider">
+  <hr class="divider" />
 
-  <div class="section-title">Seguimiento activo — tickers presentes en ambas tablas</div>
-  <div style="overflow-x:auto;">
+  <div class="section-title">
+    Seguimiento activo — tickers presentes en ambas tablas
+  </div>
+  <div style="overflow-x: auto">
     <table>
       <thead>
         <tr>
@@ -90,25 +232,21 @@ td { padding: 5px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); 
     </table>
   </div>
 
-  <hr class="divider">
+  <hr class="divider" />
 
-  <div class="section-title">Ganadores de 2025 que no aparecen (o se enfriaron) en 2026</div>
-  <div style="overflow-x:auto;">
-    <table>
-      <thead>
-        <tr><th>Ticker</th><th>Nombre</th><th>2025 anual</th><th>Situación 2026</th></tr>
-      </thead>
-      <tbody id="fallenRows"></tbody>
-    </table>
+  <div class="section-title">
+    Nuevas incorporaciones 2026 — no estaban en la tabla 2025
   </div>
-
-  <hr class="divider">
-
-  <div class="section-title">Nuevas incorporaciones 2026 — no estaban en la tabla 2025</div>
-  <div style="overflow-x:auto;">
+  <div style="overflow-x: auto">
     <table>
       <thead>
-        <tr><th>Ticker</th><th>Nombre</th><th>Sector</th><th>2026 Q1</th><th>2026 Mayo</th></tr>
+        <tr>
+          <th>Ticker</th>
+          <th>Nombre</th>
+          <th>Sector</th>
+          <th>2026 Q1</th>
+          <th>2026 Mayo</th>
+        </tr>
       </thead>
       <tbody id="newRows"></tbody>
     </table>
@@ -117,124 +255,529 @@ td { padding: 5px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const continuity = [
-  { t:'SNDK', n:'Sandisk', s:'Storage', bc:'b-stor', y25:577.07, q1:167.65, may:42.48, y26:558.16, tr:'hot' },
-  { t:'MU', n:'Micron Tech.', s:'Storage', bc:'b-stor', y25:239.13, q1:18.37, may:44.41, y26:161.66, tr:'hot' },
-  { t:'STX', n:'Seagate', s:'Storage', bc:'b-stor', y25:219.07, q1:42.26, may:16.18, y26:184.19, tr:'hot' },
-  { t:'SMSN', n:'Samsung', s:'Storage', bc:'b-stor', y25:126.59, q1:37.27, may:30.50, y26:136.50, tr:'hot' },
-  { t:'AMD', n:'AMD', s:'Semic.', bc:'b-semi', y25:77.30, q1:-5.01, may:28.41, y26:112.55, tr:'up' },
-  { t:'NBIS', n:'Nebius Group', s:'Cloud AI', bc:'b-dc', y25:202.18, q1:23.96, may:28.08, y26:111.52, tr:'hot' },
-  { t:'DELL', n:'Dell Tech.', s:'Data Center', bc:'b-dc', y25:9.23, q1:30.39, may:24.65, y26:106.91, tr:'up' },
-  { t:'RIOT', n:'Riot Platforms', s:'BTC Mining', bc:'b-cr', y25:24.09, q1:-2.45, may:39.68, y26:90.06, tr:'up' },
-  { t:'IREN', n:'IREN Limited', s:'BTC Mining', bc:'b-cr', y25:284.62, q1:-9.24, may:34.48, y26:62.03, tr:'neu' },
-  { t:'ARM', n:'Arm Holdings', s:'Semic.', bc:'b-semi', y25:-11.39, q1:38.40, may:1.40, y26:95.11, tr:'up' },
-  { t:'TSM', n:'Taiwan Semic.', s:'Big Tech', bc:'b-bt', y25:53.88, q1:11.21, may:3.94, y26:35.47, tr:'neu' },
-  { t:'QCOM', n:'QUALCOMM', s:'Semic.', bc:'b-semi', y25:11.35, q1:-24.71, may:22.00, y26:28.09, tr:'up' },
-  { t:'GOOG', n:'Alphabet', s:'Big Tech', bc:'b-bt', y25:64.78, q1:-8.59, may:3.96, y26:26.53, tr:'neu' },
-  { t:'AVGO', n:'Broadcom', s:'Big Tech', bc:'b-bt', y25:49.28, q1:-10.57, may:3.01, y26:24.24, tr:'neu' },
-  { t:'NVDA', n:'NVIDIA', s:'Big Tech', bc:'b-bt', y25:38.88, q1:-6.49, may:7.83, y26:15.39, tr:'neu' },
-  { t:'AAPL', n:'Apple', s:'Big Tech', bc:'b-bt', y25:8.56, q1:-6.65, may:8.10, y26:7.89, tr:'neu' },
-  { t:'META', n:'Meta Platforms', s:'Big Tech', bc:'b-bt', y25:12.74, q1:-13.33, may:-0.37, y26:-7.64, tr:'down' },
-  { t:'MSFT', n:'Microsoft', s:'Big Tech', bc:'b-bt', y25:14.74, q1:-23.46, may:1.80, y26:-14.16, tr:'down' },
-  { t:'COIN', n:'Coinbase', s:'Bitcoin Rel.', bc:'b-cr', y25:-8.92, q1:-22.79, may:7.13, y26:-11.05, tr:'down' },
-  { t:'MP', n:'MP Materials', s:'Raras', bc:'b-rar', y25:223.85, q1:-4.47, may:2.10, y26:33.47, tr:'neu' },
-  { t:'PPTA', n:'Perpetua Res.', s:'Raras', bc:'b-rar', y25:126.90, q1:16.15, may:8.48, y26:23.71, tr:'neu' },
-  { t:'UUUU', n:'Energy Fuels', s:'Raras', bc:'b-rar', y25:183.43, q1:25.52, may:-1.20, y26:47.04, tr:'neu' },
-  { t:'ZEC', n:'Zcash', s:'Privacy', bc:'b-priv', y25:813.23, q1:-55.99, may:74.72, y26:19.64, tr:'down' },
-  { t:'XMR', n:'Monero', s:'Privacy', bc:'b-priv', y25:124.03, q1:-25.84, may:5.36, y26:-7.64, tr:'down' },
-  { t:'SAN.MC', n:'Santander', s:'Spain', bc:'b-sp', y25:125.56, q1:-5.76, may:0.83, y26:3.93, tr:'down' },
-  { t:'BBVA.MC', n:'BBVA', s:'Spain', bc:'b-sp', y25:112.12, q1:-8.98, may:0.61, y26:-5.61, tr:'down' },
-];
-
-const fallen = [
-  { t:'LRCX', n:'Lam Research', y25:136.99, note:'No está en la tabla 2026' },
-  { t:'WDC', n:'Western Digital', y25:282.21, note:'Renombrado SNDK, sí presente' },
-  { t:'AMAT', n:'Applied Materials', y25:58.02, note:'No está en la tabla 2026' },
-  { t:'ASML', n:'ASML Holding', y25:54.36, note:'No está en la tabla 2026' },
-  { t:'OKLO', n:'Oklo', y25:238.01, note:'Presente 2026 pero +0.01% en mayo' },
-  { t:'TMC', n:'TMC metals', y25:450.89, note:'+8.78% mayo, anual -7.62%' },
-  { t:'MARA', n:'MARA Holdings', y25:-46.45, note:'+7.92% mayo, pero débil anual' },
-  { t:'MSTR', n:'Strategy (MicroStrategy)', y25:-47.53, note:'No está en tabla 2026' },
-  { t:'HOOD', n:'Robinhood', y25:203.54, note:'+5.68% mayo, pero -31.89% anual' },
-];
-
-const newEntries = [
-  { t:'INTC', n:'Intel Corp.', s:'Semic.', bc:'b-semi', q1:19.59, may:32.22 },
-  { t:'SMCI', n:'Super Micro', s:'Data Center', bc:'b-dc', q1:-22.21, may:29.09 },
-  { t:'CRWD', n:'CrowdStrike', s:'Mid Tech', bc:'b-oth', q1:-16.71, may:18.40 },
-  { t:'ORCL', n:'Oracle', s:'Mid Tech', bc:'b-oth', q1:-24.52, may:21.41 },
-  { t:'PANW', n:'Palo Alto Net.', s:'Mid Tech', bc:'b-oth', q1:-12.96, may:15.93 },
-  { t:'HUT', n:'Hut 8 Corp.', s:'BTC Mining', bc:'b-cr', q1:2.11, may:29.93 },
-  { t:'HY9H.F', n:'SK Hynix', s:'Storage', bc:'b-stor', q1:32.47, may:40.13 },
-  { t:'HYPE', n:'Hyperliquid', s:'Top Crypto', bc:'b-cr', q1:44.63, may:8.87 },
-  { t:'USAR', n:'USA Rare Earth', s:'Raras', bc:'b-rar', q1:23.25, may:3.81 },
-  { t:'CRWV', n:'CoreWeave', s:'Cloud AI', bc:'b-dc', q1:8.18, may:2.28 },
-];
-
-function fmt(v, noSign) {
-  if (v === null || v === undefined) return '<span class="neu">—</span>';
-  const cls = v > 0 ? 'pos' : v < 0 ? 'neg' : 'neu';
-  const sign = (!noSign && v > 0) ? '+' : '';
-  return `<span class="${cls}">${sign}${v.toFixed(2)}%</span>`;
-}
-function trendIcon(t) {
-  if (t === 'hot') return '<span class="trend-up">↑↑ continúa</span>';
-  if (t === 'up')  return '<span class="trend-up">↑ recupera</span>';
-  if (t === 'neu') return '<span class="trend-neu">→ mantiene</span>';
-  return '<span class="trend-down">↓ se enfría</span>';
-}
-function badgeHtml(s, bc) {
-  return `<span class="badge ${bc}">${s}</span>`;
-}
-
-const tb1 = document.getElementById('continuityRows');
-continuity.forEach(r => {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `<td><strong>${r.t}</strong></td><td style="color:var(--color-text-secondary);font-size:12px">${r.n}</td><td>${badgeHtml(r.s,r.bc)}</td><td>${fmt(r.y25)}</td><td>${fmt(r.q1)}</td><td>${fmt(r.may)}</td><td>${fmt(r.y26)}</td><td>${trendIcon(r.tr)}</td>`;
-  tb1.appendChild(tr);
-});
-
-const tb2 = document.getElementById('fallenRows');
-fallen.forEach(r => {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `<td><strong>${r.t}</strong></td><td style="color:var(--color-text-secondary);font-size:12px">${r.n}</td><td>${fmt(r.y25)}</td><td style="color:var(--color-text-secondary);font-size:12px">${r.note}</td>`;
-  tb2.appendChild(tr);
-});
-
-const tb3 = document.getElementById('newRows');
-newEntries.forEach(r => {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `<td><strong>${r.t}</strong></td><td style="color:var(--color-text-secondary);font-size:12px">${r.n}</td><td>${badgeHtml(r.s,r.bc)}</td><td>${fmt(r.q1)}</td><td>${fmt(r.may)}</td>`;
-  tb3.appendChild(tr);
-});
-
-const labels = ['Storage','Raras','Privacy','BTC Mining','Cloud AI','Semis','Big Tech','Spain'];
-const data25 = [340, 200, 315, 120, 143, 46, 40, 87];
-const data26y = [260, 38, 10, 78, 112, 94, 10, -2];
-
-new Chart(document.getElementById('continuityChart'), {
-  type: 'bar',
-  data: {
-    labels,
-    datasets: [
-      { label: '2025 anual (media aprox.)', data: data25, backgroundColor: '#6366f1', borderRadius: 3, borderSkipped: false },
-      { label: '2026 anual en curso (media aprox.)', data: data26y, backgroundColor: '#f59e0b', borderRadius: 3, borderSkipped: false }
-    ]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.y.toFixed(0) + '%' } }
+  const continuity = [
+    {
+      t: "SNDK",
+      n: "Sandisk",
+      s: "Storage",
+      bc: "b-stor",
+      y25: 577.07,
+      q1: 167.65,
+      may: 42.48,
+      y26: 558.16,
+      tr: "hot",
     },
-    scales: {
-      x: { grid: { display: false }, ticks: { color: '#888', font: { size: 11 } } },
-      y: {
-        grid: { color: 'rgba(128,128,128,0.1)' },
-        ticks: { callback: v => v + '%', color: '#888', font: { size: 11 } }
-      }
-    }
+    {
+      t: "MU",
+      n: "Micron Tech.",
+      s: "Storage",
+      bc: "b-stor",
+      y25: 239.13,
+      q1: 18.37,
+      may: 44.41,
+      y26: 161.66,
+      tr: "hot",
+    },
+    {
+      t: "STX",
+      n: "Seagate",
+      s: "Storage",
+      bc: "b-stor",
+      y25: 219.07,
+      q1: 42.26,
+      may: 16.18,
+      y26: 184.19,
+      tr: "hot",
+    },
+    {
+      t: "SMSN",
+      n: "Samsung",
+      s: "Storage",
+      bc: "b-stor",
+      y25: 126.59,
+      q1: 37.27,
+      may: 30.5,
+      y26: 136.5,
+      tr: "hot",
+    },
+    {
+      t: "AMD",
+      n: "AMD",
+      s: "Semic.",
+      bc: "b-semi",
+      y25: 77.3,
+      q1: -5.01,
+      may: 28.41,
+      y26: 112.55,
+      tr: "up",
+    },
+    {
+      t: "NBIS",
+      n: "Nebius Group",
+      s: "Cloud AI",
+      bc: "b-dc",
+      y25: 202.18,
+      q1: 23.96,
+      may: 28.08,
+      y26: 111.52,
+      tr: "hot",
+    },
+    {
+      t: "DELL",
+      n: "Dell Tech.",
+      s: "Data Center",
+      bc: "b-dc",
+      y25: 9.23,
+      q1: 30.39,
+      may: 24.65,
+      y26: 106.91,
+      tr: "up",
+    },
+    {
+      t: "RIOT",
+      n: "Riot Platforms",
+      s: "BTC Mining",
+      bc: "b-cr",
+      y25: 24.09,
+      q1: -2.45,
+      may: 39.68,
+      y26: 90.06,
+      tr: "up",
+    },
+    {
+      t: "IREN",
+      n: "IREN Limited",
+      s: "BTC Mining",
+      bc: "b-cr",
+      y25: 284.62,
+      q1: -9.24,
+      may: 34.48,
+      y26: 62.03,
+      tr: "neu",
+    },
+    {
+      t: "ARM",
+      n: "Arm Holdings",
+      s: "Semic.",
+      bc: "b-semi",
+      y25: -11.39,
+      q1: 38.4,
+      may: 1.4,
+      y26: 95.11,
+      tr: "up",
+    },
+    {
+      t: "TSM",
+      n: "Taiwan Semic.",
+      s: "Big Tech",
+      bc: "b-bt",
+      y25: 53.88,
+      q1: 11.21,
+      may: 3.94,
+      y26: 35.47,
+      tr: "neu",
+    },
+    {
+      t: "QCOM",
+      n: "QUALCOMM",
+      s: "Semic.",
+      bc: "b-semi",
+      y25: 11.35,
+      q1: -24.71,
+      may: 22.0,
+      y26: 28.09,
+      tr: "up",
+    },
+    {
+      t: "GOOG",
+      n: "Alphabet",
+      s: "Big Tech",
+      bc: "b-bt",
+      y25: 64.78,
+      q1: -8.59,
+      may: 3.96,
+      y26: 26.53,
+      tr: "neu",
+    },
+    {
+      t: "AVGO",
+      n: "Broadcom",
+      s: "Big Tech",
+      bc: "b-bt",
+      y25: 49.28,
+      q1: -10.57,
+      may: 3.01,
+      y26: 24.24,
+      tr: "neu",
+    },
+    {
+      t: "NVDA",
+      n: "NVIDIA",
+      s: "Big Tech",
+      bc: "b-bt",
+      y25: 38.88,
+      q1: -6.49,
+      may: 7.83,
+      y26: 15.39,
+      tr: "neu",
+    },
+    {
+      t: "AAPL",
+      n: "Apple",
+      s: "Big Tech",
+      bc: "b-bt",
+      y25: 8.56,
+      q1: -6.65,
+      may: 8.1,
+      y26: 7.89,
+      tr: "neu",
+    },
+    {
+      t: "META",
+      n: "Meta Platforms",
+      s: "Big Tech",
+      bc: "b-bt",
+      y25: 12.74,
+      q1: -13.33,
+      may: -0.37,
+      y26: -7.64,
+      tr: "down",
+    },
+    {
+      t: "MSFT",
+      n: "Microsoft",
+      s: "Big Tech",
+      bc: "b-bt",
+      y25: 14.74,
+      q1: -23.46,
+      may: 1.8,
+      y26: -14.16,
+      tr: "down",
+    },
+    {
+      t: "COIN",
+      n: "Coinbase",
+      s: "Bitcoin Rel.",
+      bc: "b-cr",
+      y25: -8.92,
+      q1: -22.79,
+      may: 7.13,
+      y26: -11.05,
+      tr: "down",
+    },
+    {
+      t: "MP",
+      n: "MP Materials",
+      s: "Raras",
+      bc: "b-rar",
+      y25: 223.85,
+      q1: -4.47,
+      may: 2.1,
+      y26: 33.47,
+      tr: "neu",
+    },
+    {
+      t: "PPTA",
+      n: "Perpetua Res.",
+      s: "Raras",
+      bc: "b-rar",
+      y25: 126.9,
+      q1: 16.15,
+      may: 8.48,
+      y26: 23.71,
+      tr: "neu",
+    },
+    {
+      t: "UUUU",
+      n: "Energy Fuels",
+      s: "Raras",
+      bc: "b-rar",
+      y25: 183.43,
+      q1: 25.52,
+      may: -1.2,
+      y26: 47.04,
+      tr: "neu",
+    },
+    {
+      t: "ZEC",
+      n: "Zcash",
+      s: "Privacy",
+      bc: "b-priv",
+      y25: 813.23,
+      q1: -55.99,
+      may: 74.72,
+      y26: 19.64,
+      tr: "down",
+    },
+    {
+      t: "XMR",
+      n: "Monero",
+      s: "Privacy",
+      bc: "b-priv",
+      y25: 124.03,
+      q1: -25.84,
+      may: 5.36,
+      y26: -7.64,
+      tr: "down",
+    },
+    {
+      t: "SAN.MC",
+      n: "Santander",
+      s: "Spain",
+      bc: "b-sp",
+      y25: 125.56,
+      q1: -5.76,
+      may: 0.83,
+      y26: 3.93,
+      tr: "down",
+    },
+    {
+      t: "BBVA.MC",
+      n: "BBVA",
+      s: "Spain",
+      bc: "b-sp",
+      y25: 112.12,
+      q1: -8.98,
+      may: 0.61,
+      y26: -5.61,
+      tr: "down",
+    },
+  ];
+
+  const fallen = [
+    {
+      t: "LRCX",
+      n: "Lam Research",
+      y25: 136.99,
+      note: "No está en la tabla 2026",
+    },
+    {
+      t: "WDC",
+      n: "Western Digital",
+      y25: 282.21,
+      note: "Renombrado SNDK, sí presente",
+    },
+    {
+      t: "AMAT",
+      n: "Applied Materials",
+      y25: 58.02,
+      note: "No está en la tabla 2026",
+    },
+    {
+      t: "ASML",
+      n: "ASML Holding",
+      y25: 54.36,
+      note: "No está en la tabla 2026",
+    },
+    {
+      t: "OKLO",
+      n: "Oklo",
+      y25: 238.01,
+      note: "Presente 2026 pero +0.01% en mayo",
+    },
+    {
+      t: "TMC",
+      n: "TMC metals",
+      y25: 450.89,
+      note: "+8.78% mayo, anual -7.62%",
+    },
+    {
+      t: "MARA",
+      n: "MARA Holdings",
+      y25: -46.45,
+      note: "+7.92% mayo, pero débil anual",
+    },
+    {
+      t: "MSTR",
+      n: "Strategy (MicroStrategy)",
+      y25: -47.53,
+      note: "No está en tabla 2026",
+    },
+    {
+      t: "HOOD",
+      n: "Robinhood",
+      y25: 203.54,
+      note: "+5.68% mayo, pero -31.89% anual",
+    },
+  ];
+
+  const newEntries = [
+    {
+      t: "INTC",
+      n: "Intel Corp.",
+      s: "Semic.",
+      bc: "b-semi",
+      q1: 19.59,
+      may: 32.22,
+    },
+    {
+      t: "SMCI",
+      n: "Super Micro",
+      s: "Data Center",
+      bc: "b-dc",
+      q1: -22.21,
+      may: 29.09,
+    },
+    {
+      t: "CRWD",
+      n: "CrowdStrike",
+      s: "Mid Tech",
+      bc: "b-oth",
+      q1: -16.71,
+      may: 18.4,
+    },
+    {
+      t: "ORCL",
+      n: "Oracle",
+      s: "Mid Tech",
+      bc: "b-oth",
+      q1: -24.52,
+      may: 21.41,
+    },
+    {
+      t: "PANW",
+      n: "Palo Alto Net.",
+      s: "Mid Tech",
+      bc: "b-oth",
+      q1: -12.96,
+      may: 15.93,
+    },
+    {
+      t: "HUT",
+      n: "Hut 8 Corp.",
+      s: "BTC Mining",
+      bc: "b-cr",
+      q1: 2.11,
+      may: 29.93,
+    },
+    {
+      t: "HY9H.F",
+      n: "SK Hynix",
+      s: "Storage",
+      bc: "b-stor",
+      q1: 32.47,
+      may: 40.13,
+    },
+    {
+      t: "HYPE",
+      n: "Hyperliquid",
+      s: "Top Crypto",
+      bc: "b-cr",
+      q1: 44.63,
+      may: 8.87,
+    },
+    {
+      t: "USAR",
+      n: "USA Rare Earth",
+      s: "Raras",
+      bc: "b-rar",
+      q1: 23.25,
+      may: 3.81,
+    },
+    {
+      t: "CRWV",
+      n: "CoreWeave",
+      s: "Cloud AI",
+      bc: "b-dc",
+      q1: 8.18,
+      may: 2.28,
+    },
+  ];
+
+  function fmt(v, noSign) {
+    if (v === null || v === undefined) return '<span class="neu">—</span>';
+    const cls = v > 0 ? "pos" : v < 0 ? "neg" : "neu";
+    const sign = !noSign && v > 0 ? "+" : "";
+    return `<span class="${cls}">${sign}${v.toFixed(2)}%</span>`;
   }
-});
+  function trendIcon(t) {
+    if (t === "hot") return '<span class="trend-up">↑↑ continúa</span>';
+    if (t === "up") return '<span class="trend-up">↑ recupera</span>';
+    if (t === "neu") return '<span class="trend-neu">→ mantiene</span>';
+    return '<span class="trend-down">↓ se enfría</span>';
+  }
+  function badgeHtml(s, bc) {
+    return `<span class="badge ${bc}">${s}</span>`;
+  }
+
+  const tb1 = document.getElementById("continuityRows");
+  continuity.forEach((r) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td><strong>${r.t}</strong></td><td style="color:var(--color-text-secondary);font-size:12px">${r.n}</td><td>${badgeHtml(r.s, r.bc)}</td><td>${fmt(r.y25)}</td><td>${fmt(r.q1)}</td><td>${fmt(r.may)}</td><td>${fmt(r.y26)}</td><td>${trendIcon(r.tr)}</td>`;
+    tb1.appendChild(tr);
+  });
+
+  const tb2 = document.getElementById("fallenRows");
+  fallen.forEach((r) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td><strong>${r.t}</strong></td><td style="color:var(--color-text-secondary);font-size:12px">${r.n}</td><td>${fmt(r.y25)}</td><td style="color:var(--color-text-secondary);font-size:12px">${r.note}</td>`;
+    tb2.appendChild(tr);
+  });
+
+  const tb3 = document.getElementById("newRows");
+  newEntries.forEach((r) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td><strong>${r.t}</strong></td><td style="color:var(--color-text-secondary);font-size:12px">${r.n}</td><td>${badgeHtml(r.s, r.bc)}</td><td>${fmt(r.q1)}</td><td>${fmt(r.may)}</td>`;
+    tb3.appendChild(tr);
+  });
+
+  const labels = [
+    "Storage",
+    "Raras",
+    "Privacy",
+    "BTC Mining",
+    "Cloud AI",
+    "Semis",
+    "Big Tech",
+    "Spain",
+  ];
+  const data25 = [340, 200, 315, 120, 143, 46, 40, 87];
+  const data26y = [260, 38, 10, 78, 112, 94, 10, -2];
+
+  new Chart(document.getElementById("continuityChart"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "2025 anual (media aprox.)",
+          data: data25,
+          backgroundColor: "#6366f1",
+          borderRadius: 3,
+          borderSkipped: false,
+        },
+        {
+          label: "2026 anual en curso (media aprox.)",
+          data: data26y,
+          backgroundColor: "#f59e0b",
+          borderRadius: 3,
+          borderSkipped: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { label: (ctx) => " " + ctx.parsed.y.toFixed(0) + "%" },
+        },
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { color: "#888", font: { size: 11 } },
+        },
+        y: {
+          grid: { color: "rgba(128,128,128,0.1)" },
+          ticks: {
+            callback: (v) => v + "%",
+            color: "#888",
+            font: { size: 11 },
+          },
+        },
+      },
+    },
+  });
 </script>
