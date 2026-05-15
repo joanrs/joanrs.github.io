@@ -1,7 +1,7 @@
 ---
 title: "Resolviendo Fricciones"
 date: 2026-04-02 11:00:00 +0100
-categories: [Modelos_Negocio]
+categories: [Aula]
 tags: [MongoDB, Shopify, Reddit, Vercel, Netlify]
 image: /assets/img/posts/friccion.png
 ---

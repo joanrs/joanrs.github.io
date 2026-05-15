@@ -1,7 +1,7 @@
 ---
 title: "Modelos de Negocio: Empresas de Software"
 date: 2026-04-02 10:00:00 +0100
-categories: [Modelos_Negocio]
+categories: [Aula]
 tags: [MongoDB, Shopify, Reddit]
 image: /assets/img/posts/shop.jpg
 ---
