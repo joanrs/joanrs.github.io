@@ -8,7 +8,7 @@ image: /assets/img/posts/roi.jpg
 <iframe 
   src="/Reporte_Revalorizacion_Anual_2026.html?v=060526" 
   width="100%" 
-  height="20000px" 
+  height="15000px" 
   frameborder="0"
   scrolling="no"
   style="border:none; display:block;">
