@@ -1,0 +1,363 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif); color: var(--color-text-primary, #111827); line-height: 1.5; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+.section { margin-bottom: 2.5rem; }
+.section-title { font-size: 14px; font-weight: 600; color: var(--color-text-secondary, #4b5563); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 1rem; border-bottom: 1px solid var(--color-border-tertiary, #e5e7eb); padding-bottom: 0.5rem; }
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.metric-card { background: var(--color-background-secondary, #f3f4f6); border-radius: 12px; padding: 1.25rem 1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s; border: 1px solid transparent; }
+.metric-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-color: var(--color-border-tertiary, #e5e7eb); }
+.metric-label { font-size: 12px; color: var(--color-text-secondary, #6b7280); margin-bottom: 6px; font-weight: 500; }
+.metric-val { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
+.pos { color: #10b981; }
+.neg { color: #ef4444; }
+.neutral { color: var(--color-text-secondary, #6b7280); }
+.table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 1rem; border-radius: 10px; border: 1px solid var(--color-border-tertiary, #e5e7eb); background: var(--color-background-primary, #ffffff); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.table-inner { min-width: 600px; }
+.sector-row { display: grid; grid-template-columns: 140px repeat(8, 1fr); gap: 0; border-bottom: 1px solid var(--color-border-tertiary, #f3f4f6); padding: 10px 16px; font-size: 13px; align-items: center; transition: background 0.15s; }
+.sector-row:last-child { border-bottom: none; }
+.sector-row:hover { background: var(--color-background-secondary, #f9fafb); }
+.sector-row.header { font-size: 11px; color: var(--color-text-secondary, #6b7280); font-weight: 600; padding: 12px 16px; text-transform: uppercase; letter-spacing: 0.02em; background: var(--color-background-secondary, #f3f4f6); border-bottom: 1px solid var(--color-border-tertiary, #e5e7eb); }
+.sector-name { font-weight: 600; color: var(--color-text-primary, #111827); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; }
+.cell { text-align: right; padding: 0 4px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.cell-val { display: inline-block; padding: 2px 6px; border-radius: 6px; font-weight: 600; }
+.c-pos { color: #065f46; background: #d1fae5; }
+.c-neg { color: #991b1b; background: #fee2e2; }
+.c-neu { color: var(--color-text-secondary, #4b5563); background: var(--color-background-secondary, #f3f4f6); }
+.signal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.signal-card { background: var(--color-background-primary, #ffffff); border: 1px solid var(--color-border-tertiary, #e5e7eb); border-radius: 12px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: box-shadow 0.2s, transform 0.2s; display: flex; flex-direction: column; }
+.signal-card:hover { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transform: translateY(-2px); }
+.signal-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.signal-sector { font-size: 15px; font-weight: 600; color: var(--color-text-primary, #111827); }
+.signal-anual { font-size: 14px; font-weight: 700; background: var(--color-background-secondary, #f3f4f6); padding: 2px 8px; border-radius: 6px; }
+.signal-desc { font-size: 13.5px; color: var(--color-text-secondary, #4b5563); line-height: 1.6; flex-grow: 1; }
+.badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; margin-bottom: 10px; align-self: flex-start; text-transform: uppercase; letter-spacing: 0.02em; }
+.b-buy { background: #d1fae5; color: #065f46; }
+.b-caution { background: #fef3c7; color: #92400e; }
+.b-avoid { background: #fee2e2; color: #991b1b; }
+.b-watch { background: #dbeafe; color: #1e40af; }
+.bar-wrap { margin-top: 1rem; background: var(--color-background-primary, #ffffff); border: 1px solid var(--color-border-tertiary, #e5e7eb); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.bar-row:last-child { margin-bottom: 0; }
+.bar-label { width: 95px; text-align: right; color: var(--color-text-secondary, #4b5563); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; font-size: 13px; font-weight: 500; }
+.bar-track { flex: 1; height: 16px; background: var(--color-background-secondary, #f3f4f6); border-radius: 8px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 8px; min-width: 4px; transition: width 0.8s ease-out; }
+.bar-val { width: 56px; font-size: 13px; font-weight: 600; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.insight-box { background: var(--color-background-secondary, #f9fafb); border-radius: 12px; padding: 1.25rem 1.5rem; font-size: 13.5px; color: var(--color-text-secondary, #374151); line-height: 1.6; border-left: 4px solid #10b981; margin-bottom: 1.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+.insight-box.warn { border-left-color: #f59e0b; }
+.insight-box.danger { border-left-color: #ef4444; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 768px) { 
+  .two-col { grid-template-columns: 1fr; gap: 1rem; } 
+  .metric-grid { grid-template-columns: repeat(2, 1fr); }
+  .bar-wrap { padding: 1rem; }
+  .signal-card { padding: 1.25rem; }
+}
+@media (max-width: 480px) {
+  .metric-grid { grid-template-columns: 1fr; }
+  .metric-card { display: flex; justify-content: space-between; align-items: center; padding: 1rem; }
+  .metric-label { margin-bottom: 0; }
+  .metric-val { font-size: 20px; }
+  .section-title { font-size: 13px; }
+  .bar-label { width: 80px; font-size: 12px; }
+  .bar-val { width: 50px; font-size: 12px; }
+}
+</style>
+
+<h2 class="sr-only">Análisis sectorial ROI 2026 — Mayo. Dashboard de revalorización por sectores para asignación de capital.</h2>
+
+<div style="padding: 1rem 0;">
+
+<div class="section">
+  <div style="font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px;">Sectors ROI 2026 — Análisis Mayo W3</div>
+  <div style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 1.5rem;">Perspectiva acumulada Ene–May · 21 sectores · 100+ tickers</div>
+
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="metric-label">Mejor sector anual</div>
+      <div class="metric-val pos">Storage +219%</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Mejor Q2 (parcial)</div>
+      <div class="metric-val pos">Cloud AI +75%</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Peor sector anual</div>
+      <div class="metric-val neg">Mid Tech –19%</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Sectores en positivo</div>
+      <div class="metric-val pos">16 / 21</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Momentum mayo</div>
+      <div class="metric-val">Selectivo</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Tabla resumen — medias por sector</div>
+  <div class="table-wrapper">
+    <div class="table-inner">
+      <div class="sector-row header">
+        <div class="sector-name">Sector</div>
+        <div class="cell">Ene</div>
+        <div class="cell">Feb</div>
+        <div class="cell">Mar</div>
+        <div class="cell">Q1</div>
+        <div class="cell">Abr</div>
+        <div class="cell">May</div>
+        <div class="cell">Q2</div>
+        <div class="cell" style="font-weight:700; color: var(--color-text-primary, #111827);">Anual</div>
+      </div>
+      <div id="sector-table"></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Ranking anual — top sectores (media)</div>
+  <div class="bar-wrap" id="bar-chart"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Narrativa del año 2026 — tres fases</div>
+  <div class="two-col">
+    <div>
+      <div class="insight-box danger">
+        <strong style="color: var(--color-text-primary);">Q1: Rotación defensiva</strong><br>
+        Enero arrancó con fuerza en Storage (+58%), Equipment (+32%) y Rare (+29%), pero el mercado giró en febrero-marzo. Los aranceles de Trump desencadenaron ventas en Tech: Big Tech –13%, Bitcoin Rel. –28%, Top Crypto –14%. Solo Oil resistió con un Q1 espectacular (+32%), ejerciendo de refugio. El EUR/USD cedió un –2.4%, confirmando el deterioro macro.
+      </div>
+      <div class="insight-box warn">
+        <strong style="color: var(--color-text-primary);">Abril: El gran rebote</strong><br>
+        La pausa arancelaria del 90 días desató un rebote explosivo. Semis +40%, Cloud AI +39%, BTC Mining +46%, Storage +57%. Intel llegó a +114% en el mes. Fue el mes más alcista del año con prácticamente todos los sectores en verde. El mercado pasó de pánico a euforia en semanas.
+      </div>
+    </div>
+    <div>
+      <div class="insight-box">
+        <strong style="color: var(--color-text-primary);">Mayo: Consolidación selectiva</strong><br>
+        El momentum se fragmenta. CiberSec. lidera con +30% gracias a Akamai (+47%) y Fortinet (+46%), posiblemente por contratos AI-security. Cloud AI sigue fuerte (+28%), BTC Mining consolida (+16%). Pero Electric cae –8%, Oil –2%, y Financial –0.7%. Los grandes tech como MSFT (+3.5%), GOOG (+3%), NVDA (+13%) crecen pero sin explosividad.
+      </div>
+      <div class="insight-box">
+        <strong style="color: var(--color-text-primary);">Standouts individuales 2026</strong><br>
+        <strong style="color: var(--color-text-primary);">SNDK</strong> +493%, <strong style="color: var(--color-text-primary);">MU</strong> +154%, <strong style="color: var(--color-text-primary);">SK Hynix</strong> +181%, <strong style="color: var(--color-text-primary);">INTC</strong> +195%, <strong style="color: var(--color-text-primary);">NBIS</strong> +163%, <strong style="color: var(--color-text-primary);">AKAM</strong> +73%, <strong style="color: var(--color-text-primary);">HYPE</strong> +81%. Frente a estos: Shopify –38%, Exodus –57%, CEG –24%.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Señales de asignación — perspectiva a meses vista</div>
+  <div class="signal-grid" id="signals"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Sectores a vigilar / evitar</div>
+  <div class="two-col">
+    <div>
+      <div class="insight-box warn">
+        <strong style="color: var(--color-text-primary);">Electric — momentum roto</strong><br>
+        Fue defensivo en Q1 (+3%) pero mayo muestra fisuras: GEV –3%, Dominion –4%, NextEra –5%, Vistra –12%, CEG –15%, Oklo –14%. El ciclo de tipos altos presiona a las utilities. Solo interesante si la Fed pivota.
+      </div>
+      <div class="insight-box danger">
+        <strong style="color: var(--color-text-primary);">Mid Tech — trampa de valor</strong><br>
+        –19% anual. Shopify –38%, Pltr –25%, Tencent –23%, Netflix –7%. ORCL empieza a recuperar (+20% mayo) pero el sector arrastra mucho lastre. Alto riesgo de reversión si el macro se complica.
+      </div>
+    </div>
+    <div>
+      <div class="insight-box danger">
+        <strong style="color: var(--color-text-primary);">Top Crypto / Bitcoin Rel. — sin catalizador claro</strong><br>
+        BTC –12% anual, ETH –29%, SOL –32%. El rebote de abril fue mediocre vs. otros sectores. Bitcoin Rel. –13% con HOOD –32%, EXOD –57%. La liquidez fluye hacia infraestructura (BTC Mining, Cloud AI) más que hacia los activos directos.
+      </div>
+      <div class="insight-box warn">
+        <strong style="color: var(--color-text-primary);">Oil — consolidando tras Q1 estelar</strong><br>
+        El Q1 fue brillante (+32%) pero Q2 muestra agotamiento: –3.6%. Aranceles y demanda China son el riesgo. Conservar posiciones si ya tienes, pero difícilmente el mejor lugar para nueva capital.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="section">
+  <div class="section-title">Consideraciones finales — Resumen ejecutivo</div>
+  <div class="insight-box" style="margin-bottom: 1rem;">
+    <strong style="color: var(--color-text-primary);">Narrativa del año en tres actos</strong><br>
+    El 2026 ha tenido una estructura muy clara: un <strong>Q1 de rotación defensiva</strong> donde Oil fue el único refugio mientras los aranceles Trump hundían la tecnología; un <strong>abril de rebote explosivo</strong> (el mejor mes del año, casi universal); y un <strong>mayo de consolidación selectiva</strong> donde el mercado empieza a separar ganadores estructurales de ruido.
+  </div>
+
+  <div class="two-col">
+    <div>
+      <div class="insight-box">
+        <strong style="color: var(--color-text-primary);">Dónde asignar capital a meses vista</strong><br>
+        <p style="margin-bottom: 0.5rem; margin-top: 0.25rem;">Los tres sectores con mayor convicción son <strong>Storage, Cloud AI y Semiconductores</strong>. Los tres beneficiarios directos del capex de IA, con momentum intacto y liderazgo claro a nivel ticker. Storage lidera el año con +219% de media sectorial, impulsado por el ciclo HBM que demandan las GPU de NVIDIA y los centros de datos. Cloud AI (+106%) es el mejor ratio rentabilidad/volatilidad del grupo, con NBIS y CRWV como nombres de alta convicción.</p>
+        <p style="margin-bottom: 0.5rem;"><strong>BTC Mining</strong> merece una posición pero con sizing reducido: captura el alza del Bitcoin sin el riesgo de custodia del token, y mayo consolida sanamente tras el cohete de abril.</p>
+        <p><strong>CiberSec</strong> es la sorpresa de mayo (+30% en el mes), posiblemente reflejo de contratos AI-security que aún no están en precio. Entrada tardía pero con momentum creciente.</p>
+      </div>
+      
+      <div class="insight-box">
+        <strong style="color: var(--color-text-primary);">El patrón que se repite</strong><br>
+        <p style="margin-top: 0.25rem;">El capital fluye hacia infraestructura para IA (chips, almacenamiento, cloud, centros de datos, seguridad) y se aleja de plataformas de consumo y activos especulativos puros. Esa tesis no muestra señales de agotamiento a corto plazo.</p>
+      </div>
+    </div>
+    
+    <div>
+      <div class="insight-box danger">
+        <strong style="color: var(--color-text-primary);">Qué evitar</strong><br>
+        <p style="margin-top: 0.25rem;"><strong>Mid Tech</strong> sigue siendo una trampa de valor: –19% anual y sin catalizador visible. <strong>Bitcoin Rel.</strong> y <strong>Top Crypto</strong> decepcionan frente a la infraestructura cripto (los mineros los baten con creces). <strong>Oil</strong> ya ha dado lo que tenía que dar este año.</p>
+      </div>
+
+      <div class="insight-box" style="border-left-color: #185FA5;">
+        <strong style="color: var(--color-text-primary);">Glosario accionable de señales</strong><br>
+        <p style="margin-bottom: 0.5rem; margin-top: 0.25rem;"><strong><span style="color: #0F6E56;">Sobreponderar:</span></strong> El sector merece una porción de tu cartera mayor de lo que le correspondería "por defecto". Aquí pones capital nuevo, dejas correr posiciones y no recortas en pullbacks. Convicción alta en momentum y fundamentales.</p>
+        <p style="margin-bottom: 0.5rem;"><strong><span style="color: #185FA5;">Vigilar:</span></strong> No significa comprar ya, sino tener el sector en el radar. Tener tickers identificados y esperar señal técnica o catalizador. Si ya tienes, mantienes; si no, no corres.</p>
+        <p style="margin-bottom: 0.5rem;"><strong><span style="color: #854F0B;">Precaución:</span></strong> El sector empieza a mostrar debilidad. No añadir capital nuevo, reducir tamaño si tienes posiciones grandes y estar preparado para salir si la debilidad se confirma.</p>
+        <p><strong><span style="color: #993C1D;">Infraponderar:</span></strong> Señal clara: no merece capital. Cerrar posiciones con pérdidas manejables, no abrir nuevas y redirigir capital hacia sectores a sobreponderar. Cada euro en Mid Tech es un euro que no está en Cloud AI.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Aclaración: El desglose de "Sobreponderar"</div>
+  <div class="insight-box" style="margin-bottom: 1rem; border-left-color: #0F6E56;">
+    <p style="margin-bottom: 0.5rem;">Detrás de la indicación <em>"Pones capital nuevo, dejas correr posiciones y no recortas en pullbacks"</em> hay tres decisiones de gestión distintas que se aplican en momentos distintos.</p>
+    <p>El hilo conductor de los tres puntos es el mismo: en un sector en sobreponderar, el sesgo por defecto es <strong>estar dentro y añadir</strong>, no <strong>salir y esperar</strong>. La carga de la prueba está en encontrar razones para salir, no razones para quedarse. Eso es exactamente lo contrario de lo que aplicas en un sector en infraponderar.</p>
+  </div>
+
+  <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+    <div class="signal-card" style="border-top: 3px solid #0F6E56;">
+      <div class="signal-sector" style="margin-bottom: 8px;">1. "Pones capital nuevo"</div>
+      <div class="signal-desc">
+        <p style="margin-bottom: 0.5rem;">Es la decisión más activa. Significa que cuando tienes liquidez disponible — ya sea por dividendos, posiciones cerradas o cash reservado — este es el destino prioritario. No esperas el "momento perfecto" porque en sectores con momentum fuerte siempre parece caro comparado con hace tres meses.</p>
+        <p><strong>En la práctica:</strong> No entres todo de golpe. Si asignas 3.000€ a Storage, entra en dos o tres tramos espaciados por semanas o un mes. Reduces el riesgo de entrar justo antes de un pullback técnico (que puede ser del 10–15% en sectores volátiles incluso en tendencia alcista).</p>
+      </div>
+    </div>
+    
+    <div class="signal-card" style="border-top: 3px solid #0F6E56;">
+      <div class="signal-sector" style="margin-bottom: 8px;">2. "Dejas correr posiciones"</div>
+      <div class="signal-desc">
+        <p style="margin-bottom: 0.5rem;">Psicológicamente difícil. Cuando llevas +40% o +80%, el instinto es recoger beneficios. Pero en sectores con momentum estructural (Storage, Cloud AI), los grandes movimientos son del 150–200%. Si recortas pronto, te quedas fuera del tramo gordo.</p>
+        <p><strong>En la práctica:</strong> Primero, no fijes un objetivo de precio arbitrario ("vendo al llegar a X"); la señal de salida te la da el momentum (cuando el sector muestra debilidad sostenida). Segundo, usa <em>trailing stops</em> (sube el stop-loss a medida que sube el precio) para proteger ganancias sin cerrar manualmente.</p>
+      </div>
+    </div>
+    
+    <div class="signal-card" style="border-top: 3px solid #0F6E56;">
+      <div class="signal-sector" style="margin-bottom: 8px;">3. "No recortas en pullbacks"</div>
+      <div class="signal-desc">
+        <p style="margin-bottom: 0.5rem;">Un pullback (8–12%) es una corrección temporal en tendencia alcista, no una señal de salida. El error clásico es confundir volatilidad normal con cambio de tendencia. Un pullback dura días/semanas y recupera rápido; un cambio de tendencia dura meses, con volumen bajista y rompe soportes.</p>
+        <p><strong>En la práctica:</strong> Si tienes Storage y cae un 10% en dos semanas sin cambio macro ni fundamentales del ciclo HBM, no haces nada. Si cae un 25% en dos meses mientras el resto del mercado sube, esa es otra conversación.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Aclaración: Qué significa "Momentum Selectivo"</div>
+  <div class="insight-box" style="margin-bottom: 1rem; border-left-color: #3b82f6;">
+    <p style="margin-bottom: 0.5rem;">Quiero decir que en mayo el mercado no subió de forma uniforme — no fue un mes donde "todo sube", sino uno donde había ganadores muy claros y perdedores igual de claros dentro del mismo universo.</p>
+    <p style="margin-bottom: 0.5rem;">Compáralo con <strong>abril</strong>, que fue un momentum <em>amplio</em>: casi todos los sectores subieron con fuerza al mismo tiempo, impulsados por la noticia macro de la pausa arancelaria. Fue un rebote de alivio general donde hasta los sectores más débiles del año recuperaron. En esos momentos casi cualquier posición funciona.</p>
+    <p style="margin-bottom: 0.5rem;"><strong>Mayo es diferente. Mira los extremos:</strong></p>
+    <p style="margin-bottom: 0.5rem;">CiberSec <span class="pos" style="font-weight: 600;">+30%</span>, Cloud AI <span class="pos" style="font-weight: 600;">+28%</span>, BTC Mining <span class="pos" style="font-weight: 600;">+16%</span>, Privacy <span class="pos" style="font-weight: 600;">+22%</span> — subidas muy fuertes. Pero al mismo tiempo Electric <span class="neg" style="font-weight: 600;">–8%</span>, CEG <span class="neg" style="font-weight: 600;">–15%</span>, Oklo <span class="neg" style="font-weight: 600;">–14%</span>, Vistra <span class="neg" style="font-weight: 600;">–12%</span>, Shopify <span class="neg" style="font-weight: 600;">–17%</span>, EXOD <span class="neg" style="font-weight: 600;">–15%</span>. Dentro del mismo mes, en el mismo mercado, hay sectores ganando un 30% y otros perdiendo un 15%.</p>
+    <p style="margin-bottom: 0.5rem;">Eso es selectividad. El mercado está premiando narrativas concretas — seguridad IA, infraestructura cloud, minería Bitcoin — y castigando otras — utilities, tech de consumo, cripto directo. No es un mercado de marea alta donde todos los barcos suben: es un mercado donde importa mucho <em>dónde estás</em>.</p>
+    <p><strong>Implicación práctica:</strong> Es doble. Por un lado, en un momentum selectivo la diversificación ciega no funciona bien: tener "un poco de todo" significa que tus posiciones fuertes quedan compensadas por las débiles. Por otro lado, la selección de sector y ticker importa más que nunca — y es exactamente para eso para lo que sirve el análisis que tienes arriba.</p>
+  </div>
+</div>
+
+</div>
+
+<script>
+const data = [
+  {s:'Storage',      ene:57.86, feb:12.16, mar:-10.59, q1:59.17, abr:56.55, may:26.79, q2:98.16, anual:219.25},
+  {s:'Cloud AI',     ene:15.96, feb:-3.80, mar:5.57,   q1:16.07, abr:38.64, may:27.63, q2:75.24, anual:106.30},
+  {s:'BTC Mining',   ene:20.84, feb:-3.95, mar:-14.42, q1:-1.51, abr:46.43, may:16.48, q2:70.68, anual:68.49},
+  {s:'Semic.',       ene:6.32,  feb:0.82,  mar:-3.50,  q1:3.18,  abr:40.45, may:9.71,  q2:54.72, anual:60.82},
+  {s:'Equipment',    ene:31.60, feb:5.88,  mar:-8.59,  q1:27.09, abr:15.02, may:8.49,  q2:24.90, anual:58.87},
+  {s:'CiberSec.',    ene:-2.87, feb:-10.41,mar:8.00,   q1:-4.68, abr:1.89,  may:30.08, q2:32.63, anual:26.32},
+  {s:'Index',        ene:5.16,  feb:-0.65, mar:-5.43,  q1:-1.16, abr:21.49, may:6.40,  q2:29.63, anual:29.06},
+  {s:'Data Center',  ene:-4.07, feb:8.20,  mar:-4.01,  q1:-1.15, abr:22.37, may:14.44, q2:40.07, anual:39.31},
+  {s:'ETF',          ene:6.57,  feb:-0.79, mar:-7.65,  q1:-2.67, abr:14.37, may:5.98,  q2:21.76, anual:19.04},
+  {s:'Oil',          ene:11.35, feb:5.89,  mar:12.20,  q1:32.38, abr:-1.10, may:-2.33, q2:-3.56, anual:27.50},
+  {s:'Rare',         ene:29.11, feb:-2.08, mar:-16.75, q1:1.99,  abr:13.72, may:0.57,  q2:13.65, anual:15.32},
+  {s:'Spain',        ene:3.26,  feb:4.46,  mar:-5.75,  q1:1.68,  abr:6.26,  may:-0.55, q2:5.77,  anual:7.73},
+  {s:'Electric',     ene:2.14,  feb:7.45,  mar:-6.63,  q1:2.93,  abr:13.31, may:-8.24, q2:3.73,  anual:6.57},
+  {s:'Big Tech',     ene:0.04,  feb:-7.20, mar:-6.29,  q1:-13.19,abr:14.52, may:4.63,  q2:19.53, anual:4.07},
+  {s:'Cons. Elect.', ene:-8.95, feb:3.21,  mar:-2.65,  q1:-8.44, abr:8.36,  may:5.34,  q2:14.26, anual:5.63},
+  {s:'Privacy',      ene:-1.38, feb:-32.45,mar:3.45,   q1:-32.03,abr:21.29, may:21.93, q2:50.60, anual:-3.61},
+  {s:'Financial',    ene:-2.36, feb:-5.39, mar:-4.22,  q1:-11.69,abr:11.66, may:-0.71, q2:11.15, anual:-2.11},
+  {s:'Top Crypto',   ene:0.22,  feb:-23.90,mar:9.71,   q1:-13.78,abr:5.40,  may:3.66,  q2:9.26,  anual:-3.28},
+  {s:'Bitcoin Rel.', ene:-6.45, feb:-13.34,mar:-9.74,  q1:-27.56,abr:18.19, may:1.23,  q2:19.86, anual:-12.76},
+  {s:'Currency',     ene:1.86,  feb:-1.36, mar:-2.91,  q1:-2.45, abr:1.96,  may:-0.53, q2:1.42,  anual:-1.06},
+  {s:'Mid Tech',     ene:-12.85,feb:-4.57, mar:-2.23,  q1:-18.53,abr:1.67,  may:-1.53, q2:0.43,  anual:-18.99},
+];
+
+function fmt(v) {
+  const abs = Math.abs(v).toFixed(1);
+  return (v >= 0 ? '+' : '-') + abs + '%';
+}
+function cellClass(v) {
+  if (v > 0.5) return 'c-pos';
+  if (v < -0.5) return 'c-neg';
+  return 'c-neu';
+}
+
+const fields = ['ene','feb','mar','q1','abr','may','q2','anual'];
+const tbl = document.getElementById('sector-table');
+data.forEach(d => {
+  const row = document.createElement('div');
+  row.className = 'sector-row';
+  let html = `<div class="sector-name" title="${d.s}">${d.s}</div>`;
+  fields.forEach(f => {
+    const v = d[f];
+    const cls = f === 'anual' ? cellClass(v) + ' ' : cellClass(v) + ' ';
+    html += `<div class="cell"><span class="cell-val ${cellClass(v)}">${fmt(v)}</span></div>`;
+  });
+  row.innerHTML = html;
+  tbl.appendChild(row);
+});
+
+const sorted = [...data].sort((a,b) => b.anual - a.anual);
+const maxVal = Math.max(...sorted.map(d => Math.abs(d.anual)));
+const bc = document.getElementById('bar-chart');
+sorted.forEach(d => {
+  const pct = (Math.abs(d.anual) / maxVal * 100).toFixed(1);
+  const color = d.anual >= 0 ? '#1D9E75' : '#D85A30';
+  const valStr = fmt(d.anual);
+  bc.innerHTML += `<div class="bar-row">
+    <div class="bar-label">${d.s}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${color};"></div></div>
+    <div class="bar-val" style="color:${color};">${valStr}</div>
+  </div>`;
+});
+
+const signals = [
+  {s:'Storage', badge:'buy', anual:'+219%', desc:'Ciclo HBM/IA imparable. SK Hynix, Micron, Sandisk, Seagate en modo cohete. El gasto en centros de datos impulsa almacenamiento. Momentum intacto con consolidación sana en mayo (+27%).'},
+  {s:'Cloud AI', badge:'buy', anual:'+106%', desc:'Mejor ratio rentabilidad/momentum del año. NBIS +163%, CRWV +50%. Mayo sigue fuerte (+28%). El capex de hiperescalares fluye hacia aquí. Alta convicción a 3-6 meses.'},
+  {s:'BTC Mining', badge:'buy', anual:'+69%', desc:'Beneficiado por BTC fuerte sin el riesgo directo del token. HUT +123%, RIOT +85%, WULF +94%. Consolidación sana en mayo (+16%). Alta volatilidad — sizing reducido.'},
+  {s:'Semic.', badge:'buy', anual:'+61%', desc:'Q1 corrección, Q2 recuperación brutal (+55%). AMD +98%, INTC +195%, MRVL +108%, ARM +91%. La demanda IA no da señales de frenazo. Sesgar hacia GPU/AI chips vs. legacy.'},
+  {s:'CiberSec.', badge:'watch', anual:'+26%', desc:'Mayo fue su mejor mes del año (+30%). AKAM y FTNT explosivos. Posible rerating por contratos AI-security. Entrada tardía pero con momentum creciente. Vigilar ZS (aún –28% anual).'},
+  {s:'Data Center', badge:'watch', anual:'+39%', desc:'DELL +92%, HPE +38%. Mayo sólido (+14%). Infraestructura directa para IA. Menos volátil que semis. Opción conservadora dentro del tema IA.'},
+  {s:'Equipment', badge:'watch', anual:'+59%', desc:'ASML, AMAT, LRCX en zona de récords. Beneficio de la carrera por las fabs. Mayo moderado (+8%) tras el gran rebote. Riesgo: restricciones de exportación a China.'},
+  {s:'Oil', badge:'caution', anual:'+28%', desc:'Q1 estelar (+32%) pero Q2 en negativo. Aranceles, menor demanda China y OPEC+ presionan. Flujo defensivo ya pasó. Conservar si ya tienes; nueva capital mejor en otros lados.'},
+  {s:'Spain', badge:'caution', anual:'+8%', desc:'Moderado positivo anual. ACS destaca (+57%), Solaria (+32%), Endesa (+18%). Pero bancos decepcionan en mayo. Sector defensivo-local, bajo beta al ciclo AI.'},
+  {s:'Mid Tech', badge:'avoid', anual:'–19%', desc:'Shopify –38%, Pltr –25%, Tencent –23%, RDDT –31%. ORCL es la excepción. El mercado castiga las valoraciones estiradas sin monetización AI clara. Evitar hasta señal técnica clara.'},
+  {s:'Bitcoin Rel.', badge:'avoid', anual:'–13%', desc:'HOOD –32%, EXOD –57%, BKKT –18%. Q1 fue catastrófico (–28%). El rebote de Q2 es débil vs. los propios mineros o Cloud AI. Capital mejor asignado en infraestructura.'},
+  {s:'Top Crypto', badge:'avoid', anual:'–3%', desc:'BTC –12%, ETH –29%, SOL –32%. El momentum beneficia a los instrumentos, no al activo. Hyperliquid (HYPE) es la excepción con +81%. Sin catalizador macro claro en el corto plazo.'},
+];
+
+const badgeMap = { buy:'SOBREPONDERAR', watch:'VIGILAR', caution:'PRECAUCIÓN', avoid:'INFRAPONDERAR' };
+const badgeClass = { buy:'b-buy', watch:'b-watch', caution:'b-caution', avoid:'b-avoid' };
+const sg = document.getElementById('signals');
+signals.forEach(sig => {
+  sg.innerHTML += `<div class="signal-card">
+    <div class="signal-top">
+      <div class="signal-sector">${sig.s}</div>
+      <div class="signal-anual ${sig.anual.startsWith('+') ? 'pos' : 'neg'}">${sig.anual}</div>
+    </div>
+    <span class="badge ${badgeClass[sig.badge]}">${badgeMap[sig.badge]}</span>
+    <div class="signal-desc">${sig.desc}</div>
+  </div>`;
+});
+</script>
