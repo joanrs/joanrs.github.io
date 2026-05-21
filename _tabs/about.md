@@ -3,7 +3,8 @@
 icon: fas fa-info-circle
 order: 4
 ---
-Empresas Tecnológicas. Análisis de Mercados Financieros Tecnológicos. Inteligencia Artificial. Análisis de Datos Financieros. Análisis de Adquisiciones, Acuerdos etc ... 
+Análisis Independiente del Mercado Tecnológico con Datos Propios. Construyo herramientas de Análisis Financiero. Creador de Market-Analyze.
+
 <div>
     <a href="https://x.com/joanr" target="_blank">
         <i class="fab fa-x-twitter"></i>
