@@ -1,0 +1,160 @@
+
+<style>
+.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tbl thead tr { border-bottom: 1px solid var(--color-border-tertiary); }
+.tbl th { padding: 10px 12px; text-align: left; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); white-space: nowrap; }
+.tbl td { padding: 10px 12px; color: var(--color-text-primary); border-bottom: 0.5px solid var(--color-border-tertiary); vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: var(--color-background-secondary); }
+.rank { font-weight: 500; color: var(--color-text-secondary); }
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+.b-green { background: #EAF3DE; color: #3B6D11; }
+.b-amber { background: #FAEEDA; color: #854F0B; }
+.b-gray  { background: #F1EFE8; color: #5F5E5A; }
+.b-teal  { background: #E1F5EE; color: #0F6E56; }
+.b-red   { background: #FCEBEB; color: #A32D2D; }
+@media (prefers-color-scheme: dark) {
+  .b-green { background: #27500A; color: #C0DD97; }
+  .b-amber { background: #633806; color: #FAC775; }
+  .b-gray  { background: #444441; color: #D3D1C7; }
+  .b-teal  { background: #085041; color: #9FE1CB; }
+  .b-red   { background: #791F1F; color: #F7C1C1; }
+}
+.bar-wrap { display: flex; align-items: center; gap: 8px; }
+.bar-bg { flex: 1; height: 6px; background: var(--color-background-secondary); border-radius: 3px; min-width: 60px; }
+.bar-fill { height: 6px; border-radius: 3px; background: #1D9E75; }
+.name-cell { font-weight: 500; }
+.sub { font-size: 11px; color: var(--color-text-secondary); display: block; font-weight: 400; }
+.source-note { font-size: 11px; color: var(--color-text-secondary); margin-top: 12px; padding-top: 10px; border-top: 0.5px solid var(--color-border-tertiary); }
+</style>
+<h2 class="sr-only">Tabla de perp DEX por volumen mensual de transacciones, mayo 2026</h2>
+<div style="padding: 1rem 0 0;">
+<table class="tbl">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Exchange</th>
+      <th>Vol. mensual</th>
+      <th>Cuota</th>
+      <th>Modelo</th>
+      <th>Cadena</th>
+      <th>Tendencia</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="rank">1</td>
+      <td class="name-cell">Hyperliquid<span class="sub">HYPE</span></td>
+      <td>~$180B+</td>
+      <td>
+        <div class="bar-wrap">
+          <span style="min-width:32px; font-size:13px;">44%</span>
+          <div class="bar-bg"><div class="bar-fill" style="width:100%;"></div></div>
+        </div>
+      </td>
+      <td><span class="badge b-teal">Order book</span></td>
+      <td>L1 propia</td>
+      <td><span class="badge b-green">↑ ganando</span></td>
+    </tr>
+    <tr>
+      <td class="rank">2</td>
+      <td class="name-cell">edgeX<span class="sub">EDGE</span></td>
+      <td>~$20–25B</td>
+      <td>
+        <div class="bar-wrap">
+          <span style="min-width:32px; font-size:13px;">~27%</span>
+          <div class="bar-bg"><div class="bar-fill" style="width:61%; background:#378ADD;"></div></div>
+        </div>
+      </td>
+      <td><span class="badge b-teal">Order book</span></td>
+      <td>Arbitrum</td>
+      <td><span class="badge b-gray">→ estable</span></td>
+    </tr>
+    <tr>
+      <td class="rank">3</td>
+      <td class="name-cell">Aster<span class="sub">antes ApeX+Astherus</span></td>
+      <td>~$15–18B</td>
+      <td>
+        <div class="bar-wrap">
+          <span style="min-width:32px; font-size:13px;">~21%</span>
+          <div class="bar-bg"><div class="bar-fill" style="width:48%; background:#EF9F27;"></div></div>
+        </div>
+      </td>
+      <td><span class="badge b-amber">Multi-chain AMM</span></td>
+      <td>Multi-chain</td>
+      <td><span class="badge b-red">↓ perdiendo</span></td>
+    </tr>
+    <tr>
+      <td class="rank">4</td>
+      <td class="name-cell">GMX v2<span class="sub">GMX</span></td>
+      <td>~$541M</td>
+      <td>
+        <div class="bar-wrap">
+          <span style="min-width:32px; font-size:13px;">&lt;1%</span>
+          <div class="bar-bg"><div class="bar-fill" style="width:8%; background:#888780;"></div></div>
+        </div>
+      </td>
+      <td><span class="badge b-amber">Pool AMM</span></td>
+      <td>Arbitrum / Avax</td>
+      <td><span class="badge b-gray">→ nicho DeFi</span></td>
+    </tr>
+    <tr>
+      <td class="rank">5</td>
+      <td class="name-cell">Lighter v2<span class="sub"></span></td>
+      <td>~$354M</td>
+      <td>
+        <div class="bar-wrap">
+          <span style="min-width:32px; font-size:13px;">&lt;1%</span>
+          <div class="bar-bg"><div class="bar-fill" style="width:6%; background:#888780;"></div></div>
+        </div>
+      </td>
+      <td><span class="badge b-teal">Order book</span></td>
+      <td>Arbitrum</td>
+      <td><span class="badge b-green">↑ emergente</span></td>
+    </tr>
+    <tr>
+      <td class="rank">6</td>
+      <td class="name-cell">dYdX v4<span class="sub">DYDX</span></td>
+      <td>~$18–22B*</td>
+      <td>
+        <div class="bar-wrap">
+          <span style="min-width:32px; font-size:13px;">&lt;3%</span>
+          <div class="bar-bg"><div class="bar-fill" style="width:5%; background:#888780;"></div></div>
+        </div>
+      </td>
+      <td><span class="badge b-teal">Order book</span></td>
+      <td>Cosmos L1</td>
+      <td><span class="badge b-red">↓ perdiendo</span></td>
+    </tr>
+    <tr>
+      <td class="rank">7</td>
+      <td class="name-cell">Jupiter Perps<span class="sub"></span></td>
+      <td>estimado &lt;$5B</td>
+      <td>
+        <div class="bar-wrap">
+          <span style="min-width:32px; font-size:13px;">&lt;3%</span>
+          <div class="bar-bg"><div class="bar-fill" style="width:4%; background:#888780;"></div></div>
+        </div>
+      </td>
+      <td><span class="badge b-amber">Híbrido</span></td>
+      <td>Solana</td>
+      <td><span class="badge b-gray">→ nicho SOL</span></td>
+    </tr>
+    <tr>
+      <td class="rank">8</td>
+      <td class="name-cell">Drift Protocol<span class="sub">DRIFT</span></td>
+      <td>estimado &lt;$3B</td>
+      <td>
+        <div class="bar-wrap">
+          <span style="min-width:32px; font-size:13px;">&lt;3%</span>
+          <div class="bar-bg"><div class="bar-fill" style="width:3%; background:#888780;"></div></div>
+        </div>
+      </td>
+      <td><span class="badge b-teal">Order book</span></td>
+      <td>Solana</td>
+      <td><span class="badge b-gray">→ nicho SOL</span></td>
+    </tr>
+  </tbody>
+</table>
+<p class="source-note">Fuentes: DefiLlama, BeInCrypto/Dune (semana del 23 mar 2026), Yellow.com (abr 2026). Vol. mensual = estimaciones 30 días a abril/mayo 2026. *dYdX: cuota &lt;3% del total perp DEX, cifra absoluta estimada. Cuotas de mercado referidas a la semana del 23 mar 2026.</p>
+</div>
