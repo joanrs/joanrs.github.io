@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nasdaq 100 - Revalorizaciones Históricas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0B0E14;
+            --bg-surface: #151A23;
+            --bg-surface-hover: #1E2532;
+            --text-primary: #F3F4F6;
+            --text-secondary: #9CA3AF;
+            --accent: #3B82F6;
+            --positive: #10B981;
+            --positive-bg: rgba(16, 185, 129, 0.15);
+            --negative: #EF4444;
+            --negative-bg: rgba(239, 68, 68, 0.15);
+            --border: #2A3241;
+            --font-main: 'Outfit', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60A5FA, #A78BFA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Chart */
+        .chart-wrapper {
+            position: relative;
+            height: 450px;
+            margin-top: 2rem;
+            margin-bottom: 2rem; /* Reduced margin since years are no longer at the bottom */
+        }
+
+        .y-axis {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            z-index: 0;
+        }
+
+        .y-axis-line {
+            position: absolute;
+            left: 45px;
+            right: 0;
+            height: 1px;
+            background-color: rgba(255,255,255,0.05);
+            z-index: 0;
+        }
+
+        .zero-line {
+            background-color: var(--text-secondary);
+            opacity: 0.5;
+            height: 1px;
+            border: none;
+            z-index: 15; /* Above background lines, below bars */
+        }
+
+        .chart-bars {
+            position: absolute;
+            left: 45px;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .bar-col {
+            flex: 1;
+            height: 100%;
+            position: relative;
+        }
+
+        .bar-fill {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 40px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+        }
+        
+        .bar-col:hover .bar-fill {
+            filter: brightness(1.2);
+        }
+
+        .bar-fill.pos {
+            bottom: 40%; /* 40% from bottom is exactly the 60% zero line */
+            background: linear-gradient(to top, #059669, #34D399);
+            border-radius: 6px 6px 0 0;
+            box-shadow: 0 -4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .bar-fill.neg {
+            top: 60%; /* 60% from top is exactly the 60% zero line */
+            background: linear-gradient(to bottom, #DC2626, #F87171);
+            border-radius: 0 0 6px 6px;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Permanent Value Labels */
+        .bar-value {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(11, 14, 20, 0.8);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border);
+            z-index: 30;
+        }
+
+        .bar-fill.pos .bar-value {
+            bottom: 100%;
+            margin-bottom: 6px;
+            color: var(--positive);
+        }
+
+        .bar-fill.neg .bar-value {
+            top: 100%;
+            margin-top: 6px;
+            color: var(--negative);
+        }
+
+        /* Years positioned directly on the X axis (zero line) */
+        .bar-year {
+            position: absolute;
+            top: 60%; /* Exactly on the zero line */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            background-color: var(--bg-surface); /* Masks the bar behind it for readability */
+            padding: 2px 6px;
+            border-radius: 4px;
+            z-index: 20;
+            white-space: nowrap;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-val {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            line-height: 1.2;
+        }
+        
+        .stat-val.pos { color: var(--positive); }
+        .stat-val.neg { color: var(--negative); }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 900px) {
+            .bar-value {
+                font-size: 0.65rem;
+                padding: 1px 4px;
+            }
+            .chart-wrapper {
+                height: 350px;
+            }
+            .bar-year {
+                font-size: 0.65rem;
+                padding: 1px 3px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            .card {
+                padding: 1.25rem;
+            }
+            .bar-value {
+                transform: translateX(-50%) rotate(-90deg);
+                transform-origin: bottom center;
+            }
+            .bar-fill.pos .bar-value {
+                margin-bottom: 15px;
+            }
+            .bar-fill.neg .bar-value {
+                transform-origin: top center;
+                margin-top: 15px;
+            }
+            .bar-year {
+                transform: translate(-50%, -50%) rotate(-90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Nasdaq 100</h1>
+            <p>Rendimiento histórico (2006 - 2026)</p>
+        </div>
+
+        <div class="card">
+            <!-- Chart Section -->
+            <div class="chart-wrapper" id="chart-wrapper">
+                <div class="y-axis">
+                    <span>60%</span>
+                    <span>40%</span>
+                    <span>20%</span>
+                    <span>0%</span>
+                    <span>-20%</span>
+                    <span>-40%</span>
+                </div>
+                
+                <div class="y-axis-line" style="top: 0%"></div>
+                <div class="y-axis-line" style="top: 20%"></div>
+                <div class="y-axis-line" style="top: 40%"></div>
+                <div class="y-axis-line zero-line" style="top: 60%"></div>
+                <div class="y-axis-line" style="top: 80%"></div>
+                <div class="y-axis-line" style="top: 100%"></div>
+
+                <div class="chart-bars" id="chart-bars">
+                    <!-- Bars injected by JS -->
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats" id="stats-container">
+                <!-- Stats injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rawData = [
+            { year: '2026 YTD', ret: 16.76 },
+            { year: '2025', ret: 20.17 },
+            { year: '2024', ret: 24.88 },
+            { year: '2023', ret: 53.81 },
+            { year: '2022', ret: -32.97 },
+            { year: '2021', ret: 26.63 },
+            { year: '2020', ret: 47.58 },
+            { year: '2019', ret: 37.96 },
+            { year: '2018', ret: -1.04 },
+            { year: '2017', ret: 31.52 },
+            { year: '2016', ret: 5.89 },
+            { year: '2015', ret: 8.43 },
+            { year: '2014', ret: 17.94 },
+            { year: '2013', ret: 34.99 },
+            { year: '2012', ret: 16.82 },
+            { year: '2011', ret: 2.70 },
+            { year: '2010', ret: 19.22 },
+            { year: '2009', ret: 53.54 },
+            { year: '2008', ret: -41.89 },
+            { year: '2007', ret: 18.67 },
+            { year: '2006', ret: 6.79 }
+        ];
+
+        // Format to localized string with + sign
+        function formatPercent(val, decimals = 1) {
+            const sign = val > 0 ? '+' : '';
+            return `${sign}${val.toLocaleString('es-ES', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})}%`;
+        }
+
+        function formatMultiplier(val) {
+            return `${val.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2})}x`;
+        }
+
+        const chartBars = document.getElementById('chart-bars');
+        const statsContainer = document.getElementById('stats-container');
+
+        // Reverse data for chart to show chronological order left to right
+        const chartData = [...rawData].reverse();
+
+        chartData.forEach(item => {
+            const isPos = item.ret >= 0;
+            const absVal = Math.abs(item.ret);
+            
+            // The chart Y axis goes from +60% to -40%, which is a range of 100.
+            // This means 1% of the chart container height corresponds to 1% of return.
+            const heightPercent = absVal;
+            const displayYear = item.year.replace(' YTD', '');
+            
+            const valueLabel = `<div class="bar-value">${formatPercent(item.ret, 1)}</div>`;
+
+            const col = document.createElement('div');
+            col.className = 'bar-col';
+
+            if (isPos) {
+                col.innerHTML = `
+                    <div class="bar-fill pos" style="height: ${heightPercent}%;">
+                        ${valueLabel}
+                    </div>
+                    <div class="bar-year">${displayYear}</div>
+                `;
+            } else {
+                col.innerHTML = `
+                    <div class="bar-fill neg" style="height: ${heightPercent}%;">
+                        ${valueLabel}
+                    </div>
+                    <div class="bar-year">${displayYear}</div>
+                `;
+            }
+
+            chartBars.appendChild(col);
+        });
+
+        // --- Calculate Stats ---
+        let posYears = 0;
+        let negYears = 0;
+        let compound = 1;
+        
+        const sortedReturns = [...rawData].sort((a, b) => b.ret - a.ret);
+        const bestYear = sortedReturns[0];
+        const worstYear = sortedReturns[sortedReturns.length - 1];
+
+        rawData.forEach(item => {
+            if (item.ret >= 0) posYears++;
+            else negYears++;
+            // Compound interest multiplier: 1 + (return / 100)
+            compound *= (1 + item.ret / 100);
+        });
+
+        const totalReturnPercent = (compound - 1) * 100;
+        
+        // Approximate years elapsed (from start of 2006 to May 2026 -> 20.4 years)
+        const yearsElapsed = 20.4;
+        
+        // CAGR Formula: (End/Start)^(1/Years) - 1
+        const cagr = (Math.pow(compound, 1 / yearsElapsed) - 1) * 100;
+
+        const winRate = (posYears / rawData.length) * 100;
+
+        statsContainer.innerHTML = `
+            <div class="stat-box">
+                <div class="stat-val pos">${formatPercent(totalReturnPercent, 0)}</div>
+                <div class="stat-label">Retorno Acumulado</div>
+                <div class="stat-sub">Multiplicador total: ${formatMultiplier(compound)}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-val pos">${formatPercent(cagr, 2)}</div>
+                <div class="stat-label">CAGR</div>
+                <div class="stat-sub">Tasa anual compuesta (${yearsElapsed} años)</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-val pos">${winRate.toFixed(0)}%</div>
+                <div class="stat-label">Win Rate</div>
+                <div class="stat-sub">${posYears} años positivos / ${negYears} negativos</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-val pos">${formatPercent(bestYear.ret, 1)}</div>
+                <div class="stat-label">Mejor Año</div>
+                <div class="stat-sub">Registrado en ${bestYear.year}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-val neg">${formatPercent(worstYear.ret, 1)}</div>
+                <div class="stat-label">Peor Año</div>
+                <div class="stat-sub">Registrado en ${worstYear.year}</div>
+            </div>
+        `;
+    </script>
+</body>
+</html>
