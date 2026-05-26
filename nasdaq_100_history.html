@@ -19,6 +19,25 @@
             --negative-bg: rgba(239, 68, 68, 0.15);
             --border: #2A3241;
             --font-main: 'Outfit', sans-serif;
+            --stat-bg: rgba(255,255,255,0.02);
+            --stat-border: rgba(255,255,255,0.05);
+            --bar-value-bg: rgba(11, 14, 20, 0.8);
+            --y-axis-line: rgba(255,255,255,0.05);
+            --shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        [data-theme="light"] {
+            --bg-base: #F9FAFB;
+            --bg-surface: #FFFFFF;
+            --bg-surface-hover: #F3F4F6;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --border: #E5E7EB;
+            --stat-bg: rgba(0,0,0,0.02);
+            --stat-border: rgba(0,0,0,0.05);
+            --bar-value-bg: rgba(255, 255, 255, 0.8);
+            --y-axis-line: rgba(0,0,0,0.05);
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,11 +49,39 @@
             min-height: 100vh;
             padding: 2rem;
             line-height: 1.5;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 50;
+        }
+
+        #theme-btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        #theme-btn:hover {
+            background: var(--bg-surface-hover);
+            transform: scale(1.05);
         }
 
         .header {
@@ -64,9 +111,10 @@
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
 
         /* Chart */
@@ -96,7 +144,7 @@
             left: 45px;
             right: 0;
             height: 1px;
-            background-color: rgba(255,255,255,0.05);
+            background-color: var(--y-axis-line);
             z-index: 0;
         }
 
@@ -165,7 +213,7 @@
             white-space: nowrap;
             padding: 2px 6px;
             border-radius: 4px;
-            background: rgba(11, 14, 20, 0.8);
+            background: var(--bar-value-bg);
             backdrop-filter: blur(4px);
             border: 1px solid var(--border);
             z-index: 30;
@@ -207,14 +255,15 @@
         }
 
         .stat-box {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.05);
+            background: var(--stat-bg);
+            border: 1px solid var(--stat-border);
             border-radius: 12px;
             padding: 1.5rem;
             text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            transition: background-color 0.3s, border-color 0.3s;
         }
 
         .stat-val {
@@ -257,6 +306,10 @@
         }
 
         @media (max-width: 768px) {
+            .theme-toggle {
+                top: -1rem;
+                right: 0;
+            }
             .header h1 {
                 font-size: 2rem;
             }
@@ -283,6 +336,9 @@
 <body>
 
     <div class="container">
+        <div class="theme-toggle">
+            <button id="theme-btn" aria-label="Cambiar tema"></button>
+        </div>
         <div class="header">
             <h1>Nasdaq 100</h1>
             <p>Rendimiento histórico (2006 - 2026)</p>
@@ -320,6 +376,23 @@
     </div>
 
     <script>
+        const themeBtn = document.getElementById('theme-btn');
+        const root = document.documentElement;
+        
+        const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+
+        let currentTheme = localStorage.getItem('theme') || 'dark';
+        root.setAttribute('data-theme', currentTheme);
+        themeBtn.innerHTML = currentTheme === 'dark' ? sunIcon : moonIcon;
+
+        themeBtn.addEventListener('click', () => {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+            themeBtn.innerHTML = currentTheme === 'dark' ? sunIcon : moonIcon;
+        });
+
         const rawData = [
             { year: '2026 YTD', ret: 16.76 },
             { year: '2025', ret: 20.17 },
