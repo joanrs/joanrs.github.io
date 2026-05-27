@@ -296,6 +296,25 @@
             opacity: 0.8;
         }
 
+        /* Light mode: refuerzo tipográfico en textos fuera del gráfico */
+        [data-theme="light"] .stat-label {
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .stat-sub {
+            font-weight: 600;
+            opacity: 1;
+        }
+
+        [data-theme="light"] .header p {
+            font-weight: 600;
+        }
+
+        [data-theme="light"] .stat-val {
+            letter-spacing: -0.02em;
+        }
+
         @media (max-width: 900px) {
             .bar-value {
                 font-size: 0.65rem;
