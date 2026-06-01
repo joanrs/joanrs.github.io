@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sector Analyzer — market-analyze</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0b0f14;
+    --surface: #111720;
+    --surface2: #18202c;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #e8edf5;
+    --muted: #6b7a8d;
+    --muted2: #8a98ab;
+    --green: #22d98a;
+    --green-bg: rgba(34,217,138,0.1);
+    --red: #f05e5e;
+    --red-bg: rgba(240,94,94,0.1);
+    --amber: #f5a623;
+    --amber-bg: rgba(245,166,35,0.1);
+    --blue: #4b9cf5;
+    --blue-bg: rgba(75,156,245,0.1);
+    --accent: #4b9cf5;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --font-serif: 'Instrument Serif', serif;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  body.light {
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --surface2: #eef0f4;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.15);
+    --text: #111827;
+    --muted: #6b7280;
+    --muted2: #374151;
+    --green: #0f6e56;
+    --green-bg: rgba(15,110,86,0.08);
+    --red: #c0392b;
+    --red-bg: rgba(192,57,43,0.08);
+    --amber: #92400e;
+    --amber-bg: rgba(146,64,14,0.08);
+    --blue: #185fa5;
+    --blue-bg: rgba(24,95,165,0.08);
+    --accent: #185fa5;
+  }
+
+  /* Theme toggle */
+  .theme-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    width: 36px; height: 36px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .theme-btn:hover { background: var(--surface); border-color: var(--accent); }
+  .theme-btn svg { width: 16px; height: 16px; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 2.5rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .header-left h1 {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+  .header-left p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: var(--font-mono);
+  }
+  .upload-zone {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .upload-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .upload-btn:hover { background: #1f2b3e; border-color: var(--accent); }
+  .upload-btn svg { width: 14px; height: 14px; }
+  #file-label { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+  input[type="file"] { display: none; }
+
+  /* ── MAIN LAYOUT ── */
+  .main { padding: 1.5rem 2rem 3rem; max-width: 1400px; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    gap: 1rem;
+  }
+  .empty-icon {
+    width: 64px; height: 64px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .empty-icon svg { width: 28px; height: 28px; color: var(--muted); }
+  .empty-state h2 { font-size: 18px; font-weight: 400; font-family: var(--font-serif); color: var(--muted2); }
+  .empty-state p { font-size: 13px; color: var(--muted); max-width: 320px; line-height: 1.7; }
+
+  /* ── SECTIONS ── */
+  .section { margin-bottom: 2.5rem; }
+  .section-label {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── KPI STRIP ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+  }
+  .kpi-card {
+    background: var(--surface);
+    padding: 1.25rem 1.5rem;
+  }
+  .kpi-label { font-size: 10px; font-family: var(--font-mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .kpi-val { font-size: 22px; font-weight: 500; font-family: var(--font-mono); }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .kpi-val.g { color: var(--green); }
+  .kpi-val.r { color: var(--red); }
+  .kpi-val.b { color: var(--blue); }
+  .kpi-val.a { color: var(--amber); }
+
+  /* ── SECTOR TABLE ── */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th {
+    background: var(--surface2);
+    padding: 10px 12px;
+    text-align: right;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  thead th:first-child { text-align: left; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding: 9px 12px; text-align: right; }
+  tbody td:first-child { text-align: left; }
+  .sector-name-cell { font-weight: 500; font-size: 12px; white-space: nowrap; }
+  .chip {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+  }
+  .chip.g { color: var(--green); background: var(--green-bg); }
+  .chip.r { color: var(--red); background: var(--red-bg); }
+  .chip.n { color: var(--muted2); background: var(--surface2); }
+  .trend-cell { font-size: 11px; font-family: var(--font-mono); }
+  .trend-up { color: var(--green); }
+  .trend-down { color: var(--red); }
+  .trend-flat { color: var(--muted); }
+
+  /* ── SIGNAL CARDS ── */
+  .signal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .signal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: border-color 0.15s;
+  }
+  .signal-card:hover { border-color: var(--border2); }
+  .signal-header { display: flex; justify-content: space-between; align-items: center; }
+  .signal-sector { font-size: 14px; font-weight: 600; }
+  .signal-anual { font-size: 13px; font-family: var(--font-mono); font-weight: 500; }
+  .signal-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .badge-buy    { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,217,138,0.2); }
+  .badge-watch  { background: var(--blue-bg);  color: var(--blue);  border: 1px solid rgba(75,156,245,0.2); }
+  .badge-caution{ background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(245,166,35,0.2); }
+  .badge-avoid  { background: var(--red-bg);   color: var(--red);   border: 1px solid rgba(240,94,94,0.2); }
+  .signal-desc { font-size: 12px; color: var(--muted2); line-height: 1.6; }
+  .signal-metrics {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .sig-metric { display: flex; flex-direction: column; gap: 2px; }
+  .sig-metric-label { font-size: 9px; font-family: var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .sig-metric-val { font-size: 12px; font-family: var(--font-mono); font-weight: 500; }
+
+  /* ── BAR CHART ── */
+  .bar-list { display: flex; flex-direction: column; gap: 6px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-label { width: 100px; font-size: 11px; color: var(--muted2); text-align: right; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; height: 18px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .bar-val { width: 62px; font-size: 11px; font-family: var(--font-mono); font-weight: 500; text-align: right; flex-shrink: 0; }
+
+  /* ── TOP TICKERS ── */
+  .ticker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .ticker-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .ticker-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .ticker-sym { font-size: 13px; font-weight: 600; font-family: var(--font-mono); color: var(--text); }
+  .ticker-name { font-size: 11px; color: var(--muted); margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ticker-stats { display: flex; justify-content: space-between; font-size: 11px; font-family: var(--font-mono); }
+  .ticker-sector-tag {
+    font-size: 9px; font-family: var(--font-mono); padding: 2px 6px;
+    border-radius: 3px; background: var(--surface2); color: var(--muted2); white-space: nowrap;
+  }
+
+  /* ── NARRATIVE BOXES ── */
+  .narrative-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+  .narrative-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1.25rem;
+  }
+  .narrative-card.warn { border-left-color: var(--amber); }
+  .narrative-card.danger { border-left-color: var(--red); }
+  .narrative-card.neutral { border-left-color: var(--muted); }
+  .narrative-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .narrative-title .phase-tag {
+    font-size: 9px; font-family: var(--font-mono); padding: 2px 6px;
+    border-radius: 3px; background: var(--surface2); color: var(--muted2);
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .narrative-body { font-size: 12px; color: var(--muted2); line-height: 1.7; }
+
+  /* ── MOMENTUM ── */
+  .momentum-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .momentum-row:last-child { border-bottom: none; }
+  .momentum-sector { font-weight: 500; width: 120px; }
+  .momentum-bar-wrap { flex: 1; padding: 0 12px; }
+  .momentum-bar-track { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; position: relative; }
+  .momentum-bar-fill { height: 100%; border-radius: 3px; position: absolute; }
+  .momentum-val { font-family: var(--font-mono); font-size: 11px; font-weight: 500; width: 70px; text-align: right; }
+
+  /* ── FILTER ROW ── */
+  .filter-row { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .filter-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted2);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 600px) {
+    .header, .main, .footer { padding-left: 1rem; padding-right: 1rem; }
+    .kpi-val { font-size: 18px; }
+  }
+
+  /* ── EDUCATIONAL SECTIONS ── */
+  .exec-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 13px;
+    color: var(--muted2);
+    line-height: 1.7;
+  }
+  .exec-box.warn  { border-left-color: var(--amber); }
+  .exec-box.danger{ border-left-color: var(--red); }
+  .exec-box.blue  { border-left-color: var(--blue); }
+  .exec-box strong { color: var(--text); }
+  .exec-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .two-col-exec { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  @media (max-width: 768px) { .two-col-exec { grid-template-columns: 1fr; } }
+  .gloss-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .gloss-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--green);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+  }
+  .gloss-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .gloss-body { font-size: 12px; color: var(--muted2); line-height: 1.7; }
+  .gloss-body p { margin-bottom: 0.5rem; }
+  .gloss-body p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Sector Analyzer</h1>
+    <p id="header-meta">Carga una tabla HTML de market-analyze para comenzar</p>
+  </div>
+  <div class="upload-zone">
+    <button class="upload-btn" id="export-btn" style="display:none; background:var(--surface); color:var(--text);" title="Exportar reporte a archivo HTML independiente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Exportar
+    </button>
+    <label class="upload-btn" for="file-input">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Cargar tabla HTML
+    </label>
+    <input type="file" id="file-input" accept=".html,.htm">
+    <span id="file-label">ningún archivo</span>
+    <button class="theme-btn" id="theme-toggle" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
+      <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="main" id="main-content">
+  <div class="empty-state" id="empty-state">
+    <div class="empty-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    </div>
+    <h2>Análisis sectorial automático</h2>
+    <p>Carga cualquier tabla HTML exportada desde market-analyze y el análisis completo se genera al instante.</p>
+  </div>
+  <div id="report" style="display:none"></div>
+</div>
+
+<div class="footer">
+  <span>market-analyze · sector-analyzer v1.0</span>
+  <span id="footer-ts"></span>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// ── PARSER ──────────────────────────────────────────────────────────────
+function parseHTMLTables(html) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  const tables = doc.querySelectorAll('table');
+  const result = [];
+  tables.forEach(tbl => {
+    const headers = [...tbl.querySelectorAll('thead th')].map(th => th.textContent.trim());
+    const rows = [...tbl.querySelectorAll('tbody tr')].map(tr =>
+      [...tr.querySelectorAll('td')].map(td => td.textContent.trim())
+    ).filter(r => r.length > 0);
+    result.push({ headers, rows });
+  });
+  return result;
+}
+
+function parseVal(str) {
+  if (!str) return NaN;
+  const clean = str.replace(/[📈📉🚀💀↑↓→%\s]/g, '').replace(/[+]/g, '');
+  return parseFloat(clean);
+}
+
+function parseTrend(str) {
+  if (!str) return { dir: 0, mag: 0 };
+  if (str.includes('↑')) return { dir: 1, mag: parseInt(str.replace('↑','')) || 0 };
+  if (str.includes('↓')) return { dir: -1, mag: parseInt(str.replace('↓','')) || 0 };
+  return { dir: 0, mag: 0 };
+}
+
+function detectSchema(tables) {
+  // Find sector table (has 'Sector' header and ~21 rows)
+  // Find ticker table (has 'Ticker' header)
+  let sectorTable = null, tickerTable = null;
+  for (const t of tables) {
+    if (t.headers.includes('Sector') && t.rows.length > 15 && t.rows.length < 30) sectorTable = t;
+    if (t.headers.includes('Ticker')) tickerTable = t;
+  }
+  return { sectorTable, tickerTable };
+}
+
+function buildSectors(t) {
+  // Detect column positions dynamically
+  const h = t.headers;
+  const idx = name => h.findIndex(x => x.toLowerCase().includes(name.toLowerCase()));
+  const iSector = 0;
+  const iQ1  = idx('Q1');
+  const iAbr = h.findIndex(x => ['Abr','Apr','Abril'].includes(x));
+  const iMay = h.findIndex(x => ['May','Mayo'].includes(x));
+  const iAnual = idx('Anual');
+  const iTrend = idx('Trend');
+  const iMom = idx('Momentum');
+
+  const monthName = iMay >= 0 ? 'mayo' : (iAbr >= 0 ? 'abril' : 'marzo');
+
+  const sectors = t.rows.map(r => {
+    let q1 = iQ1 >= 0 ? parseVal(r[iQ1]) : NaN;
+    let abr = iAbr >= 0 ? parseVal(r[iAbr]) : NaN;
+    let mayRaw = iMay >= 0 ? parseVal(r[iMay]) : NaN;
+    let anual = iAnual >= 0 ? parseVal(r[iAnual]) : NaN;
+
+    let currentMonth = !isNaN(mayRaw) ? mayRaw : (!isNaN(abr) ? abr : q1);
+
+    if (isNaN(anual) && (!isNaN(q1) || !isNaN(currentMonth))) {
+       let ytd = 1;
+       if (!isNaN(q1)) ytd *= (1 + q1/100);
+       if (!isNaN(currentMonth) && isNaN(mayRaw) && !isNaN(abr)) ytd *= (1 + abr/100);
+       if (!isNaN(mayRaw)) {
+          if (!isNaN(abr)) ytd *= (1 + abr/100);
+          ytd *= (1 + mayRaw/100);
+       }
+       anual = (ytd - 1) * 100;
+    }
+
+    return {
+      sector:   r[iSector] || '',
+      q1:       q1,
+      abr:      abr,
+      may:      currentMonth, // Aliasing the latest month to 'may' property
+      anual:    !isNaN(anual) ? anual : currentMonth,
+      trend:    iTrend >= 0 ? parseTrend(r[iTrend]) : { dir: 0, mag: 0 },
+      momentum: iMom >= 0 ? parseVal(r[iMom]) : NaN,
+      raw: r
+    };
+  }).filter(s => s.sector && !isNaN(s.anual));
+
+  return { sectors, monthName };
+}
+
+function buildTickers(t) {
+  const h = t.headers;
+  const idx = name => h.findIndex(x => x.toLowerCase().includes(name.toLowerCase()));
+  const iQ1  = idx('Q1');
+  const iAbr = h.findIndex(x => ['Abr','Apr','Abril'].includes(x));
+  const iMay = h.findIndex(x => ['May','Mayo'].includes(x));
+  const iAnual = idx('Anual');
+  const iSector = idx('Lista') >= 0 ? idx('Lista') : idx('Sector');
+  const iNombre = idx('Nombre');
+  const iMkt = idx('MktCap');
+
+  return t.rows.map(r => {
+    let q1 = iQ1 >= 0 ? parseVal(r[iQ1]) : NaN;
+    let abr = iAbr >= 0 ? parseVal(r[iAbr]) : NaN;
+    let mayRaw = iMay >= 0 ? parseVal(r[iMay]) : NaN;
+    let anual = iAnual >= 0 ? parseVal(r[iAnual]) : NaN;
+
+    let currentMonth = !isNaN(mayRaw) ? mayRaw : (!isNaN(abr) ? abr : q1);
+
+    if (isNaN(anual) && (!isNaN(q1) || !isNaN(currentMonth))) {
+       let ytd = 1;
+       if (!isNaN(q1)) ytd *= (1 + q1/100);
+       if (!isNaN(currentMonth) && isNaN(mayRaw) && !isNaN(abr)) ytd *= (1 + abr/100);
+       if (!isNaN(mayRaw)) {
+          if (!isNaN(abr)) ytd *= (1 + abr/100);
+          ytd *= (1 + mayRaw/100);
+       }
+       anual = (ytd - 1) * 100;
+    }
+
+    return {
+      ticker:  r[0] || '',
+      nombre:  iNombre >= 0 ? r[iNombre] : '',
+      mktcap:  iMkt >= 0 ? r[iMkt] : '',
+      sector:  iSector >= 0 ? r[iSector] : '',
+      q1:      q1,
+      abr:     abr,
+      may:     currentMonth,
+      anual:   !isNaN(anual) ? anual : currentMonth,
+    };
+  }).filter(t => t.ticker && !isNaN(t.anual));
+}
+
+// ── ANALYSIS ENGINE ──────────────────────────────────────────────────────
+function classifySignal(s) {
+  const { anual, may, trend, momentum } = s;
+  const trendDir = trend.dir;
+  const trendMag = trend.mag;
+
+  // Score-based: anual weight 40%, may 30%, trend 20%, momentum 10%
+  let score = 0;
+  score += anual > 50 ? 4 : anual > 20 ? 3 : anual > 5 ? 2 : anual > 0 ? 1 : anual > -10 ? -1 : -3;
+  score += may > 30 ? 4 : may > 15 ? 3 : may > 5 ? 2 : may > 0 ? 1 : may > -5 ? 0 : -2;
+  score += trendDir === 1 ? (trendMag > 8 ? 3 : trendMag > 3 ? 2 : 1) : trendDir === -1 ? (trendMag > 5 ? -2 : -1) : 0;
+  score += !isNaN(momentum) ? (momentum > 20 ? 2 : momentum > 0 ? 1 : momentum > -10 ? 0 : -1) : 0;
+
+  if (score >= 8)  return 'buy';
+  if (score >= 4)  return 'watch';
+  if (score >= 0)  return 'caution';
+  return 'avoid';
+}
+
+const SIGNAL_LABELS = { buy: 'Sobreponderar', watch: 'Vigilar', caution: 'Precaución', avoid: 'Infraponderar' };
+const SIGNAL_BADGE  = { buy: 'badge-buy', watch: 'badge-watch', caution: 'badge-caution', avoid: 'badge-avoid' };
+
+function generateNarrative(sectors) {
+  const sorted = [...sectors].sort((a,b) => b.anual - a.anual);
+  const best = sorted[0];
+  const worst = sorted[sorted.length - 1];
+  const bestMay = [...sectors].sort((a,b) => b.may - a.may)[0];
+  const worstMay = [...sectors].sort((a,b) => a.may - b.may)[0];
+  const risingMomentum = sectors.filter(s => s.trend.dir === 1).sort((a,b) => b.trend.mag - a.trend.mag).slice(0, 3);
+  const fallingMomentum = sectors.filter(s => s.trend.dir === -1).sort((a,b) => b.trend.mag - a.trend.mag).slice(0, 3);
+
+  const posAnual = sectors.filter(s => s.anual > 0).length;
+  const posQ1    = sectors.filter(s => s.q1 > 0).length;
+  const posMay   = sectors.filter(s => s.may > 0).length;
+
+  const avgAnual = (sectors.reduce((a,s) => a + s.anual, 0) / sectors.length).toFixed(1);
+  const avgMay   = (sectors.reduce((a,s) => a + s.may, 0)   / sectors.length).toFixed(1);
+
+  return { best, worst, bestMay, worstMay, risingMomentum, fallingMomentum, posAnual, posQ1, posMay, avgAnual, avgMay, total: sectors.length };
+}
+
+function signalDescription(s, monthName) {
+  const { sector, anual, may, q1, trend, momentum } = s;
+  const signal = classifySignal(s);
+  const momentumStr = !isNaN(momentum) ? ` Momentum mensual: ${momentum > 0 ? '+' : ''}${momentum.toFixed(1)}%.` : '';
+  const trendStr = trend.dir === 1 ? ` Subió ${trend.mag} posiciones en el ranking.`
+                 : trend.dir === -1 ? ` Bajó ${trend.mag} posiciones en el ranking.`
+                 : ' Mantiene posición en el ranking.';
+
+  if (signal === 'buy') {
+    return `Rendimiento anual de ${f(anual)} con ${monthName} en ${f(may)}.${trendStr}${momentumStr} Momentum sólido que justifica sobreponderar en la asignación de capital.`;
+  }
+  if (signal === 'watch') {
+    const q1str = q1 > 0 ? `Q1 positivo (${f(q1)}).` : `Q1 negativo (${f(q1)}).`;
+    return `${q1str} El mes de ${monthName} muestra recuperación. Anual en ${f(anual)}.${trendStr}${momentumStr} Tesis en formación — esperar confirmación antes de añadir posición.`;
+  }
+  if (signal === 'caution') {
+    return `Anual en ${f(anual)} pero ${monthName} muestra debilidad (${f(may)}).${trendStr}${momentumStr} No añadir capital nuevo. Revisar si la tendencia se prolonga.`;
+  }
+  return `Rendimiento anual de ${f(anual)} con ${monthName} en ${f(may)}.${trendStr}${momentumStr} Momentum deteriorado. Capital mejor asignado en sectores con señal de sobreponderar.`;
+}
+
+// ── FORMATTERS ──────────────────────────────────────────────────────────
+function f(v, dec=2) {
+  if (isNaN(v)) return '—';
+  return (v >= 0 ? '+' : '') + v.toFixed(dec) + '%';
+}
+function chipHtml(v) {
+  if (isNaN(v)) return '<span class="chip n">—</span>';
+  const cls = v > 0.5 ? 'g' : v < -0.5 ? 'r' : 'n';
+  return `<span class="chip ${cls}">${f(v)}</span>`;
+}
+function colorVal(v) {
+  return v > 0.5 ? 'var(--green)' : v < -0.5 ? 'var(--red)' : 'var(--muted2)';
+}
+
+// ── RENDER ──────────────────────────────────────────────────────────────
+function render(sectors, tickers, filename, monthName) {
+  const monthNameCap = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+  const monthShort = monthNameCap.substring(0,3);
+  window._currentPeriod = monthNameCap;
+
+  const n = generateNarrative(sectors);
+  const sortedAnual = [...sectors].sort((a,b) => b.anual - a.anual);
+  const maxAnual = Math.max(...sectors.map(s => Math.abs(s.anual)));
+
+  // Signals
+  const withSignal = sectors.map(s => ({ ...s, signal: classifySignal(s) }));
+  const buys    = withSignal.filter(s => s.signal === 'buy');
+  const watches = withSignal.filter(s => s.signal === 'watch');
+  const cautions = withSignal.filter(s => s.signal === 'caution');
+  const avoids  = withSignal.filter(s => s.signal === 'avoid');
+
+  // Top tickers
+  const topTickers = [...tickers].sort((a,b) => b.anual - a.anual).slice(0, 12);
+  const topMay     = [...tickers].sort((a,b) => b.may - a.may).slice(0, 8);
+
+  // Momentum sorted
+  const momentumSorted = [...sectors]
+    .filter(s => !isNaN(s.momentum))
+    .sort((a,b) => b.momentum - a.momentum);
+  const maxMom = Math.max(...momentumSorted.map(s => Math.abs(s.momentum)));
+
+  const periods = sectors[0].abr !== undefined && !isNaN(sectors[0].abr) ? ['Q1', 'Abr', 'May', 'Anual'] : ['Q1', 'May', 'Anual'];
+  const hasMom = sectors.some(s => !isNaN(s.momentum));
+  const hasTrend = sectors.some(s => s.trend.mag > 0);
+
+  $('header-meta').textContent = `${filename} · ${sectors.length} sectores · ${tickers.length} tickers`;
+  $('footer-ts').textContent = `Generado: ${new Date().toLocaleString('es-ES')}`;
+
+  const html = `
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Mejor sector anual</div>
+      <div class="kpi-val g">${n.best.sector}</div>
+      <div class="kpi-sub">${f(n.best.anual)}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Mayor momentum ${monthName}</div>
+      <div class="kpi-val b">${n.bestMay.sector}</div>
+      <div class="kpi-sub">${f(n.bestMay.may)} en ${monthName}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Peor sector anual</div>
+      <div class="kpi-val r">${n.worst.sector}</div>
+      <div class="kpi-sub">${f(n.worst.anual)}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Sectores positivos</div>
+      <div class="kpi-val">${n.posAnual}<span style="font-size:13px;color:var(--muted)"> / ${n.total}</span></div>
+      <div class="kpi-sub">anual · ${n.posMay}/${n.total} en mayo</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Media sectorial anual</div>
+      <div class="kpi-val ${parseFloat(n.avgAnual) >= 0 ? 'g' : 'r'}">${f(parseFloat(n.avgAnual),1)}</div>
+      <div class="kpi-sub">${monthNameCap}: ${f(parseFloat(n.avgMay),1)}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Sobreponderar</div>
+      <div class="kpi-val g">${buys.length}</div>
+      <div class="kpi-sub">${watches.length} vigilar · ${cautions.length + avoids.length} reducir</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Momentum mes</div>
+      <div class="kpi-val ${n.posMay < n.total/2 ? 'a' : 'g'}">${n.posMay < n.total/2 ? 'Selectivo' : 'Amplio'}</div>
+      <div class="kpi-sub">${n.posMay}/${n.total} sectores positivos</div>
+    </div>
+  </div>
+
+  <!-- SECTOR TABLE -->
+  <div class="section">
+    <div class="section-label">Tabla sectorial completa</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Sector</th>
+            <th>Q1</th>
+            ${!isNaN(sectors[0]?.abr) && monthName !== 'abril' ? '<th>Abr</th>' : ''}
+            <th>${monthNameCap}</th>
+            <th>Anual</th>
+            ${hasTrend ? '<th>Trend</th>' : ''}
+            ${hasMom ? '<th>Momentum</th>' : ''}
+            <th>Señal</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${sortedAnual.map(s => {
+            const sig = classifySignal(s);
+            const tr = s.trend;
+            const trendHtml = tr.dir === 1 ? `<span class="trend-up">↑${tr.mag}</span>`
+                            : tr.dir === -1 ? `<span class="trend-down">↓${tr.mag}</span>`
+                            : `<span class="trend-flat">→</span>`;
+            return `<tr>
+              <td><span class="sector-name-cell">${s.sector}</span></td>
+              <td>${chipHtml(s.q1)}</td>
+              ${!isNaN(s.abr) ? `<td>${chipHtml(s.abr)}</td>` : ''}
+              <td>${chipHtml(s.may)}</td>
+              <td>${chipHtml(s.anual)}</td>
+              ${hasTrend ? `<td class="trend-cell">${trendHtml}</td>` : ''}
+              ${hasMom ? `<td><span style="font-family:var(--font-mono);font-size:11px;color:${colorVal(s.momentum)}">${f(s.momentum)}</span></td>` : ''}
+              <td><span class="signal-badge ${SIGNAL_BADGE[sig]}">${SIGNAL_LABELS[sig]}</span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BAR CHART ANUAL -->
+  <div class="section">
+    <div class="section-label">Ranking anual — media sectorial</div>
+    <div class="bar-list">
+      ${sortedAnual.map(s => {
+        const pct = (Math.abs(s.anual) / maxAnual * 100).toFixed(1);
+        const col = s.anual >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<div class="bar-row">
+          <div class="bar-label">${s.sector}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col};"></div></div>
+          <div class="bar-val" style="color:${col}">${f(s.anual,1)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <!-- MOMENTUM -->
+  ${hasMom ? `<div class="section">
+    <div class="section-label">Momentum mensual — cambio de fuerza relativa</div>
+    <div>${momentumSorted.map(s => {
+      const pct = (Math.abs(s.momentum) / maxMom * 100).toFixed(1);
+      const col = s.momentum >= 0 ? 'var(--green)' : 'var(--red)';
+      const left = s.momentum < 0 ? `left:${(50 - pct/2).toFixed(1)}%` : `left:50%`;
+      return `<div class="momentum-row">
+        <div class="momentum-sector">${s.sector}</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:${pct/2}%;${left};background:${col};"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:${col}">${f(s.momentum,1)}</div>
+      </div>`;
+    }).join('')}</div>
+  </div>` : ''}
+
+  <!-- NARRATIVE -->
+  <div class="section">
+    <div class="section-label">Lectura narrativa del período</div>
+    <div class="narrative-grid">
+      <div class="narrative-card">
+        <div class="narrative-title">
+          <span class="phase-tag">Líderes</span>
+          Sectores con momentum sostenido
+        </div>
+        <div class="narrative-body">
+          ${buys.length > 0
+            ? buys.map(s => `<strong>${s.sector}</strong> (${f(s.anual,1)} anual, ${f(s.may,1)} mayo)`).join(' · ')
+            : 'Ningún sector cumple criterios de sobreponderar en este período.'}
+        </div>
+      </div>
+      <div class="narrative-card warn">
+        <div class="narrative-title">
+          <span class="phase-tag">En formación</span>
+          Sectores con tesis emergente
+        </div>
+        <div class="narrative-body">
+          ${watches.length > 0
+            ? watches.map(s => `<strong>${s.sector}</strong> (${f(s.anual,1)} anual)`).join(' · ')
+            : 'Sin sectores en zona de vigilar.'}
+          ${n.risingMomentum.length > 0
+            ? `<br><br>Mayor subida en ranking: ${n.risingMomentum.map(s => `<strong>${s.sector}</strong> ↑${s.trend.mag}`).join(', ')}.`
+            : ''}
+        </div>
+      </div>
+      <div class="narrative-card danger">
+        <div class="narrative-title">
+          <span class="phase-tag">Evitar</span>
+          Sectores con momentum deteriorado
+        </div>
+        <div class="narrative-body">
+          ${avoids.length > 0
+            ? avoids.map(s => `<strong>${s.sector}</strong> (${f(s.anual,1)} anual, ${f(s.may,1)} mayo)`).join(' · ')
+            : 'Ningún sector en zona de infraponderar.'}
+          ${n.fallingMomentum.length > 0
+            ? `<br><br>Mayor caída en ranking: ${n.fallingMomentum.map(s => `<strong>${s.sector}</strong> ↓${s.trend.mag}`).join(', ')}.`
+            : ''}
+        </div>
+      </div>
+      <div class="narrative-card neutral">
+        <div class="narrative-title">
+          <span class="phase-tag">Contexto</span>
+          Amplitud del mercado
+        </div>
+        <div class="narrative-body">
+          <strong>${n.posAnual}</strong> de ${n.total} sectores en positivo anual (${(n.posAnual/n.total*100).toFixed(0)}%).
+          En ${monthName}: <strong>${n.posMay}</strong> de ${n.total} positivos.
+          Media anual: <strong>${f(parseFloat(n.avgAnual),1)}</strong>.
+          ${n.posMay < n.total/2
+            ? ` Momentum ${monthName} <strong>selectivo</strong> — el mercado discrimina entre sectores.`
+            : ` Momentum ${monthName} <strong>amplio</strong> — rebote generalizado.`}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÑALES DETALLADAS -->
+  <div class="section">
+    <div class="section-label">Señales de asignación — todos los sectores</div>
+    <div class="filter-row" id="filter-row">
+      <button class="filter-btn active" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="buy">Sobreponderar</button>
+      <button class="filter-btn" data-filter="watch">Vigilar</button>
+      <button class="filter-btn" data-filter="caution">Precaución</button>
+      <button class="filter-btn" data-filter="avoid">Infraponderar</button>
+    </div>
+    <div class="signal-grid" id="signal-grid">
+      ${withSignal.sort((a,b) => {
+          const order = {buy:0, watch:1, caution:2, avoid:3};
+          return order[a.signal] - order[b.signal] || b.anual - a.anual;
+        }).map(s => `
+        <div class="signal-card" data-signal="${s.signal}">
+          <div class="signal-header">
+            <span class="signal-sector">${s.sector}</span>
+            <span class="signal-anual" style="color:${colorVal(s.anual)}">${f(s.anual,1)}</span>
+          </div>
+          <span class="signal-badge ${SIGNAL_BADGE[s.signal]}">${SIGNAL_LABELS[s.signal]}</span>
+          <div class="signal-desc">${signalDescription(s, monthName)}</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:${colorVal(s.q1)}">${f(s.q1,1)}</span>
+            </div>
+            ${!isNaN(s.abr) ? `<div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:${colorVal(s.abr)}">${f(s.abr,1)}</span>
+            </div>` : ''}
+            <div class="sig-metric">
+              <span class="sig-metric-label">${monthShort}</span>
+              <span class="sig-metric-val" style="color:${colorVal(s.may)}">${f(s.may,1)}</span>
+            </div>
+            ${hasMom && !isNaN(s.momentum) ? `<div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:${colorVal(s.momentum)}">${f(s.momentum,1)}</span>
+            </div>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- TOP TICKERS ANUAL -->
+  ${tickers.length > 0 ? `
+  <div class="section">
+    <div class="section-label">Top 12 tickers — rendimiento anual</div>
+    <div class="ticker-grid">
+      ${topTickers.map(t => `
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">${t.ticker}</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:${colorVal(t.anual)}">${f(t.anual,1)}</span>
+          </div>
+          <div class="ticker-name">${t.nombre}</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:${colorVal(t.q1)}">${f(t.q1,1)}</span></span>
+            <span style="color:var(--muted)">${monthShort} <span style="color:${colorVal(t.may)}">${f(t.may,1)}</span></span>
+            <span class="ticker-sector-tag">${t.sector.replace(/ETF/g,'').trim() || 'ETF'}</span>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Top 8 tickers — momentum ${monthName}</div>
+    <div class="ticker-grid">
+      ${topMay.map(t => `
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">${t.ticker}</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:${colorVal(t.may)}">${f(t.may,1)}</span>
+          </div>
+          <div class="ticker-name">${t.nombre}</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Anual <span style="color:${colorVal(t.anual)}">${f(t.anual,1)}</span></span>
+            <span class="ticker-sector-tag">${t.sector.replace(/ETF/g,'').trim() || 'ETF'}</span>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>
+  </div>` : ''}
+
+  <!-- RESUMEN EJECUTIVO -->
+  <div class="section">
+    <div class="section-label">Resumen ejecutivo — perspectiva del período</div>
+    <div class="exec-box">
+      <div class="exec-title">Narrativa del período</div>
+      Mejor sector anual: <strong>${n.best.sector}</strong> (${f(n.best.anual,1)}) · Peor: <strong>${n.worst.sector}</strong> (${f(n.worst.anual,1)}).
+      En el último mes registrado, el liderazgo lo tomó <strong>${n.bestMay.sector}</strong> (${f(n.bestMay.may,1)}),
+      mientras que <strong>${n.worstMay.sector}</strong> fue el más débil (${f(n.worstMay.may,1)}).
+      <strong>${n.posAnual}</strong> de <strong>${n.total}</strong> sectores cierran en positivo anual (${(n.posAnual/n.total*100).toFixed(0)}%).
+      ${n.posMay < n.total/2
+        ? `Solo <strong>${n.posMay}/${n.total}</strong> sectores en positivo en el último mes: <strong>momentum selectivo</strong> — el mercado discrimina entre sectores.`
+        : `<strong>${n.posMay}/${n.total}</strong> sectores en positivo en el último mes: <strong>momentum amplio</strong> — rebote generalizado.`}
+    </div>
+    <div class="two-col-exec">
+      <div>
+        <div class="exec-box">
+          <div class="exec-title">Dónde asignar capital</div>
+          ${buys.length > 0
+            ? `Los sectores con mayor convicción: ${buys.map(s => `<strong>${s.sector}</strong> (${f(s.anual,1)} anual, ${f(s.may,1)} ${monthName})`).join(' · ')}. Momentum sólido con señal de sobreponderar.`
+            : 'No hay sectores con señal clara de sobreponderar en este período. Esperar confirmación.'}
+          ${watches.length > 0 ? `<br><br><strong>En vigilancia:</strong> ${watches.map(s => `<strong>${s.sector}</strong>`).join(', ')}. Tesis en formación — esperar catalizador técnico.` : ''}
+        </div>
+        <div class="exec-box warn">
+          <div class="exec-title">El patrón que se repite</div>
+          El capital fluye hacia sectores con momentum estructural y se aleja de activos especulativos sin catalizador.
+          Cada euro en <strong>${avoids.length > 0 ? avoids[0].sector : 'sectores a infraponderar'}</strong> es un euro que no está en
+          <strong>${buys.length > 0 ? buys[0].sector : 'sectores con señal de sobreponderar'}</strong>.
+        </div>
+      </div>
+      <div>
+        <div class="exec-box danger">
+          <div class="exec-title">Qué evitar</div>
+          ${avoids.length > 0
+            ? avoids.map(s => `<strong>${s.sector}</strong> (${f(s.anual,1)} anual, ${f(s.may,1)} ${monthName})`).join(' · ') + '. Momentum deteriorado — capital mejor asignado en sectores con señal de sobreponderar.'
+            : 'Ningún sector en zona de infraponderar en este período.'}
+          ${cautions.length > 0 ? `<br><br><strong>Precaución:</strong> ${cautions.map(s => `<strong>${s.sector}</strong>`).join(', ')}. No añadir capital nuevo.` : ''}
+        </div>
+        <div class="exec-box blue">
+          <div class="exec-title">Glosario accionable de señales</div>
+          <p><strong style="color:var(--green)">Sobreponderar:</strong> Capital nuevo aquí, dejas correr posiciones y no recortas en pullbacks. Convicción alta.</p>
+          <p><strong style="color:var(--blue)">Vigilar:</strong> No comprar aún. Tener tickers en el radar y esperar señal técnica. Si ya tienes, mantienes.</p>
+          <p><strong style="color:var(--amber)">Precaución:</strong> No añadir capital nuevo. Reducir tamaño si tienes posiciones grandes. Preparado para salir.</p>
+          <p><strong style="color:var(--red)">Infraponderar:</strong> No merece capital. Cerrar con pérdidas manejables y redirigir hacia sobreponderar.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACLARACIÓN SOBREPONDERAR -->
+  <div class="section">
+    <div class="section-label">Aclaración — qué significa sobreponderar en la práctica</div>
+    <div class="exec-box" style="margin-bottom:1rem">
+      Hay tres decisiones de gestión distintas detrás de "Sobreponderar". El hilo conductor: el sesgo por defecto es
+      <strong>estar dentro y añadir</strong>, no <strong>salir y esperar</strong>. La carga de la prueba está en encontrar razones para salir,
+      no razones para quedarse. Exactamente lo contrario de lo que aplicas en infraponderar.
+    </div>
+    <div class="gloss-grid">
+      <div class="gloss-card">
+        <div class="gloss-title">1. "Pones capital nuevo"</div>
+        <div class="gloss-body">
+          <p>Cuando tienes liquidez disponible, este es el destino prioritario. No esperas el "momento perfecto" porque en sectores con momentum fuerte siempre parece caro comparado con hace tres meses.</p>
+          <p><strong>En la práctica:</strong> No entres todo de golpe. Divide en 2–3 tramos espaciados semanas o un mes. Reduces el riesgo de entrar justo antes de un pullback técnico (10–15% incluso en tendencia alcista).</p>
+        </div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-title">2. "Dejas correr posiciones"</div>
+        <div class="gloss-body">
+          <p>Psicológicamente difícil. Con +40–80% el instinto es recoger. Pero en sectores con momentum estructural, los grandes movimientos son del 150–200%. Si recortas pronto, te quedas fuera del tramo gordo.</p>
+          <p><strong>En la práctica:</strong> No fijes objetivo de precio arbitrario. La señal de salida la da el momentum cuando muestra debilidad sostenida. Usa <em>trailing stops</em> para proteger ganancias sin cerrar manualmente.</p>
+        </div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-title">3. "No recortas en pullbacks"</div>
+        <div class="gloss-body">
+          <p>Un pullback (8–12%) es corrección temporal en tendencia alcista, no señal de salida. Error clásico: confundir volatilidad normal con cambio de tendencia. Un pullback dura días/semanas; un cambio de tendencia dura meses, con volumen bajista y ruptura de soportes.</p>
+          <p><strong>En la práctica:</strong> Caída del 10% en dos semanas sin cambio macro → no haces nada. Caída del 25% en dos meses mientras el mercado sube → esa es otra conversación.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACLARACIÓN MOMENTUM -->
+  <div class="section">
+    <div class="section-label">Aclaración — momentum selectivo vs momentum amplio</div>
+    <div class="exec-box blue">
+      ${n.posMay < n.total/2
+        ? `El mercado en este período no subió de forma uniforme. Hay ganadores muy claros y perdedores igualmente claros dentro del mismo universo. Eso es <strong>selectividad</strong>: el mercado premia narrativas concretas y castiga otras. No es un mercado de marea alta donde todos los barcos suben: importa mucho <em>dónde estás</em>.`
+        : `El mercado en este período mostró <strong>momentum amplio</strong>: la mayoría de sectores subieron al mismo tiempo. Ocurre en rebotes de alivio por catalizadores macro. El riesgo es confundir un rebote generalizado con momentum estructural sostenido.`}
+      <br><br>
+      <strong>Comparativa del período:</strong>
+      Mejor: <strong>${n.bestMay.sector}</strong> ${f(n.bestMay.may,1)} · Peor: <strong>${n.worstMay.sector}</strong> ${f(n.worstMay.may,1)}.
+      Spread entre mejor y peor: <strong>${(n.bestMay.may - n.worstMay.may).toFixed(1)}pp</strong>.
+      <br><br>
+      <strong>Implicación práctica:</strong>
+      ${n.posMay < n.total/2
+        ? 'En momentum selectivo, la diversificación ciega no funciona bien: las posiciones fuertes quedan compensadas por las débiles. La selección de sector y ticker importa más que nunca — exactamente para eso sirve este análisis.'
+        : 'En momentum amplio, la diversificación funciona bien. El riesgo está en concentrar demasiado en los ganadores del rebote antes de confirmar que el momentum es estructural y no solo un rebote de alivio.'}
+    </div>
+  </div>
+  `;
+
+  $('report').innerHTML = html;
+  $('report').style.display = 'block';
+  $('empty-state').style.display = 'none';
+  $('export-btn').style.display = 'flex';
+
+  // Filter buttons
+  $('filter-row').addEventListener('click', e => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    $('filter-row').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    $('signal-grid').querySelectorAll('.signal-card').forEach(card => {
+      card.style.display = (f === 'all' || card.dataset.signal === f) ? '' : 'none';
+    });
+  });
+}
+
+// ── FILE HANDLER ─────────────────────────────────────────────────────────
+$('file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  $('file-label').textContent = file.name;
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const tables = parseHTMLTables(ev.target.result);
+      if (tables.length < 1) { alert('No se encontraron tablas en el archivo.'); return; }
+      const { sectorTable, tickerTable } = detectSchema(tables);
+      if (!sectorTable) { alert('No se encontró tabla de sectores. Asegúrate de cargar una tabla de market-analyze.'); return; }
+      const { sectors, monthName } = buildSectors(sectorTable);
+      const tickers = tickerTable ? buildTickers(tickerTable) : [];
+      render(sectors, tickers, file.name, monthName);
+    } catch(err) {
+      alert('Error procesando el archivo: ' + err.message);
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+});
+
+// ── THEME TOGGLE ──────────────────────────────────────────────────────────
+(function() {
+  const btn  = $('theme-toggle');
+  const sun  = $('icon-sun');
+  const moon = $('icon-moon');
+  const saved = localStorage.getItem('sa-theme');
+  if (saved === 'light') {
+    document.body.classList.add('light');
+    sun.style.display = ''; moon.style.display = 'none';
+  }
+  btn.addEventListener('click', () => {
+    const isLight = document.body.classList.toggle('light');
+    localStorage.setItem('sa-theme', isLight ? 'light' : 'dark');
+    sun.style.display  = isLight ? '' : 'none';
+    moon.style.display = isLight ? 'none' : '';
+  });
+})();
+
+// ── EXPORT REPORT ─────────────────────────────────────────────────────────
+$('export-btn').addEventListener('click', () => {
+  const clone = document.documentElement.cloneNode(true);
+  
+  // Clean up UI elements for the exported version
+  const uploadZone = clone.querySelector('.upload-zone');
+  if (uploadZone) uploadZone.remove();
+  const emptyState = clone.querySelector('.empty-state');
+  if (emptyState) emptyState.remove();
+  
+  // Remove all scripts to ensure it's a static report (except a new inline one for filters)
+  clone.querySelectorAll('script').forEach(s => s.remove());
+
+  // Inject a small script to make the filter buttons work in the exported file
+  const filterScript = document.createElement('script');
+  filterScript.textContent = `
+    document.getElementById('filter-row').addEventListener('click', e => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      document.querySelectorAll('.signal-card').forEach(el => {
+        el.style.display = (f === 'all' || el.dataset.signal === f) ? '' : 'none';
+      });
+    });
+  `;
+  clone.querySelector('body').appendChild(filterScript);
+
+  const htmlStr = '<!DOCTYPE html>\n<html lang="es">\n' + clone.innerHTML + '\n</html>';
+  const blob = new Blob([htmlStr], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  
+  const periodStr = window._currentPeriod || 'Export';
+  a.download = `Analysis_${periodStr}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sector Analyzer — market-analyze</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0b0f14;
+    --surface: #111720;
+    --surface2: #18202c;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #e8edf5;
+    --muted: #6b7a8d;
+    --muted2: #8a98ab;
+    --green: #22d98a;
+    --green-bg: rgba(34,217,138,0.1);
+    --red: #f05e5e;
+    --red-bg: rgba(240,94,94,0.1);
+    --amber: #f5a623;
+    --amber-bg: rgba(245,166,35,0.1);
+    --blue: #4b9cf5;
+    --blue-bg: rgba(75,156,245,0.1);
+    --accent: #4b9cf5;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --font-serif: 'Instrument Serif', serif;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  body.light {
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --surface2: #eef0f4;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.15);
+    --text: #111827;
+    --muted: #6b7280;
+    --muted2: #374151;
+    --green: #0f6e56;
+    --green-bg: rgba(15,110,86,0.08);
+    --red: #c0392b;
+    --red-bg: rgba(192,57,43,0.08);
+    --amber: #92400e;
+    --amber-bg: rgba(146,64,14,0.08);
+    --blue: #185fa5;
+    --blue-bg: rgba(24,95,165,0.08);
+    --accent: #185fa5;
+  }
+
+  /* Theme toggle */
+  .theme-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    width: 36px; height: 36px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .theme-btn:hover { background: var(--surface); border-color: var(--accent); }
+  .theme-btn svg { width: 16px; height: 16px; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 2.5rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .header-left h1 {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+  .header-left p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: var(--font-mono);
+  }
+  .upload-zone {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .upload-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .upload-btn:hover { background: #1f2b3e; border-color: var(--accent); }
+  .upload-btn svg { width: 14px; height: 14px; }
+  #file-label { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+  input[type="file"] { display: none; }
+
+  /* ── MAIN LAYOUT ── */
+  .main { padding: 1.5rem 2rem 3rem; max-width: 1400px; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    gap: 1rem;
+  }
+  .empty-icon {
+    width: 64px; height: 64px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .empty-icon svg { width: 28px; height: 28px; color: var(--muted); }
+  .empty-state h2 { font-size: 18px; font-weight: 400; font-family: var(--font-serif); color: var(--muted2); }
+  .empty-state p { font-size: 13px; color: var(--muted); max-width: 320px; line-height: 1.7; }
+
+  /* ── SECTIONS ── */
+  .section { margin-bottom: 2.5rem; }
+  .section-label {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── KPI STRIP ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+  }
+  .kpi-card {
+    background: var(--surface);
+    padding: 1.25rem 1.5rem;
+  }
+  .kpi-label { font-size: 10px; font-family: var(--font-mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .kpi-val { font-size: 22px; font-weight: 500; font-family: var(--font-mono); }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .kpi-val.g { color: var(--green); }
+  .kpi-val.r { color: var(--red); }
+  .kpi-val.b { color: var(--blue); }
+  .kpi-val.a { color: var(--amber); }
+
+  /* ── SECTOR TABLE ── */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th {
+    background: var(--surface2);
+    padding: 10px 12px;
+    text-align: right;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  thead th:first-child { text-align: left; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding: 9px 12px; text-align: right; }
+  tbody td:first-child { text-align: left; }
+  .sector-name-cell { font-weight: 500; font-size: 12px; white-space: nowrap; }
+  .chip {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+  }
+  .chip.g { color: var(--green); background: var(--green-bg); }
+  .chip.r { color: var(--red); background: var(--red-bg); }
+  .chip.n { color: var(--muted2); background: var(--surface2); }
+  .trend-cell { font-size: 11px; font-family: var(--font-mono); }
+  .trend-up { color: var(--green); }
+  .trend-down { color: var(--red); }
+  .trend-flat { color: var(--muted); }
+
+  /* ── SIGNAL CARDS ── */
+  .signal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .signal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: border-color 0.15s;
+  }
+  .signal-card:hover { border-color: var(--border2); }
+  .signal-header { display: flex; justify-content: space-between; align-items: center; }
+  .signal-sector { font-size: 14px; font-weight: 600; }
+  .signal-anual { font-size: 13px; font-family: var(--font-mono); font-weight: 500; }
+  .signal-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .badge-buy    { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,217,138,0.2); }
+  .badge-watch  { background: var(--blue-bg);  color: var(--blue);  border: 1px solid rgba(75,156,245,0.2); }
+  .badge-caution{ background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(245,166,35,0.2); }
+  .badge-avoid  { background: var(--red-bg);   color: var(--red);   border: 1px solid rgba(240,94,94,0.2); }
+  .signal-desc { font-size: 12px; color: var(--muted2); line-height: 1.6; }
+  .signal-metrics {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .sig-metric { display: flex; flex-direction: column; gap: 2px; }
+  .sig-metric-label { font-size: 9px; font-family: var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .sig-metric-val { font-size: 12px; font-family: var(--font-mono); font-weight: 500; }
+
+  /* ── BAR CHART ── */
+  .bar-list { display: flex; flex-direction: column; gap: 6px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-label { width: 100px; font-size: 11px; color: var(--muted2); text-align: right; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; height: 18px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .bar-val { width: 62px; font-size: 11px; font-family: var(--font-mono); font-weight: 500; text-align: right; flex-shrink: 0; }
+
+  /* ── TOP TICKERS ── */
+  .ticker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .ticker-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .ticker-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .ticker-sym { font-size: 13px; font-weight: 600; font-family: var(--font-mono); color: var(--text); }
+  .ticker-name { font-size: 11px; color: var(--muted); margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ticker-stats { display: flex; justify-content: space-between; font-size: 11px; font-family: var(--font-mono); }
+  .ticker-sector-tag {
+    font-size: 9px; font-family: var(--font-mono); padding: 2px 6px;
+    border-radius: 3px; background: var(--surface2); color: var(--muted2); white-space: nowrap;
+  }
+
+  /* ── NARRATIVE BOXES ── */
+  .narrative-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+  .narrative-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1.25rem;
+  }
+  .narrative-card.warn { border-left-color: var(--amber); }
+  .narrative-card.danger { border-left-color: var(--red); }
+  .narrative-card.neutral { border-left-color: var(--muted); }
+  .narrative-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .narrative-title .phase-tag {
+    font-size: 9px; font-family: var(--font-mono); padding: 2px 6px;
+    border-radius: 3px; background: var(--surface2); color: var(--muted2);
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .narrative-body { font-size: 12px; color: var(--muted2); line-height: 1.7; }
+
+  /* ── MOMENTUM ── */
+  .momentum-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .momentum-row:last-child { border-bottom: none; }
+  .momentum-sector { font-weight: 500; width: 120px; }
+  .momentum-bar-wrap { flex: 1; padding: 0 12px; }
+  .momentum-bar-track { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; position: relative; }
+  .momentum-bar-fill { height: 100%; border-radius: 3px; position: absolute; }
+  .momentum-val { font-family: var(--font-mono); font-size: 11px; font-weight: 500; width: 70px; text-align: right; }
+
+  /* ── FILTER ROW ── */
+  .filter-row { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .filter-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted2);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 600px) {
+    .header, .main, .footer { padding-left: 1rem; padding-right: 1rem; }
+    .kpi-val { font-size: 18px; }
+  }
+
+  /* ── EDUCATIONAL SECTIONS ── */
+  .exec-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 13px;
+    color: var(--muted2);
+    line-height: 1.7;
+  }
+  .exec-box.warn  { border-left-color: var(--amber); }
+  .exec-box.danger{ border-left-color: var(--red); }
+  .exec-box.blue  { border-left-color: var(--blue); }
+  .exec-box strong { color: var(--text); }
+  .exec-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .two-col-exec { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  @media (max-width: 768px) { .two-col-exec { grid-template-columns: 1fr; } }
+  .gloss-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .gloss-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--green);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+  }
+  .gloss-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .gloss-body { font-size: 12px; color: var(--muted2); line-height: 1.7; }
+  .gloss-body p { margin-bottom: 0.5rem; }
+  .gloss-body p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body class="light">
+
+<div class="header">
+  <div class="header-left">
+    <h1>Sector Analyzer</h1>
+    <p id="header-meta">tabla_ghost_May_2026.html · 21 sectores · 139 tickers</p>
+  </div>
+  
+</div>
+
+<div class="main" id="main-content">
+  
+  <div id="report" style="display: block;">
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Mejor sector anual</div>
+      <div class="kpi-val g">Storage</div>
+      <div class="kpi-sub">+280.74%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Mayor momentum mayo</div>
+      <div class="kpi-val b">Data Center</div>
+      <div class="kpi-sub">+57.63% en mayo</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Peor sector anual</div>
+      <div class="kpi-val r">Mid Tech</div>
+      <div class="kpi-sub">-12.35%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Sectores positivos</div>
+      <div class="kpi-val">17<span style="font-size:13px;color:var(--muted)"> / 21</span></div>
+      <div class="kpi-sub">anual · 18/21 en mayo</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Media sectorial anual</div>
+      <div class="kpi-val g">+45.5%</div>
+      <div class="kpi-sub">Mayo: +18.1%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Sobreponderar</div>
+      <div class="kpi-val g">4</div>
+      <div class="kpi-sub">7 vigilar · 10 reducir</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Momentum mes</div>
+      <div class="kpi-val g">Amplio</div>
+      <div class="kpi-sub">18/21 sectores positivos</div>
+    </div>
+  </div>
+
+  <!-- SECTOR TABLE -->
+  <div class="section">
+    <div class="section-label">Tabla sectorial completa</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Sector</th>
+            <th>Q1</th>
+            <th>Abr</th>
+            <th>Mayo</th>
+            <th>Anual</th>
+            <th>Trend</th>
+            <th>Momentum</th>
+            <th>Señal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+              <td><span class="sector-name-cell">Storage</span></td>
+              <td><span class="chip g">+59.17%</span></td>
+              <td><span class="chip g">+56.55%</span></td>
+              <td><span class="chip g">+52.00%</span></td>
+              <td><span class="chip g">+280.74%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓1</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-4.55%</span></td>
+              <td><span class="signal-badge badge-watch">Vigilar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Cloud AI</span></td>
+              <td><span class="chip g">+16.07%</span></td>
+              <td><span class="chip g">+38.64%</span></td>
+              <td><span class="chip g">+32.67%</span></td>
+              <td><span class="chip g">+114.52%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓2</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-5.97%</span></td>
+              <td><span class="signal-badge badge-watch">Vigilar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">BTC Mining</span></td>
+              <td><span class="chip r">-1.51%</span></td>
+              <td><span class="chip g">+46.42%</span></td>
+              <td><span class="chip g">+40.85%</span></td>
+              <td><span class="chip g">+102.87%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓2</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-5.57%</span></td>
+              <td><span class="signal-badge badge-watch">Vigilar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Data Center</span></td>
+              <td><span class="chip r">-1.15%</span></td>
+              <td><span class="chip g">+22.37%</span></td>
+              <td><span class="chip g">+57.63%</span></td>
+              <td><span class="chip g">+97.41%</span></td>
+              <td class="trend-cell"><span class="trend-up">↑4</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+35.26%</span></td>
+              <td><span class="signal-badge badge-buy">Sobreponderar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Semic.</span></td>
+              <td><span class="chip g">+3.18%</span></td>
+              <td><span class="chip g">+40.45%</span></td>
+              <td><span class="chip g">+23.57%</span></td>
+              <td><span class="chip g">+83.49%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓4</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-16.88%</span></td>
+              <td><span class="signal-badge badge-watch">Vigilar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Equipment</span></td>
+              <td><span class="chip g">+27.09%</span></td>
+              <td><span class="chip g">+15.02%</span></td>
+              <td><span class="chip g">+16.52%</span></td>
+              <td><span class="chip g">+70.58%</span></td>
+              <td class="trend-cell"><span class="trend-flat">→</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+1.50%</span></td>
+              <td><span class="signal-badge badge-buy">Sobreponderar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Cons. Elect.</span></td>
+              <td><span class="chip r">-8.44%</span></td>
+              <td><span class="chip g">+8.36%</span></td>
+              <td><span class="chip g">+40.68%</span></td>
+              <td><span class="chip g">+47.74%</span></td>
+              <td class="trend-cell"><span class="trend-up">↑10</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+32.32%</span></td>
+              <td><span class="signal-badge badge-buy">Sobreponderar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">CiberSec.</span></td>
+              <td><span class="chip r">-4.68%</span></td>
+              <td><span class="chip g">+1.89%</span></td>
+              <td><span class="chip g">+42.48%</span></td>
+              <td><span class="chip g">+39.80%</span></td>
+              <td class="trend-cell"><span class="trend-up">↑16</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+40.59%</span></td>
+              <td><span class="signal-badge badge-buy">Sobreponderar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Index</span></td>
+              <td><span class="chip r">-1.16%</span></td>
+              <td><span class="chip g">+21.49%</span></td>
+              <td><span class="chip g">+12.59%</span></td>
+              <td><span class="chip g">+37.33%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓4</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-8.90%</span></td>
+              <td><span class="signal-badge badge-watch">Vigilar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">ETF</span></td>
+              <td><span class="chip r">-2.67%</span></td>
+              <td><span class="chip g">+14.37%</span></td>
+              <td><span class="chip g">+9.00%</span></td>
+              <td><span class="chip g">+23.16%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓1</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-5.37%</span></td>
+              <td><span class="signal-badge badge-watch">Vigilar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Oil</span></td>
+              <td><span class="chip g">+32.38%</span></td>
+              <td><span class="chip r">-1.10%</span></td>
+              <td><span class="chip r">-6.13%</span></td>
+              <td><span class="chip g">+22.45%</span></td>
+              <td class="trend-cell"><span class="trend-flat">→</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-5.02%</span></td>
+              <td><span class="signal-badge badge-caution">Precaución</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Rare</span></td>
+              <td><span class="chip g">+1.99%</span></td>
+              <td><span class="chip g">+13.72%</span></td>
+              <td><span class="chip g">+2.58%</span></td>
+              <td><span class="chip g">+18.50%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓5</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-11.14%</span></td>
+              <td><span class="signal-badge badge-caution">Precaución</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Spain</span></td>
+              <td><span class="chip g">+1.68%</span></td>
+              <td><span class="chip g">+6.26%</span></td>
+              <td><span class="chip g">+1.29%</span></td>
+              <td><span class="chip g">+9.22%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓2</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-4.97%</span></td>
+              <td><span class="signal-badge badge-caution">Precaución</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Top Crypto</span></td>
+              <td><span class="chip r">-13.78%</span></td>
+              <td><span class="chip g">+5.40%</span></td>
+              <td><span class="chip g">+10.13%</span></td>
+              <td><span class="chip g">+8.98%</span></td>
+              <td class="trend-cell"><span class="trend-up">↑6</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+4.73%</span></td>
+              <td><span class="signal-badge badge-watch">Vigilar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Electric</span></td>
+              <td><span class="chip g">+2.93%</span></td>
+              <td><span class="chip g">+13.31%</span></td>
+              <td><span class="chip r">-5.49%</span></td>
+              <td><span class="chip g">+8.56%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓7</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-18.80%</span></td>
+              <td><span class="signal-badge badge-avoid">Infraponderar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Big Tech</span></td>
+              <td><span class="chip r">-13.19%</span></td>
+              <td><span class="chip g">+14.52%</span></td>
+              <td><span class="chip g">+7.27%</span></td>
+              <td><span class="chip g">+6.30%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓4</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-7.25%</span></td>
+              <td><span class="signal-badge badge-caution">Precaución</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Financial</span></td>
+              <td><span class="chip r">-11.68%</span></td>
+              <td><span class="chip g">+11.66%</span></td>
+              <td><span class="chip g">+4.45%</span></td>
+              <td><span class="chip g">+3.85%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓2</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-7.21%</span></td>
+              <td><span class="signal-badge badge-caution">Precaución</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Currency</span></td>
+              <td><span class="chip r">-2.45%</span></td>
+              <td><span class="chip g">+1.96%</span></td>
+              <td><span class="chip n">-0.22%</span></td>
+              <td><span class="chip r">-0.75%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓1</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-2.18%</span></td>
+              <td><span class="signal-badge badge-avoid">Infraponderar</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Privacy</span></td>
+              <td><span class="chip r">-32.03%</span></td>
+              <td><span class="chip g">+21.29%</span></td>
+              <td><span class="chip g">+22.19%</span></td>
+              <td><span class="chip r">-3.42%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓1</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+0.89%</span></td>
+              <td><span class="signal-badge badge-caution">Precaución</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Bitcoin Rel.</span></td>
+              <td><span class="chip r">-22.24%</span></td>
+              <td><span class="chip g">+15.64%</span></td>
+              <td><span class="chip g">+8.30%</span></td>
+              <td><span class="chip r">-3.93%</span></td>
+              <td class="trend-cell"><span class="trend-down">↓5</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-7.35%</span></td>
+              <td><span class="signal-badge badge-caution">Precaución</span></td>
+            </tr><tr>
+              <td><span class="sector-name-cell">Mid Tech</span></td>
+              <td><span class="chip r">-18.53%</span></td>
+              <td><span class="chip g">+1.67%</span></td>
+              <td><span class="chip g">+7.22%</span></td>
+              <td><span class="chip r">-12.35%</span></td>
+              <td class="trend-cell"><span class="trend-up">↑5</span></td>
+              <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+5.55%</span></td>
+              <td><span class="signal-badge badge-caution">Precaución</span></td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BAR CHART ANUAL -->
+  <div class="section">
+    <div class="section-label">Ranking anual — media sectorial</div>
+    <div class="bar-list">
+      <div class="bar-row">
+          <div class="bar-label">Storage</div>
+          <div class="bar-track"><div class="bar-fill" style="width:100.0%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+280.7%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Cloud AI</div>
+          <div class="bar-track"><div class="bar-fill" style="width:40.8%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+114.5%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">BTC Mining</div>
+          <div class="bar-track"><div class="bar-fill" style="width:36.6%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+102.9%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Data Center</div>
+          <div class="bar-track"><div class="bar-fill" style="width:34.7%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+97.4%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Semic.</div>
+          <div class="bar-track"><div class="bar-fill" style="width:29.7%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+83.5%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Equipment</div>
+          <div class="bar-track"><div class="bar-fill" style="width:25.1%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+70.6%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Cons. Elect.</div>
+          <div class="bar-track"><div class="bar-fill" style="width:17.0%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+47.7%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">CiberSec.</div>
+          <div class="bar-track"><div class="bar-fill" style="width:14.2%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+39.8%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Index</div>
+          <div class="bar-track"><div class="bar-fill" style="width:13.3%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+37.3%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">ETF</div>
+          <div class="bar-track"><div class="bar-fill" style="width:8.2%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+23.2%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Oil</div>
+          <div class="bar-track"><div class="bar-fill" style="width:8.0%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+22.4%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Rare</div>
+          <div class="bar-track"><div class="bar-fill" style="width:6.6%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+18.5%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Spain</div>
+          <div class="bar-track"><div class="bar-fill" style="width:3.3%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+9.2%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Top Crypto</div>
+          <div class="bar-track"><div class="bar-fill" style="width:3.2%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+9.0%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Electric</div>
+          <div class="bar-track"><div class="bar-fill" style="width:3.0%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+8.6%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Big Tech</div>
+          <div class="bar-track"><div class="bar-fill" style="width:2.2%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+6.3%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Financial</div>
+          <div class="bar-track"><div class="bar-fill" style="width:1.4%;background:var(--green);"></div></div>
+          <div class="bar-val" style="color:var(--green)">+3.9%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Currency</div>
+          <div class="bar-track"><div class="bar-fill" style="width:0.3%;background:var(--red);"></div></div>
+          <div class="bar-val" style="color:var(--red)">-0.8%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Privacy</div>
+          <div class="bar-track"><div class="bar-fill" style="width:1.2%;background:var(--red);"></div></div>
+          <div class="bar-val" style="color:var(--red)">-3.4%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Bitcoin Rel.</div>
+          <div class="bar-track"><div class="bar-fill" style="width:1.4%;background:var(--red);"></div></div>
+          <div class="bar-val" style="color:var(--red)">-3.9%</div>
+        </div><div class="bar-row">
+          <div class="bar-label">Mid Tech</div>
+          <div class="bar-track"><div class="bar-fill" style="width:4.4%;background:var(--red);"></div></div>
+          <div class="bar-val" style="color:var(--red)">-12.3%</div>
+        </div>
+    </div>
+  </div>
+
+  <!-- MOMENTUM -->
+  <div class="section">
+    <div class="section-label">Momentum mensual — cambio de fuerza relativa</div>
+    <div><div class="momentum-row">
+        <div class="momentum-sector">CiberSec.</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:50%;left:50%;background:var(--green);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--green)">+40.6%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Data Center</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:43.45%;left:50%;background:var(--green);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--green)">+35.3%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Cons. Elect.</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:39.8%;left:50%;background:var(--green);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--green)">+32.3%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Mid Tech</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:6.85%;left:50%;background:var(--green);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--green)">+5.5%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Top Crypto</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:5.85%;left:50%;background:var(--green);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--green)">+4.7%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Equipment</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:1.85%;left:50%;background:var(--green);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--green)">+1.5%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Privacy</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:1.1%;left:50%;background:var(--green);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--green)">+0.9%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Currency</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:2.7%;left:47.3%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-2.2%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Storage</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:5.6%;left:44.4%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-4.5%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Spain</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:6.1%;left:43.9%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-5.0%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Oil</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:6.2%;left:43.8%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-5.0%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">ETF</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:6.6%;left:43.4%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-5.4%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">BTC Mining</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:6.85%;left:43.1%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-5.6%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Cloud AI</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:7.35%;left:42.6%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-6.0%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Financial</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:8.9%;left:41.1%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-7.2%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Big Tech</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:8.95%;left:41.0%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-7.3%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Bitcoin Rel.</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:9.05%;left:41.0%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-7.3%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Index</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:10.95%;left:39.0%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-8.9%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Rare</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:13.7%;left:36.3%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-11.1%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Semic.</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:20.8%;left:29.2%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-16.9%</div>
+      </div><div class="momentum-row">
+        <div class="momentum-sector">Electric</div>
+        <div class="momentum-bar-wrap">
+          <div class="momentum-bar-track">
+            <div class="momentum-bar-fill" style="width:23.15%;left:26.9%;background:var(--red);"></div>
+          </div>
+        </div>
+        <div class="momentum-val" style="color:var(--red)">-18.8%</div>
+      </div></div>
+  </div>
+
+  <!-- NARRATIVE -->
+  <div class="section">
+    <div class="section-label">Lectura narrativa del período</div>
+    <div class="narrative-grid">
+      <div class="narrative-card">
+        <div class="narrative-title">
+          <span class="phase-tag">Líderes</span>
+          Sectores con momentum sostenido
+        </div>
+        <div class="narrative-body">
+          <strong>CiberSec.</strong> (+39.8% anual, +42.5% mayo) · <strong>Cons. Elect.</strong> (+47.7% anual, +40.7% mayo) · <strong>Data Center</strong> (+97.4% anual, +57.6% mayo) · <strong>Equipment</strong> (+70.6% anual, +16.5% mayo)
+        </div>
+      </div>
+      <div class="narrative-card warn">
+        <div class="narrative-title">
+          <span class="phase-tag">En formación</span>
+          Sectores con tesis emergente
+        </div>
+        <div class="narrative-body">
+          <strong>BTC Mining</strong> (+102.9% anual) · <strong>Cloud AI</strong> (+114.5% anual) · <strong>ETF</strong> (+23.2% anual) · <strong>Index</strong> (+37.3% anual) · <strong>Semic.</strong> (+83.5% anual) · <strong>Storage</strong> (+280.7% anual) · <strong>Top Crypto</strong> (+9.0% anual)
+          <br><br>Mayor subida en ranking: <strong>CiberSec.</strong> ↑16, <strong>Cons. Elect.</strong> ↑10, <strong>Top Crypto</strong> ↑6.
+        </div>
+      </div>
+      <div class="narrative-card danger">
+        <div class="narrative-title">
+          <span class="phase-tag">Evitar</span>
+          Sectores con momentum deteriorado
+        </div>
+        <div class="narrative-body">
+          <strong>Currency</strong> (-0.8% anual, -0.2% mayo) · <strong>Electric</strong> (+8.6% anual, -5.5% mayo)
+          <br><br>Mayor caída en ranking: <strong>Electric</strong> ↓7, <strong>Bitcoin Rel.</strong> ↓5, <strong>Rare</strong> ↓5.
+        </div>
+      </div>
+      <div class="narrative-card neutral">
+        <div class="narrative-title">
+          <span class="phase-tag">Contexto</span>
+          Amplitud del mercado
+        </div>
+        <div class="narrative-body">
+          <strong>17</strong> de 21 sectores en positivo anual (81%).
+          En mayo: <strong>18</strong> de 21 positivos.
+          Media anual: <strong>+45.5%</strong>.
+           Momentum mayo <strong>amplio</strong> — rebote generalizado.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÑALES DETALLADAS -->
+  <div class="section">
+    <div class="section-label">Señales de asignación — todos los sectores</div>
+    <div class="filter-row" id="filter-row">
+      <button class="filter-btn active" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="buy">Sobreponderar</button>
+      <button class="filter-btn" data-filter="watch">Vigilar</button>
+      <button class="filter-btn" data-filter="caution">Precaución</button>
+      <button class="filter-btn" data-filter="avoid">Infraponderar</button>
+    </div>
+    <div class="signal-grid" id="signal-grid">
+      
+        <div class="signal-card" data-signal="buy">
+          <div class="signal-header">
+            <span class="signal-sector">Data Center</span>
+            <span class="signal-anual" style="color:var(--green)">+97.4%</span>
+          </div>
+          <span class="signal-badge badge-buy">Sobreponderar</span>
+          <div class="signal-desc">Rendimiento anual de +97.41% con mayo en +57.63%. Subió 4 posiciones en el ranking. Momentum mensual: +35.3%. Momentum sólido que justifica sobreponderar en la asignación de capital.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-1.1%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+22.4%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+57.6%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--green)">+35.3%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="buy">
+          <div class="signal-header">
+            <span class="signal-sector">Equipment</span>
+            <span class="signal-anual" style="color:var(--green)">+70.6%</span>
+          </div>
+          <span class="signal-badge badge-buy">Sobreponderar</span>
+          <div class="signal-desc">Rendimiento anual de +70.58% con mayo en +16.52%. Mantiene posición en el ranking. Momentum mensual: +1.5%. Momentum sólido que justifica sobreponderar en la asignación de capital.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--green)">+27.1%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+15.0%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+16.5%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--green)">+1.5%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="buy">
+          <div class="signal-header">
+            <span class="signal-sector">Cons. Elect.</span>
+            <span class="signal-anual" style="color:var(--green)">+47.7%</span>
+          </div>
+          <span class="signal-badge badge-buy">Sobreponderar</span>
+          <div class="signal-desc">Rendimiento anual de +47.74% con mayo en +40.68%. Subió 10 posiciones en el ranking. Momentum mensual: +32.3%. Momentum sólido que justifica sobreponderar en la asignación de capital.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-8.4%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+8.4%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+40.7%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--green)">+32.3%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="buy">
+          <div class="signal-header">
+            <span class="signal-sector">CiberSec.</span>
+            <span class="signal-anual" style="color:var(--green)">+39.8%</span>
+          </div>
+          <span class="signal-badge badge-buy">Sobreponderar</span>
+          <div class="signal-desc">Rendimiento anual de +39.80% con mayo en +42.48%. Subió 16 posiciones en el ranking. Momentum mensual: +40.6%. Momentum sólido que justifica sobreponderar en la asignación de capital.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-4.7%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+1.9%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+42.5%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--green)">+40.6%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="watch">
+          <div class="signal-header">
+            <span class="signal-sector">Storage</span>
+            <span class="signal-anual" style="color:var(--green)">+280.7%</span>
+          </div>
+          <span class="signal-badge badge-watch">Vigilar</span>
+          <div class="signal-desc">Q1 positivo (+59.17%). El mes de mayo muestra recuperación. Anual en +280.74%. Bajó 1 posiciones en el ranking. Momentum mensual: -4.5%. Tesis en formación — esperar confirmación antes de añadir posición.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--green)">+59.2%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+56.5%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+52.0%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-4.5%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="watch">
+          <div class="signal-header">
+            <span class="signal-sector">Cloud AI</span>
+            <span class="signal-anual" style="color:var(--green)">+114.5%</span>
+          </div>
+          <span class="signal-badge badge-watch">Vigilar</span>
+          <div class="signal-desc">Q1 positivo (+16.07%). El mes de mayo muestra recuperación. Anual en +114.52%. Bajó 2 posiciones en el ranking. Momentum mensual: -6.0%. Tesis en formación — esperar confirmación antes de añadir posición.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--green)">+16.1%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+38.6%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+32.7%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-6.0%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="watch">
+          <div class="signal-header">
+            <span class="signal-sector">BTC Mining</span>
+            <span class="signal-anual" style="color:var(--green)">+102.9%</span>
+          </div>
+          <span class="signal-badge badge-watch">Vigilar</span>
+          <div class="signal-desc">Q1 negativo (-1.51%). El mes de mayo muestra recuperación. Anual en +102.87%. Bajó 2 posiciones en el ranking. Momentum mensual: -5.6%. Tesis en formación — esperar confirmación antes de añadir posición.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-1.5%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+46.4%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+40.9%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-5.6%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="watch">
+          <div class="signal-header">
+            <span class="signal-sector">Semic.</span>
+            <span class="signal-anual" style="color:var(--green)">+83.5%</span>
+          </div>
+          <span class="signal-badge badge-watch">Vigilar</span>
+          <div class="signal-desc">Q1 positivo (+3.18%). El mes de mayo muestra recuperación. Anual en +83.49%. Bajó 4 posiciones en el ranking. Momentum mensual: -16.9%. Tesis en formación — esperar confirmación antes de añadir posición.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--green)">+3.2%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+40.5%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+23.6%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-16.9%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="watch">
+          <div class="signal-header">
+            <span class="signal-sector">Index</span>
+            <span class="signal-anual" style="color:var(--green)">+37.3%</span>
+          </div>
+          <span class="signal-badge badge-watch">Vigilar</span>
+          <div class="signal-desc">Q1 negativo (-1.16%). El mes de mayo muestra recuperación. Anual en +37.33%. Bajó 4 posiciones en el ranking. Momentum mensual: -8.9%. Tesis en formación — esperar confirmación antes de añadir posición.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-1.2%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+21.5%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+12.6%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-8.9%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="watch">
+          <div class="signal-header">
+            <span class="signal-sector">ETF</span>
+            <span class="signal-anual" style="color:var(--green)">+23.2%</span>
+          </div>
+          <span class="signal-badge badge-watch">Vigilar</span>
+          <div class="signal-desc">Q1 negativo (-2.67%). El mes de mayo muestra recuperación. Anual en +23.16%. Bajó 1 posiciones en el ranking. Momentum mensual: -5.4%. Tesis en formación — esperar confirmación antes de añadir posición.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-2.7%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+14.4%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+9.0%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-5.4%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="watch">
+          <div class="signal-header">
+            <span class="signal-sector">Top Crypto</span>
+            <span class="signal-anual" style="color:var(--green)">+9.0%</span>
+          </div>
+          <span class="signal-badge badge-watch">Vigilar</span>
+          <div class="signal-desc">Q1 negativo (-13.78%). El mes de mayo muestra recuperación. Anual en +8.98%. Subió 6 posiciones en el ranking. Momentum mensual: +4.7%. Tesis en formación — esperar confirmación antes de añadir posición.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-13.8%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+5.4%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+10.1%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--green)">+4.7%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="caution">
+          <div class="signal-header">
+            <span class="signal-sector">Oil</span>
+            <span class="signal-anual" style="color:var(--green)">+22.4%</span>
+          </div>
+          <span class="signal-badge badge-caution">Precaución</span>
+          <div class="signal-desc">Anual en +22.45% pero mayo muestra debilidad (-6.13%). Mantiene posición en el ranking. Momentum mensual: -5.0%. No añadir capital nuevo. Revisar si la tendencia se prolonga.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--green)">+32.4%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--red)">-1.1%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--red)">-6.1%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-5.0%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="caution">
+          <div class="signal-header">
+            <span class="signal-sector">Rare</span>
+            <span class="signal-anual" style="color:var(--green)">+18.5%</span>
+          </div>
+          <span class="signal-badge badge-caution">Precaución</span>
+          <div class="signal-desc">Anual en +18.50% pero mayo muestra debilidad (+2.58%). Bajó 5 posiciones en el ranking. Momentum mensual: -11.1%. No añadir capital nuevo. Revisar si la tendencia se prolonga.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--green)">+2.0%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+13.7%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+2.6%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-11.1%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="caution">
+          <div class="signal-header">
+            <span class="signal-sector">Spain</span>
+            <span class="signal-anual" style="color:var(--green)">+9.2%</span>
+          </div>
+          <span class="signal-badge badge-caution">Precaución</span>
+          <div class="signal-desc">Anual en +9.22% pero mayo muestra debilidad (+1.29%). Bajó 2 posiciones en el ranking. Momentum mensual: -5.0%. No añadir capital nuevo. Revisar si la tendencia se prolonga.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--green)">+1.7%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+6.3%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+1.3%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-5.0%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="caution">
+          <div class="signal-header">
+            <span class="signal-sector">Big Tech</span>
+            <span class="signal-anual" style="color:var(--green)">+6.3%</span>
+          </div>
+          <span class="signal-badge badge-caution">Precaución</span>
+          <div class="signal-desc">Anual en +6.30% pero mayo muestra debilidad (+7.27%). Bajó 4 posiciones en el ranking. Momentum mensual: -7.3%. No añadir capital nuevo. Revisar si la tendencia se prolonga.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-13.2%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+14.5%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+7.3%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-7.3%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="caution">
+          <div class="signal-header">
+            <span class="signal-sector">Financial</span>
+            <span class="signal-anual" style="color:var(--green)">+3.9%</span>
+          </div>
+          <span class="signal-badge badge-caution">Precaución</span>
+          <div class="signal-desc">Anual en +3.85% pero mayo muestra debilidad (+4.45%). Bajó 2 posiciones en el ranking. Momentum mensual: -7.2%. No añadir capital nuevo. Revisar si la tendencia se prolonga.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-11.7%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+11.7%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+4.5%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-7.2%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="caution">
+          <div class="signal-header">
+            <span class="signal-sector">Privacy</span>
+            <span class="signal-anual" style="color:var(--red)">-3.4%</span>
+          </div>
+          <span class="signal-badge badge-caution">Precaución</span>
+          <div class="signal-desc">Anual en -3.42% pero mayo muestra debilidad (+22.19%). Bajó 1 posiciones en el ranking. Momentum mensual: +0.9%. No añadir capital nuevo. Revisar si la tendencia se prolonga.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-32.0%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+21.3%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+22.2%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--green)">+0.9%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="caution">
+          <div class="signal-header">
+            <span class="signal-sector">Bitcoin Rel.</span>
+            <span class="signal-anual" style="color:var(--red)">-3.9%</span>
+          </div>
+          <span class="signal-badge badge-caution">Precaución</span>
+          <div class="signal-desc">Anual en -3.93% pero mayo muestra debilidad (+8.30%). Bajó 5 posiciones en el ranking. Momentum mensual: -7.3%. No añadir capital nuevo. Revisar si la tendencia se prolonga.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-22.2%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+15.6%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+8.3%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-7.3%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="caution">
+          <div class="signal-header">
+            <span class="signal-sector">Mid Tech</span>
+            <span class="signal-anual" style="color:var(--red)">-12.3%</span>
+          </div>
+          <span class="signal-badge badge-caution">Precaución</span>
+          <div class="signal-desc">Anual en -12.35% pero mayo muestra debilidad (+7.22%). Subió 5 posiciones en el ranking. Momentum mensual: +5.5%. No añadir capital nuevo. Revisar si la tendencia se prolonga.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-18.5%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+1.7%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--green)">+7.2%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--green)">+5.5%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="avoid">
+          <div class="signal-header">
+            <span class="signal-sector">Electric</span>
+            <span class="signal-anual" style="color:var(--green)">+8.6%</span>
+          </div>
+          <span class="signal-badge badge-avoid">Infraponderar</span>
+          <div class="signal-desc">Rendimiento anual de +8.56% con mayo en -5.49%. Bajó 7 posiciones en el ranking. Momentum mensual: -18.8%. Momentum deteriorado. Capital mejor asignado en sectores con señal de sobreponderar.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--green)">+2.9%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+13.3%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--red)">-5.5%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-18.8%</span>
+            </div>
+          </div>
+        </div>
+        <div class="signal-card" data-signal="avoid">
+          <div class="signal-header">
+            <span class="signal-sector">Currency</span>
+            <span class="signal-anual" style="color:var(--red)">-0.8%</span>
+          </div>
+          <span class="signal-badge badge-avoid">Infraponderar</span>
+          <div class="signal-desc">Rendimiento anual de -0.75% con mayo en -0.22%. Bajó 1 posiciones en el ranking. Momentum mensual: -2.2%. Momentum deteriorado. Capital mejor asignado en sectores con señal de sobreponderar.</div>
+          <div class="signal-metrics">
+            <div class="sig-metric">
+              <span class="sig-metric-label">Q1</span>
+              <span class="sig-metric-val" style="color:var(--red)">-2.5%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Abr</span>
+              <span class="sig-metric-val" style="color:var(--green)">+2.0%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">May</span>
+              <span class="sig-metric-val" style="color:var(--muted2)">-0.2%</span>
+            </div>
+            <div class="sig-metric">
+              <span class="sig-metric-label">Momentum</span>
+              <span class="sig-metric-val" style="color:var(--red)">-2.2%</span>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- TOP TICKERS ANUAL -->
+  
+  <div class="section">
+    <div class="section-label">Top 12 tickers — rendimiento anual</div>
+    <div class="ticker-grid">
+      
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">SNDK</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+614.0%</span>
+          </div>
+          <div class="ticker-name">Sandisk Corporation</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+167.7%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+54.6%</span></span>
+            <span class="ticker-sector-tag">Storage</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">HY9H.F</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+244.2%</span>
+          </div>
+          <div class="ticker-name">SK Hynix</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+32.5%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+74.3%</span></span>
+            <span class="ticker-sector-tag">Storage</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">MU</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+240.2%</span>
+          </div>
+          <div class="ticker-name">Micron Tech.</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+18.4%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+87.8%</span></span>
+            <span class="ticker-sector-tag">Storage</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">DELL</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+234.4%</span>
+          </div>
+          <div class="ticker-name">Dell Technologies</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+30.4%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+101.4%</span></span>
+            <span class="ticker-sector-tag">Data Center</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">ARM</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+223.2%</span>
+          </div>
+          <div class="ticker-name">Arm Holdings</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+38.4%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+68.0%</span></span>
+            <span class="ticker-sector-tag">Semic.</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">STX</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+219.5%</span>
+          </div>
+          <div class="ticker-name">Seagate Technology</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+42.3%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+30.6%</span></span>
+            <span class="ticker-sector-tag">Storage</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">INTC</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+210.8%</span>
+          </div>
+          <div class="ticker-name">Intel Corp.</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+19.6%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+21.4%</span></span>
+            <span class="ticker-sector-tag">Semic.</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">WDC</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+208.4%</span>
+          </div>
+          <div class="ticker-name">Western Digital</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+57.0%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+22.3%</span></span>
+            <span class="ticker-sector-tag">Storage</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">NBIS</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+176.1%</span>
+          </div>
+          <div class="ticker-name">Nebius Group</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+24.0%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+67.2%</span></span>
+            <span class="ticker-sector-tag">Cloud AI</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">HUT</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+171.7%</span>
+          </div>
+          <div class="ticker-name">Hut 8 Corp.</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+2.1%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+64.7%</span></span>
+            <span class="ticker-sector-tag">BTC Mining</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">0992.HK</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+159.2%</span>
+          </div>
+          <div class="ticker-name">Lenovo Group</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--red)">-1.2%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+105.5%</span></span>
+            <span class="ticker-sector-tag">Cons. Elect.</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">SMSN.IL</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+158.2%</span>
+          </div>
+          <div class="ticker-name">Samsung Electronics</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+37.3%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+42.5%</span></span>
+            <span class="ticker-sector-tag">Storage</span>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Top 8 tickers — momentum mayo</div>
+    <div class="ticker-grid">
+      
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">0992.HK</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+105.5%</span>
+          </div>
+          <div class="ticker-name">Lenovo Group</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+159.2%</span></span>
+            <span class="ticker-sector-tag">Cons. Elect.</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">DELL</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+101.4%</span>
+          </div>
+          <div class="ticker-name">Dell Technologies</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+234.4%</span></span>
+            <span class="ticker-sector-tag">Data Center</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">MU</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+87.8%</span>
+          </div>
+          <div class="ticker-name">Micron Tech.</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+240.2%</span></span>
+            <span class="ticker-sector-tag">Storage</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">HY9H.F</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+74.3%</span>
+          </div>
+          <div class="ticker-name">SK Hynix</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+244.2%</span></span>
+            <span class="ticker-sector-tag">Storage</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">SMCI</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+68.2%</span>
+          </div>
+          <div class="ticker-name">Super Micro Computer</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+57.5%</span></span>
+            <span class="ticker-sector-tag">Data Center</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">ARM</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+68.0%</span>
+          </div>
+          <div class="ticker-name">Arm Holdings</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+223.2%</span></span>
+            <span class="ticker-sector-tag">Semic.</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">NBIS</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+67.2%</span>
+          </div>
+          <div class="ticker-name">Nebius Group</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+176.1%</span></span>
+            <span class="ticker-sector-tag">Cloud AI</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">HUT</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+64.7%</span>
+          </div>
+          <div class="ticker-name">Hut 8 Corp.</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+171.7%</span></span>
+            <span class="ticker-sector-tag">BTC Mining</span>
+          </div>
+        </div>
+    </div>
+  </div>
+  
+
+  <!-- RESUMEN EJECUTIVO -->
+  <div class="section">
+    <div class="section-label">Resumen ejecutivo — perspectiva del período</div>
+    <div class="exec-box">
+      <div class="exec-title">Narrativa del período</div>
+      Mejor sector anual: <strong>Storage</strong> (+280.7%) · Peor: <strong>Mid Tech</strong> (-12.3%).
+      En el último mes registrado, el liderazgo lo tomó <strong>Data Center</strong> (+57.6%),
+      mientras que <strong>Oil</strong> fue el más débil (-6.1%).
+      <strong>17</strong> de <strong>21</strong> sectores cierran en positivo anual (81%).
+      <strong>18/21</strong> sectores en positivo en el último mes: <strong>momentum amplio</strong> — rebote generalizado.
+    </div>
+    <div class="two-col-exec">
+      <div>
+        <div class="exec-box">
+          <div class="exec-title">Dónde asignar capital</div>
+          Los sectores con mayor convicción: <strong>CiberSec.</strong> (+39.8% anual, +42.5% mayo) · <strong>Cons. Elect.</strong> (+47.7% anual, +40.7% mayo) · <strong>Data Center</strong> (+97.4% anual, +57.6% mayo) · <strong>Equipment</strong> (+70.6% anual, +16.5% mayo). Momentum sólido con señal de sobreponderar.
+          <br><br><strong>En vigilancia:</strong> <strong>BTC Mining</strong>, <strong>Cloud AI</strong>, <strong>ETF</strong>, <strong>Index</strong>, <strong>Semic.</strong>, <strong>Storage</strong>, <strong>Top Crypto</strong>. Tesis en formación — esperar catalizador técnico.
+        </div>
+        <div class="exec-box warn">
+          <div class="exec-title">El patrón que se repite</div>
+          El capital fluye hacia sectores con momentum estructural y se aleja de activos especulativos sin catalizador.
+          Cada euro en <strong>Currency</strong> es un euro que no está en
+          <strong>CiberSec.</strong>.
+        </div>
+      </div>
+      <div>
+        <div class="exec-box danger">
+          <div class="exec-title">Qué evitar</div>
+          <strong>Currency</strong> (-0.8% anual, -0.2% mayo) · <strong>Electric</strong> (+8.6% anual, -5.5% mayo). Momentum deteriorado — capital mejor asignado en sectores con señal de sobreponderar.
+          <br><br><strong>Precaución:</strong> <strong>Big Tech</strong>, <strong>Bitcoin Rel.</strong>, <strong>Financial</strong>, <strong>Mid Tech</strong>, <strong>Oil</strong>, <strong>Privacy</strong>, <strong>Rare</strong>, <strong>Spain</strong>. No añadir capital nuevo.
+        </div>
+        <div class="exec-box blue">
+          <div class="exec-title">Glosario accionable de señales</div>
+          <p><strong style="color:var(--green)">Sobreponderar:</strong> Capital nuevo aquí, dejas correr posiciones y no recortas en pullbacks. Convicción alta.</p>
+          <p><strong style="color:var(--blue)">Vigilar:</strong> No comprar aún. Tener tickers en el radar y esperar señal técnica. Si ya tienes, mantienes.</p>
+          <p><strong style="color:var(--amber)">Precaución:</strong> No añadir capital nuevo. Reducir tamaño si tienes posiciones grandes. Preparado para salir.</p>
+          <p><strong style="color:var(--red)">Infraponderar:</strong> No merece capital. Cerrar con pérdidas manejables y redirigir hacia sobreponderar.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACLARACIÓN SOBREPONDERAR -->
+  <div class="section">
+    <div class="section-label">Aclaración — qué significa sobreponderar en la práctica</div>
+    <div class="exec-box" style="margin-bottom:1rem">
+      Hay tres decisiones de gestión distintas detrás de "Sobreponderar". El hilo conductor: el sesgo por defecto es
+      <strong>estar dentro y añadir</strong>, no <strong>salir y esperar</strong>. La carga de la prueba está en encontrar razones para salir,
+      no razones para quedarse. Exactamente lo contrario de lo que aplicas en infraponderar.
+    </div>
+    <div class="gloss-grid">
+      <div class="gloss-card">
+        <div class="gloss-title">1. "Pones capital nuevo"</div>
+        <div class="gloss-body">
+          <p>Cuando tienes liquidez disponible, este es el destino prioritario. No esperas el "momento perfecto" porque en sectores con momentum fuerte siempre parece caro comparado con hace tres meses.</p>
+          <p><strong>En la práctica:</strong> No entres todo de golpe. Divide en 2–3 tramos espaciados semanas o un mes. Reduces el riesgo de entrar justo antes de un pullback técnico (10–15% incluso en tendencia alcista).</p>
+        </div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-title">2. "Dejas correr posiciones"</div>
+        <div class="gloss-body">
+          <p>Psicológicamente difícil. Con +40–80% el instinto es recoger. Pero en sectores con momentum estructural, los grandes movimientos son del 150–200%. Si recortas pronto, te quedas fuera del tramo gordo.</p>
+          <p><strong>En la práctica:</strong> No fijes objetivo de precio arbitrario. La señal de salida la da el momentum cuando muestra debilidad sostenida. Usa <em>trailing stops</em> para proteger ganancias sin cerrar manualmente.</p>
+        </div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-title">3. "No recortas en pullbacks"</div>
+        <div class="gloss-body">
+          <p>Un pullback (8–12%) es corrección temporal en tendencia alcista, no señal de salida. Error clásico: confundir volatilidad normal con cambio de tendencia. Un pullback dura días/semanas; un cambio de tendencia dura meses, con volumen bajista y ruptura de soportes.</p>
+          <p><strong>En la práctica:</strong> Caída del 10% en dos semanas sin cambio macro → no haces nada. Caída del 25% en dos meses mientras el mercado sube → esa es otra conversación.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACLARACIÓN MOMENTUM -->
+  <div class="section">
+    <div class="section-label">Aclaración — momentum selectivo vs momentum amplio</div>
+    <div class="exec-box blue">
+      El mercado en este período mostró <strong>momentum amplio</strong>: la mayoría de sectores subieron al mismo tiempo. Ocurre en rebotes de alivio por catalizadores macro. El riesgo es confundir un rebote generalizado con momentum estructural sostenido.
+      <br><br>
+      <strong>Comparativa del período:</strong>
+      Mejor: <strong>Data Center</strong> +57.6% · Peor: <strong>Oil</strong> -6.1%.
+      Spread entre mejor y peor: <strong>63.8pp</strong>.
+      <br><br>
+      <strong>Implicación práctica:</strong>
+      En momentum amplio, la diversificación funciona bien. El riesgo está en concentrar demasiado en los ganadores del rebote antes de confirmar que el momentum es estructural y no solo un rebote de alivio.
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>market-analyze · sector-analyzer v1.0</span>
+  <span id="footer-ts">Generado: 1/6/2026, 14:07:34</span>
+</div>
+
+
+
+
+<script>
+    document.getElementById('filter-row').addEventListener('click', e => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      document.querySelectorAll('.signal-card').forEach(el => {
+        el.style.display = (f === 'all' || el.dataset.signal === f) ? '' : 'none';
+      });
+    });
+  </script></body>
+</html>
