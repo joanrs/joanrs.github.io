@@ -17,6 +17,17 @@
     margin-left: 4px;
     opacity: 0.8;
   }
+  .ghost-table tbody tr.sector-selected {
+    background-color: #dbeafe !important;
+    outline: 2px solid #1e40af;
+  }
+  .ghost-table tbody tr {
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .ghost-table tbody tr:not(.sector-selected):hover {
+    background-color: #f0f7ff !important;
+  }
 </style>
 <script>
   document.addEventListener("click", function (e) {
@@ -66,6 +77,132 @@
     th.appendChild(icon);
 
     rows.forEach((row) => tbody.appendChild(row));
+
+    // Si es la primera tabla, reordenar la segunda
+    const tables = document.querySelectorAll(".ghost-table");
+    if (table === tables[0] && tables.length > 1) {
+      const table2 = tables[1];
+      const tbody2 = table2.querySelector("tbody");
+      const rows2 = Array.from(tbody2.querySelectorAll("tr"));
+
+      const sectorOrderMap = new Map();
+      rows.forEach((r, i) => {
+        const secName = (
+          r.children[0].innerText || r.children[0].textContent
+        ).trim();
+        sectorOrderMap.set(secName, i);
+      });
+
+      const headers2 = Array.from(table2.querySelectorAll("thead th"));
+      const clickedHeaderTitle = th.textContent.replace(/[▲▼s]/g, "").trim();
+      const colIndex2 = headers2.findIndex(
+        (h) =>
+          h.textContent.replace(/[▲▼s]/g, "").trim() === clickedHeaderTitle,
+      );
+
+      let targetColIndex = colIndex2;
+      if (targetColIndex === -1) {
+        targetColIndex = headers2.length - 1; // Fallback al último índice (usualmente Anual)
+      }
+
+      const listaColIndex = headers2.findIndex(
+        (h) => h.textContent.replace(/[▲▼s]/g, "").trim() === "Lista",
+      );
+      const finalListaColIndex = listaColIndex !== -1 ? listaColIndex : 3;
+
+      rows2.sort((a, b) => {
+        const tagsA = Array.from(
+          a.children[finalListaColIndex].querySelectorAll(".tag-l"),
+        ).map((el) => (el.innerText || el.textContent).trim());
+        const tagsB = Array.from(
+          b.children[finalListaColIndex].querySelectorAll(".tag-l"),
+        ).map((el) => (el.innerText || el.textContent).trim());
+
+        const secA = tagsA.find((t) => sectorOrderMap.has(t)) || tagsA[0];
+        const secB = tagsB.find((t) => sectorOrderMap.has(t)) || tagsB[0];
+
+        const orderA = sectorOrderMap.has(secA)
+          ? sectorOrderMap.get(secA)
+          : 999;
+        const orderB = sectorOrderMap.has(secB)
+          ? sectorOrderMap.get(secB)
+          : 999;
+
+        if (orderA !== orderB) {
+          return orderA - orderB;
+        }
+
+        let cellA =
+          a.children[targetColIndex].innerText ||
+          a.children[targetColIndex].textContent;
+        let cellB =
+          b.children[targetColIndex].innerText ||
+          b.children[targetColIndex].textContent;
+
+        let valA = cellA
+          .trim()
+          .replace("%", "")
+          .replace("$", "")
+          .replace(/,/g, "");
+        let valB = cellB
+          .trim()
+          .replace("%", "")
+          .replace("$", "")
+          .replace(/,/g, "");
+
+        let nA = parseFloat(valA);
+        let nB = parseFloat(valB);
+
+        if (isNaN(nA)) nA = -Infinity;
+        if (isNaN(nB)) nB = -Infinity;
+
+        return nB - nA; // De mayor a menor
+      });
+
+      rows2.forEach((row) => tbody2.appendChild(row));
+    }
+  });
+
+  // --- Sector Filter: click on first table rows ---
+  let _activeSector = null;
+  document.addEventListener("click", function (e) {
+    if (e.target.closest("th")) return; // ignore header clicks
+    const tr = e.target.closest("tr");
+    if (!tr) return;
+    const tables = document.querySelectorAll(".ghost-table");
+    if (!tables[0] || !tables[1]) return;
+    if (!tables[0].querySelector("tbody").contains(tr)) return;
+
+    const tagEl = tr.querySelector(".tag-l");
+    if (!tagEl) return;
+    const sectorName = tagEl.textContent.trim();
+
+    const tbody2 = tables[1].querySelector("tbody");
+    const heads2 = Array.from(tables[1].querySelectorAll("thead th"));
+    const listaIdx = heads2.findIndex(
+      (h) => h.textContent.replace(/[▲▼s]/g, "").trim() === "Lista",
+    );
+    const liIdx = listaIdx !== -1 ? listaIdx : 3;
+
+    if (_activeSector === sectorName) {
+      _activeSector = null;
+      tables[0]
+        .querySelectorAll("tbody tr")
+        .forEach((r) => r.classList.remove("sector-selected"));
+      tbody2.querySelectorAll("tr").forEach((r) => (r.style.display = ""));
+    } else {
+      _activeSector = sectorName;
+      tables[0]
+        .querySelectorAll("tbody tr")
+        .forEach((r) => r.classList.remove("sector-selected"));
+      tr.classList.add("sector-selected");
+      tbody2.querySelectorAll("tr").forEach((r) => {
+        const tags = Array.from(
+          r.children[liIdx] ? r.children[liIdx].querySelectorAll(".tag-l") : [],
+        ).map((t) => t.textContent.trim());
+        r.style.display = tags.includes(sectorName) ? "" : "none";
+      });
+    }
   });
 </script>
 <div style="text-align: center; margin-bottom: 20px">
@@ -234,6 +371,10 @@
           <th data-type="number">Mar</th>
           <th data-type="number">Q1</th>
           <th data-type="number">Abr</th>
+          <th data-type="string" title="Cambio de ranking entre Mar y Abr">
+            Trend
+          </th>
+          <th data-type="number" title="Abr vs Mar">Momentum</th>
         </tr>
       </thead>
       <tbody>
@@ -246,6 +387,13 @@
           <td><span class="neg">-14.42%</span></td>
           <td><span class="neg">-1.51%</span></td>
           <td><span class="pos">46.43%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 18 posiciones respecto a Mar"
+          >
+            <span style="color: #15803d; font-weight: bold">↑18</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+60.84%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -256,6 +404,13 @@
           <td><span class="neg">-6.29%</span></td>
           <td><span class="neg">-13.19%</span></td>
           <td><span class="pos">14.52%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 4 posiciones respecto a Mar"
+          >
+            <span style="color: #15803d; font-weight: bold">↑4</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+20.81%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -263,9 +418,16 @@
               >Bitcoin Rel.</span
             >
           </td>
-          <td><span class="neg">-9.74%</span></td>
-          <td><span class="neg">-27.56%</span></td>
-          <td><span class="pos">18.19%</span></td>
+          <td><span class="neg">-7.06%</span></td>
+          <td><span class="neg">-22.24%</span></td>
+          <td><span class="pos">15.64%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 8 posiciones respecto a Mar"
+          >
+            <span style="color: #15803d; font-weight: bold">↑8</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+22.71%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -276,6 +438,13 @@
           <td><span class="pos">8.00%</span></td>
           <td><span class="neg">-4.68%</span></td>
           <td><span class="pos">1.89%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 16 posiciones respecto a Mar"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓16</span>
+          </td>
+          <td><span class="neg" title="Abr vs Mar">-6.11%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -286,6 +455,13 @@
           <td><span class="pos">5.57%</span></td>
           <td><span class="pos">16.07%</span></td>
           <td><span class="pos">38.64%</span></td>
+          <td
+            style="text-align: center"
+            title="Mantuvo su posición respecto a Mar"
+          >
+            <span style="color: #64748b">→</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+33.06%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -296,6 +472,13 @@
           <td><span class="neg">-2.65%</span></td>
           <td><span class="neg">-8.44%</span></td>
           <td><span class="pos">8.36%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 8 posiciones respecto a Mar"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓8</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+11.01%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -306,6 +489,13 @@
           <td><span class="neg">-2.91%</span></td>
           <td><span class="neg">-2.45%</span></td>
           <td><span class="pos">1.96%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 10 posiciones respecto a Mar"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓10</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+4.87%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -316,6 +506,13 @@
           <td><span class="neg">-4.01%</span></td>
           <td><span class="neg">-1.15%</span></td>
           <td><span class="pos">22.37%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 5 posiciones respecto a Mar"
+          >
+            <span style="color: #15803d; font-weight: bold">↑5</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+26.38%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -323,9 +520,16 @@
               >ETF</span
             >
           </td>
-          <td><span class="neg">-7.79%</span></td>
-          <td><span class="neg">-2.49%</span></td>
-          <td><span class="pos">14.30%</span></td>
+          <td><span class="neg">-7.65%</span></td>
+          <td><span class="neg">-2.67%</span></td>
+          <td><span class="pos">14.37%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 6 posiciones respecto a Mar"
+          >
+            <span style="color: #15803d; font-weight: bold">↑6</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+22.02%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -333,9 +537,16 @@
               >Electric</span
             >
           </td>
-          <td><span class="neg">-5.38%</span></td>
-          <td><span class="pos">6.34%</span></td>
-          <td><span class="pos">13.49%</span></td>
+          <td><span class="neg">-6.63%</span></td>
+          <td><span class="pos">2.93%</span></td>
+          <td><span class="pos">13.31%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 2 posiciones respecto a Mar"
+          >
+            <span style="color: #15803d; font-weight: bold">↑2</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+19.94%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -346,6 +557,13 @@
           <td><span class="neg">-8.59%</span></td>
           <td><span class="pos">27.09%</span></td>
           <td><span class="pos">15.02%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 9 posiciones respecto a Mar"
+          >
+            <span style="color: #15803d; font-weight: bold">↑9</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+23.61%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -353,9 +571,16 @@
               >Financial</span
             >
           </td>
-          <td><span class="neg">-5.49%</span></td>
-          <td><span class="neg">-13.34%</span></td>
-          <td><span class="pos">16.29%</span></td>
+          <td><span class="neg">-4.22%</span></td>
+          <td><span class="neg">-11.69%</span></td>
+          <td><span class="pos">11.66%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 3 posiciones respecto a Mar"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓3</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+15.88%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -366,6 +591,13 @@
           <td><span class="neg">-5.43%</span></td>
           <td><span class="neg">-1.16%</span></td>
           <td><span class="pos">21.49%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 6 posiciones respecto a Mar"
+          >
+            <span style="color: #15803d; font-weight: bold">↑6</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+26.92%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -376,6 +608,13 @@
           <td><span class="neg">-2.23%</span></td>
           <td><span class="neg">-18.53%</span></td>
           <td><span class="pos">1.67%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 14 posiciones respecto a Mar"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓14</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+3.90%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -386,6 +625,13 @@
           <td><span class="pos">12.20%</span></td>
           <td><span class="pos">32.38%</span></td>
           <td><span class="neg">-1.10%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 20 posiciones respecto a Mar"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓20</span>
+          </td>
+          <td><span class="neg" title="Abr vs Mar">-13.31%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -396,6 +642,13 @@
           <td><span class="pos">3.45%</span></td>
           <td><span class="neg">-32.03%</span></td>
           <td><span class="pos">21.29%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 2 posiciones respecto a Mar"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓2</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+17.84%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -406,6 +659,13 @@
           <td><span class="neg">-16.75%</span></td>
           <td><span class="pos">1.99%</span></td>
           <td><span class="pos">13.72%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 9 posiciones respecto a Mar"
+          >
+            <span style="color: #15803d; font-weight: bold">↑9</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+30.47%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -416,6 +676,13 @@
           <td><span class="neg">-3.50%</span></td>
           <td><span class="pos">3.18%</span></td>
           <td><span class="pos">40.45%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 6 posiciones respecto a Mar"
+          >
+            <span style="color: #15803d; font-weight: bold">↑6</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+43.95%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -423,9 +690,16 @@
               >Spain</span
             >
           </td>
-          <td><span class="neg">-6.98%</span></td>
-          <td><span class="neg">-0.95%</span></td>
-          <td><span class="pos">6.59%</span></td>
+          <td><span class="neg">-5.75%</span></td>
+          <td><span class="pos">1.67%</span></td>
+          <td><span class="pos">6.26%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 3 posiciones respecto a Mar"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓3</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+12.00%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -436,6 +710,13 @@
           <td><span class="neg">-10.59%</span></td>
           <td><span class="pos">59.17%</span></td>
           <td><span class="pos">56.55%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 18 posiciones respecto a Mar"
+          >
+            <span style="color: #15803d; font-weight: bold">↑18</span>
+          </td>
+          <td><span class="pos" title="Abr vs Mar">+67.14%</span></td>
         </tr>
         <tr>
           <td style="text-align: center; padding: 4px 8px">
@@ -446,6 +727,13 @@
           <td><span class="pos">9.71%</span></td>
           <td><span class="neg">-13.78%</span></td>
           <td><span class="pos">5.40%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 15 posiciones respecto a Mar"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓15</span>
+          </td>
+          <td><span class="neg" title="Abr vs Mar">-4.31%</span></td>
         </tr>
       </tbody>
     </table>
@@ -1158,6 +1446,19 @@
           <td><span class="pos">15.74% 📈</span></td>
         </tr>
         <tr>
+          <td><span class="ticker-badge">QQQ</span></td>
+          <td>Invesco QQQ Trust</td>
+          <td><span class="market-cap">$372.51B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            >
+          </td>
+          <td><span class="neg">-4.96% 📉</span></td>
+          <td><span class="neg">-6.04% 📉</span></td>
+          <td><span class="pos">15.69% 📈</span></td>
+        </tr>
+        <tr>
           <td><span class="ticker-badge">QQQM</span></td>
           <td>Invesco NASDAQ 100</td>
           <td><span class="market-cap">$68.83B</span></td>
@@ -1260,6 +1561,19 @@
           <td><span class="neg">-25.52% 💀</span></td>
           <td><span class="neg">-24.31% 💀</span></td>
           <td><span class="pos">12.21% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">CEG</span></td>
+          <td>Constellation Energy</td>
+          <td><span class="market-cap">$99.42B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(61, 70%, 45%)"
+              >Electric</span
+            >
+          </td>
+          <td><span class="neg">-15.35% 📉</span></td>
+          <td><span class="neg">-20.95% 💀</span></td>
+          <td><span class="pos">12.09% 📈</span></td>
         </tr>
         <tr>
           <td><span class="ticker-badge">0857.HK</span></td>
@@ -1379,6 +1693,19 @@
           <td><span class="pos">9.71% 📈</span></td>
         </tr>
         <tr>
+          <td><span class="ticker-badge">BAC</span></td>
+          <td>Bank of America</td>
+          <td><span class="market-cap">$353.20B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="neg">-2.17% 📉</span></td>
+          <td><span class="neg">-11.36% 📉</span></td>
+          <td><span class="pos">9.66% 📈</span></td>
+        </tr>
+        <tr>
           <td><span class="ticker-badge">SAN.MC</span></td>
           <td>Banco Santander</td>
           <td><span class="market-cap">$148.10B</span></td>
@@ -1429,6 +1756,32 @@
           <td><span class="pos">1.43% 📈</span></td>
           <td><span class="neg">-25.40% 💀</span></td>
           <td><span class="pos">9.21% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">GS</span></td>
+          <td>Goldman Sachs</td>
+          <td><span class="market-cap">$279.81B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="neg">-1.58% 📉</span></td>
+          <td><span class="neg">-3.76% 📉</span></td>
+          <td><span class="pos">9.19% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">V</span></td>
+          <td>Visa Inc.</td>
+          <td><span class="market-cap">$619.49B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="neg">-5.59% 📉</span></td>
+          <td><span class="neg">-13.82% 📉</span></td>
+          <td><span class="pos">9.13% 📈</span></td>
         </tr>
         <tr>
           <td><span class="ticker-badge">ASML</span></td>
@@ -1572,6 +1925,19 @@
           <td><span class="neg">-3.37% 📉</span></td>
           <td><span class="neg">-2.68% 📉</span></td>
           <td><span class="pos">6.64% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">JPM</span></td>
+          <td>JPMorgan</td>
+          <td><span class="market-cap">$797.99B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="neg">-2.04% 📉</span></td>
+          <td><span class="neg">-8.71% 📉</span></td>
+          <td><span class="pos">6.48% 📈</span></td>
         </tr>
         <tr>
           <td><span class="ticker-badge">BKT.MC</span></td>
@@ -1821,6 +2187,19 @@
           <td><span class="pos">2.66% 📈</span></td>
         </tr>
         <tr>
+          <td><span class="ticker-badge">SLR.MC</span></td>
+          <td>Solaria Energía</td>
+          <td><span class="market-cap">$3.16B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="pos">7.87% 📈</span></td>
+          <td><span class="pos">30.58% 🚀</span></td>
+          <td><span class="pos">2.57% 📈</span></td>
+        </tr>
+        <tr>
           <td><span class="ticker-badge">SHOP</span></td>
           <td>Shopify</td>
           <td><span class="market-cap">$162.09B</span></td>
@@ -1912,6 +2291,19 @@
           <td><span class="neg">-1.52% 📉</span></td>
           <td><span class="pos">6.93% 📈</span></td>
           <td><span class="pos">1.04% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">MA</span></td>
+          <td>Mastercard</td>
+          <td><span class="market-cap">$436.67B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="neg">-3.39% 📉</span></td>
+          <td><span class="neg">-12.48% 📉</span></td>
+          <td><span class="pos">0.65% 📈</span></td>
         </tr>
         <tr>
           <td><span class="ticker-badge">IGLN.L</span></td>
@@ -2072,6 +2464,19 @@
           <td><span class="pos">16.34% 📈</span></td>
           <td><span class="pos">41.01% 🚀</span></td>
           <td><span class="neg">-4.71% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">CRCL</span></td>
+          <td>Circle Int. G</td>
+          <td><span class="market-cap">$30.24B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(23, 81%, 40%)"
+              >Bitcoin Rel.</span
+            >
+          </td>
+          <td><span class="pos">14.35% 📈</span></td>
+          <td><span class="pos">20.32% 🚀</span></td>
+          <td><span class="neg">-4.75% 📉</span></td>
         </tr>
         <tr>
           <td><span class="ticker-badge">PLTR</span></td>
