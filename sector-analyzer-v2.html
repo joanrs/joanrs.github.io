@@ -18,12 +18,16 @@
     --muted2: #8a98ab;
     --green: #22d98a;
     --green-bg: rgba(34,217,138,0.1);
+    --green-border: rgba(34,217,138,0.25);
     --red: #f05e5e;
     --red-bg: rgba(240,94,94,0.1);
+    --red-border: rgba(240,94,94,0.25);
     --amber: #f5a623;
     --amber-bg: rgba(245,166,35,0.1);
+    --amber-border: rgba(245,166,35,0.25);
     --blue: #4b9cf5;
     --blue-bg: rgba(75,156,245,0.1);
+    --blue-border: rgba(75,156,245,0.25);
     --accent: #4b9cf5;
     --font-body: 'DM Sans', sans-serif;
     --font-mono: 'DM Mono', monospace;
@@ -43,12 +47,16 @@
     --muted2: #374151;
     --green: #0f6e56;
     --green-bg: rgba(15,110,86,0.08);
+    --green-border: rgba(15,110,86,0.22);
     --red: #c0392b;
     --red-bg: rgba(192,57,43,0.08);
+    --red-border: rgba(192,57,43,0.22);
     --amber: #92400e;
     --amber-bg: rgba(146,64,14,0.08);
+    --amber-border: rgba(146,64,14,0.22);
     --blue: #185fa5;
     --blue-bg: rgba(24,95,165,0.08);
+    --blue-border: rgba(24,95,165,0.22);
     --accent: #185fa5;
   }
 
@@ -76,6 +84,7 @@
     font-size: 14px;
     line-height: 1.6;
     min-height: 100vh;
+    transition: background 0.22s ease, color 0.22s ease;
   }
 
   /* ── HEADER ── */
@@ -120,10 +129,9 @@
     align-items: center;
     gap: 6px;
   }
-  .upload-btn:hover { background: #1f2b3e; border-color: var(--accent); }
+  .upload-btn:hover { background: var(--surface2); filter: brightness(0.94); border-color: var(--accent); }
   .upload-btn svg { width: 14px; height: 14px; }
-  #file-label { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
-  input[type="file"] { display: none; }
+
 
   /* ── MAIN LAYOUT ── */
   .main { padding: 1.5rem 2rem 3rem; max-width: 1400px; }
@@ -260,10 +268,10 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
-  .badge-buy    { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,217,138,0.2); }
-  .badge-watch  { background: var(--blue-bg);  color: var(--blue);  border: 1px solid rgba(75,156,245,0.2); }
-  .badge-caution{ background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(245,166,35,0.2); }
-  .badge-avoid  { background: var(--red-bg);   color: var(--red);   border: 1px solid rgba(240,94,94,0.2); }
+  .badge-buy    { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .badge-watch  { background: var(--blue-bg);  color: var(--blue);  border: 1px solid var(--blue-border); }
+  .badge-caution{ background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .badge-avoid  { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
   .signal-desc { font-size: 12px; color: var(--muted2); line-height: 1.6; }
   .signal-metrics {
     display: flex;
@@ -347,7 +355,82 @@
   }
   .filter-btn:hover, .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-  /* ── FOOTER ── */
+  /* ── API MODE ── */
+  .api-zone {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .api-input {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: var(--radius);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    width: 220px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .api-input:focus { border-color: var(--accent); }
+  .api-input::placeholder { color: var(--muted); }
+  .api-sep {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    padding: 0 4px;
+  }
+  .api-select {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 7px 10px;
+    border-radius: var(--radius);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    outline: none;
+  }
+  .api-error {
+    font-size: 11px;
+    color: var(--red);
+    font-family: var(--font-mono);
+    display: none;
+    margin-top: 4px;
+  }
+
+
+  /* ── SPARKLINE ── */
+  .sparkline-wrap { display: flex; align-items: flex-end; gap: 2px; height: 28px; margin-top: 6px; }
+  .spark-bar { width: 6px; border-radius: 1px; flex-shrink: 0; }
+
+  /* ── DERIVED METRICS (z-score, aceleración, etc.) ── */
+  .derived-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+  }
+  .derived-pill {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: var(--surface2);
+    color: var(--muted2);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .derived-pill.pos { background: var(--green-bg); color: var(--green); }
+  .derived-pill.neg { background: var(--red-bg);   color: var(--red); }
+  .derived-pill.hi  { background: var(--blue-bg);  color: var(--blue); }
+
+
   .footer {
     padding: 1.5rem 2rem;
     border-top: 1px solid var(--border);
@@ -403,19 +486,42 @@
 <div class="header">
   <div class="header-left">
     <h1>Sector Analyzer</h1>
-    <p id="header-meta">Carga una tabla HTML de market-analyze para comenzar</p>
+    <p id="header-meta">Conecta con el API de market-analyze</p>
   </div>
-  <div class="upload-zone">
-    <label class="upload-btn" for="file-input">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Cargar tabla HTML
-    </label>
-    <input type="file" id="file-input" accept=".html,.htm">
-    <span id="file-label">ningún archivo</span>
-    <button class="theme-btn" id="theme-toggle" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
-      <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
+  <div class="upload-zone" style="flex-direction:column; align-items:flex-end; gap:8px;">
+
+    <!-- Fila superior: export + theme -->
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button class="upload-btn" id="export-btn" style="display:none;" title="Exportar reporte a HTML independiente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Exportar
+      </button>
+      <button class="theme-btn" id="theme-toggle" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
+        <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+
+    <!-- Controles de API -->
+    <div id="zone-api" style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+      <div class="api-zone">
+        <input class="api-input" id="api-url" type="text" placeholder="https://tu-app.vercel.app">
+        <span class="api-sep">/api/sector-analysis</span>
+        <select class="api-select" id="api-year"></select>
+        <select class="api-select" id="api-month">
+          <option value="1">Ene</option><option value="2">Feb</option><option value="3">Mar</option>
+          <option value="4">Abr</option><option value="5">May</option><option value="6">Jun</option>
+          <option value="7">Jul</option><option value="8">Ago</option><option value="9">Sep</option>
+          <option value="10">Oct</option><option value="11">Nov</option><option value="12">Dic</option>
+        </select>
+        <button class="upload-btn" id="api-fetch-btn" onclick="fetchFromAPI()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Cargar
+        </button>
+      </div>
+      <div class="api-error" id="api-error"></div>
+    </div>
+
   </div>
 </div>
 
@@ -425,104 +531,170 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
     </div>
     <h2>Análisis sectorial automático</h2>
-    <p>Carga cualquier tabla HTML exportada desde market-analyze y el análisis completo se genera al instante.</p>
+    <p>Conecta directamente con el API de market-analyze para procesar el rendimiento histórico.</p>
   </div>
   <div id="report" style="display:none"></div>
 </div>
 
 <div class="footer">
-  <span>market-analyze · sector-analyzer v1.0</span>
+  <span>market-analyze · sector-analyzer v2.0</span>
   <span id="footer-ts"></span>
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
 
-// ── PARSER ──────────────────────────────────────────────────────────────
-function parseHTMLTables(html) {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  const tables = doc.querySelectorAll('table');
-  const result = [];
-  tables.forEach(tbl => {
-    const headers = [...tbl.querySelectorAll('thead th')].map(th => th.textContent.trim());
-    const rows = [...tbl.querySelectorAll('tbody tr')].map(tr =>
-      [...tr.querySelectorAll('td')].map(td => td.textContent.trim())
-    ).filter(r => r.length > 0);
-    result.push({ headers, rows });
-  });
-  return result;
-}
-
-function parseVal(str) {
-  if (!str) return NaN;
-  const clean = str.replace(/[📈📉🚀💀↑↓→%\s]/g, '').replace(/[+]/g, '');
-  return parseFloat(clean);
-}
-
-function parseTrend(str) {
-  if (!str) return { dir: 0, mag: 0 };
-  if (str.includes('↑')) return { dir: 1, mag: parseInt(str.replace('↑','')) || 0 };
-  if (str.includes('↓')) return { dir: -1, mag: parseInt(str.replace('↓','')) || 0 };
-  return { dir: 0, mag: 0 };
-}
-
-function detectSchema(tables) {
-  // Find sector table (has 'Sector' header and ~21 rows)
-  // Find ticker table (has 'Ticker' header)
-  let sectorTable = null, tickerTable = null;
-  for (const t of tables) {
-    if (t.headers.includes('Sector') && t.rows.length > 15 && t.rows.length < 30) sectorTable = t;
-    if (t.headers.includes('Ticker')) tickerTable = t;
+// ── INIT: poblar selectores año/mes y restaurar URL guardada ─────────────
+(function initControls() {
+  const yearSel = $('api-year');
+  const now = new Date();
+  for (let y = now.getFullYear(); y >= now.getFullYear() - 4; y--) {
+    const o = document.createElement('option');
+    o.value = y; o.textContent = y;
+    yearSel.appendChild(o);
   }
-  return { sectorTable, tickerTable };
+  $('api-month').value = now.getMonth() + 1;
+
+  const savedUrl = localStorage.getItem('sa-api-url');
+  if (savedUrl) $('api-url').value = savedUrl;
+})();
+
+// ── API FETCH ────────────────────────────────────────────────────────────
+async function fetchFromAPI() {
+  const baseUrl = $('api-url').value.replace(/\/$/, '').trim();
+  const year    = $('api-year').value;
+  const month   = $('api-month').value;
+  const errEl   = $('api-error');
+  const btn     = $('api-fetch-btn');
+
+  if (!baseUrl) { showApiError('Introduce la URL base de tu API.'); return; }
+  errEl.style.display = 'none';
+  btn.textContent = 'Cargando…';
+  btn.disabled = true;
+
+  localStorage.setItem('sa-api-url', baseUrl);
+
+  try {
+    const res = await fetch(`${baseUrl}/api/sector-analysis?year=${year}&month=${month}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    renderFromAPI(data);
+  } catch(e) {
+    showApiError(`Error: ${e.message}`);
+  } finally {
+    btn.textContent = 'Cargar';
+    btn.disabled = false;
+  }
 }
 
-function buildSectors(t) {
-  // Detect column positions dynamically
-  const h = t.headers;
-  const idx = name => h.findIndex(x => x.toLowerCase().includes(name.toLowerCase()));
-  const iSector = 0;
-  const iQ1  = idx('Q1');
-  const iAbr = h.findIndex(x => ['Abr','Apr','Abril'].includes(x));
-  const iMay = h.findIndex(x => ['May','Mayo'].includes(x));
-  const iAnual = idx('Anual');
-  const iTrend = idx('Trend');
-  const iMom = idx('Momentum');
-
-  return t.rows.map(r => ({
-    sector:   r[iSector] || '',
-    q1:       iQ1  >= 0 ? parseVal(r[iQ1])  : NaN,
-    abr:      iAbr >= 0 ? parseVal(r[iAbr]) : NaN,
-    may:      iMay >= 0 ? parseVal(r[iMay]) : NaN,
-    anual:    iAnual >= 0 ? parseVal(r[iAnual]) : NaN,
-    trend:    iTrend >= 0 ? parseTrend(r[iTrend]) : { dir: 0, mag: 0 },
-    momentum: iMom >= 0 ? parseVal(r[iMom]) : NaN,
-    raw: r
-  })).filter(s => s.sector && !isNaN(s.anual));
+function showApiError(msg) {
+  const el = $('api-error');
+  el.textContent = msg;
+  el.style.display = 'block';
 }
 
-function buildTickers(t) {
-  const h = t.headers;
-  const idx = name => h.findIndex(x => x.toLowerCase().includes(name.toLowerCase()));
-  const iQ1  = idx('Q1');
-  const iAbr = h.findIndex(x => ['Abr','Apr','Abril'].includes(x));
-  const iMay = h.findIndex(x => ['May','Mayo'].includes(x));
-  const iAnual = idx('Anual');
-  const iSector = idx('Lista') >= 0 ? idx('Lista') : idx('Sector');
-  const iNombre = idx('Nombre');
-  const iMkt = idx('MktCap');
+// ── RENDER DESDE API ─────────────────────────────────────────────────────
+// Convierte la respuesta de /api/sector-analysis al mismo formato interno
+// que usa render() y lo muestra con las métricas enriquecidas (z_score,
+// aceleración, racha, percentil, sparkline).
+function renderFromAPI(data) {
+  const { meta, kpis, sectors: apiSectors, top_tickers, narrative } = data;
+  const monthName = meta.month_name.toLowerCase();
 
-  return t.rows.map(r => ({
-    ticker:  r[0] || '',
-    nombre:  iNombre >= 0 ? r[iNombre] : '',
-    mktcap:  iMkt >= 0 ? r[iMkt] : '',
-    sector:  iSector >= 0 ? r[iSector] : '',
-    q1:      iQ1  >= 0 ? parseVal(r[iQ1])  : NaN,
-    abr:     iAbr >= 0 ? parseVal(r[iAbr]) : NaN,
-    may:     iMay >= 0 ? parseVal(r[iMay]) : NaN,
-    anual:   iAnual >= 0 ? parseVal(r[iAnual]) : NaN,
-  })).filter(t => t.ticker && !isNaN(t.anual));
+  // Mapear sectores del API al formato interno
+  const sectors = apiSectors.map(s => ({
+    sector:   s.sector,
+    q1:       s.q1_return  ?? NaN,
+    abr:      s.q2_return  ?? NaN,   // Aproximación: usamos Q2 como contexto
+    may:      s.avg_return ?? 0,
+    anual:    s.ytd_return ?? 0,
+    trend:    { dir: 0, mag: 0 },
+    momentum: s.acceleration ?? NaN,
+    // Extras del API
+    z_score:    s.z_score,
+    acceleration: s.acceleration,
+    streak:     s.streak,
+    percentile: s.percentile,
+    sparkline:  s.sparkline || [],
+    description: s.description,
+    signal_api: s.signal,
+  }));
+
+  // Tickers del API
+  const tickers = (top_tickers || []).map(t => ({
+    ticker: t.ticker,
+    nombre: t.nombre,
+    mktcap: t.market_cap ? `$${(t.market_cap/1e9).toFixed(1)}B` : '',
+    sector: (t.sectors || []).join(', '),
+    q1:     NaN,
+    abr:    NaN,
+    may:    t.month_return ?? 0,
+    anual:  t.ytd_return   ?? 0,
+  }));
+
+  $('header-meta').textContent =
+    `API · ${meta.year}/${String(meta.month).padStart(2,'0')} · ${sectors.length} sectores · ${tickers.length} tickers`;
+
+  // Renderizar y luego enriquecer
+  render(sectors, tickers, 'API', monthName);
+
+  // Enriquecer tarjetas de señal con pills de métricas derivadas y sparkline
+  const cards = document.querySelectorAll('#signal-grid .signal-card');
+  cards.forEach(card => {
+    const sectorName = card.querySelector('.signal-sector')?.textContent;
+    const sd = sectors.find(s => s.sector === sectorName);
+    if (!sd) return;
+
+    // Sobreescribir descripción con la del API (más rica)
+    if (sd.description) {
+      const descEl = card.querySelector('.signal-desc');
+      if (descEl) descEl.textContent = sd.description;
+    }
+
+    // Pills de métricas derivadas
+    const pills = [];
+    if (sd.z_score != null) {
+      const cls = sd.z_score > 1 ? 'hi' : sd.z_score > 0 ? 'pos' : 'neg';
+      pills.push(`<span class="derived-pill ${cls}">z ${sd.z_score > 0 ? '+' : ''}${sd.z_score.toFixed(2)}</span>`);
+    }
+    if (sd.acceleration != null) {
+      const cls = sd.acceleration > 0 ? 'pos' : 'neg';
+      pills.push(`<span class="derived-pill ${cls}">accel ${sd.acceleration > 0 ? '+' : ''}${sd.acceleration.toFixed(1)}pp</span>`);
+    }
+    if (sd.streak != null && sd.streak !== 0) {
+      const cls = sd.streak > 0 ? 'pos' : 'neg';
+      const arrow = sd.streak > 0 ? '↑' : '↓';
+      pills.push(`<span class="derived-pill ${cls}">${arrow} ${Math.abs(sd.streak)}m racha</span>`);
+    }
+    if (sd.percentile != null) {
+      const cls = sd.percentile >= 80 ? 'hi' : sd.percentile <= 20 ? 'neg' : '';
+      pills.push(`<span class="derived-pill ${cls}">pct ${sd.percentile.toFixed(0)}º</span>`);
+    }
+
+    if (pills.length) {
+      const row = document.createElement('div');
+      row.className = 'derived-row';
+      row.innerHTML = pills.join('');
+      card.appendChild(row);
+    }
+
+    // Sparkline
+    if (sd.sparkline && sd.sparkline.length > 1) {
+      const maxV = Math.max(...sd.sparkline.map(p => Math.abs(p.v || 0))) || 1;
+      const barsHtml = sd.sparkline.map(p => {
+        const h = Math.max(3, Math.round(Math.abs(p.v || 0) / maxV * 26));
+        const col = (p.v || 0) >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<div class="spark-bar" style="height:${h}px;background:${col};opacity:0.7;" title="${p.y}/${p.m}: ${(p.v||0).toFixed(1)}%"></div>`;
+      }).join('');
+      const wrap = document.createElement('div');
+      wrap.className = 'sparkline-wrap';
+      wrap.innerHTML = barsHtml;
+      card.appendChild(wrap);
+    }
+  });
 }
 
 // ── ANALYSIS ENGINE ──────────────────────────────────────────────────────
@@ -566,7 +738,7 @@ function generateNarrative(sectors) {
   return { best, worst, bestMay, worstMay, risingMomentum, fallingMomentum, posAnual, posQ1, posMay, avgAnual, avgMay, total: sectors.length };
 }
 
-function signalDescription(s) {
+function signalDescription(s, monthName) {
   const { sector, anual, may, q1, trend, momentum } = s;
   const signal = classifySignal(s);
   const momentumStr = !isNaN(momentum) ? ` Momentum mensual: ${momentum > 0 ? '+' : ''}${momentum.toFixed(1)}%.` : '';
@@ -575,16 +747,16 @@ function signalDescription(s) {
                  : ' Mantiene posición en el ranking.';
 
   if (signal === 'buy') {
-    return `Rendimiento anual de ${f(anual)} con mayo en ${f(may)}.${trendStr}${momentumStr} Momentum sólido que justifica sobreponderar en la asignación de capital.`;
+    return `Rendimiento anual de ${f(anual)} con ${monthName} en ${f(may)}.${trendStr}${momentumStr} Momentum sólido que justifica sobreponderar en la asignación de capital.`;
   }
   if (signal === 'watch') {
     const q1str = q1 > 0 ? `Q1 positivo (${f(q1)}).` : `Q1 negativo (${f(q1)}).`;
-    return `${q1str} Abril y mayo muestran recuperación. Anual en ${f(anual)}.${trendStr}${momentumStr} Tesis en formación — esperar confirmación antes de añadir posición.`;
+    return `${q1str} El mes de ${monthName} muestra recuperación. Anual en ${f(anual)}.${trendStr}${momentumStr} Tesis en formación — esperar confirmación antes de añadir posición.`;
   }
   if (signal === 'caution') {
-    return `Anual en ${f(anual)} pero mayo muestra debilidad (${f(may)}).${trendStr}${momentumStr} No añadir capital nuevo. Revisar si la tendencia se prolonga.`;
+    return `Anual en ${f(anual)} pero ${monthName} muestra debilidad (${f(may)}).${trendStr}${momentumStr} No añadir capital nuevo. Revisar si la tendencia se prolonga.`;
   }
-  return `Rendimiento anual de ${f(anual)} con mayo en ${f(may)}.${trendStr}${momentumStr} Momentum deteriorado. Capital mejor asignado en sectores con señal de sobreponderar.`;
+  return `Rendimiento anual de ${f(anual)} con ${monthName} en ${f(may)}.${trendStr}${momentumStr} Momentum deteriorado. Capital mejor asignado en sectores con señal de sobreponderar.`;
 }
 
 // ── FORMATTERS ──────────────────────────────────────────────────────────
@@ -602,7 +774,11 @@ function colorVal(v) {
 }
 
 // ── RENDER ──────────────────────────────────────────────────────────────
-function render(sectors, tickers, filename) {
+function render(sectors, tickers, filename, monthName) {
+  const monthNameCap = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+  const monthShort = monthNameCap.substring(0,3);
+  window._currentPeriod = monthNameCap;
+
   const n = generateNarrative(sectors);
   const sortedAnual = [...sectors].sort((a,b) => b.anual - a.anual);
   const maxAnual = Math.max(...sectors.map(s => Math.abs(s.anual)));
@@ -640,9 +816,9 @@ function render(sectors, tickers, filename) {
       <div class="kpi-sub">${f(n.best.anual)}</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Mayor momentum mayo</div>
+      <div class="kpi-label">Mayor momentum ${monthName}</div>
       <div class="kpi-val b">${n.bestMay.sector}</div>
-      <div class="kpi-sub">${f(n.bestMay.may)} en mayo</div>
+      <div class="kpi-sub">${f(n.bestMay.may)} en ${monthName}</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Peor sector anual</div>
@@ -657,7 +833,7 @@ function render(sectors, tickers, filename) {
     <div class="kpi-card">
       <div class="kpi-label">Media sectorial anual</div>
       <div class="kpi-val ${parseFloat(n.avgAnual) >= 0 ? 'g' : 'r'}">${f(parseFloat(n.avgAnual),1)}</div>
-      <div class="kpi-sub">Mayo: ${f(parseFloat(n.avgMay),1)}</div>
+      <div class="kpi-sub">${monthNameCap}: ${f(parseFloat(n.avgMay),1)}</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Sobreponderar</div>
@@ -680,8 +856,8 @@ function render(sectors, tickers, filename) {
           <tr>
             <th style="text-align:left">Sector</th>
             <th>Q1</th>
-            ${!isNaN(sectors[0]?.abr) ? '<th>Abr</th>' : ''}
-            <th>Mayo</th>
+            ${!isNaN(sectors[0]?.abr) && monthName !== 'abril' ? '<th>Abr</th>' : ''}
+            <th>${monthNameCap}</th>
             <th>Anual</th>
             ${hasTrend ? '<th>Trend</th>' : ''}
             ${hasMom ? '<th>Momentum</th>' : ''}
@@ -796,11 +972,11 @@ function render(sectors, tickers, filename) {
         </div>
         <div class="narrative-body">
           <strong>${n.posAnual}</strong> de ${n.total} sectores en positivo anual (${(n.posAnual/n.total*100).toFixed(0)}%).
-          En mayo: <strong>${n.posMay}</strong> de ${n.total} positivos.
+          En ${monthName}: <strong>${n.posMay}</strong> de ${n.total} positivos.
           Media anual: <strong>${f(parseFloat(n.avgAnual),1)}</strong>.
           ${n.posMay < n.total/2
-            ? ' Momentum mayo <strong>selectivo</strong> — el mercado discrimina entre sectores.'
-            : ' Momentum mayo <strong>amplio</strong> — rebote generalizado.'}
+            ? ` Momentum ${monthName} <strong>selectivo</strong> — el mercado discrimina entre sectores.`
+            : ` Momentum ${monthName} <strong>amplio</strong> — rebote generalizado.`}
         </div>
       </div>
     </div>
@@ -827,7 +1003,7 @@ function render(sectors, tickers, filename) {
             <span class="signal-anual" style="color:${colorVal(s.anual)}">${f(s.anual,1)}</span>
           </div>
           <span class="signal-badge ${SIGNAL_BADGE[s.signal]}">${SIGNAL_LABELS[s.signal]}</span>
-          <div class="signal-desc">${signalDescription(s)}</div>
+          <div class="signal-desc">${signalDescription(s, monthName)}</div>
           <div class="signal-metrics">
             <div class="sig-metric">
               <span class="sig-metric-label">Q1</span>
@@ -838,7 +1014,7 @@ function render(sectors, tickers, filename) {
               <span class="sig-metric-val" style="color:${colorVal(s.abr)}">${f(s.abr,1)}</span>
             </div>` : ''}
             <div class="sig-metric">
-              <span class="sig-metric-label">Mayo</span>
+              <span class="sig-metric-label">${monthShort}</span>
               <span class="sig-metric-val" style="color:${colorVal(s.may)}">${f(s.may,1)}</span>
             </div>
             ${hasMom && !isNaN(s.momentum) ? `<div class="sig-metric">
@@ -864,7 +1040,7 @@ function render(sectors, tickers, filename) {
           <div class="ticker-name">${t.nombre}</div>
           <div class="ticker-stats">
             <span style="color:var(--muted)">Q1 <span style="color:${colorVal(t.q1)}">${f(t.q1,1)}</span></span>
-            <span style="color:var(--muted)">May <span style="color:${colorVal(t.may)}">${f(t.may,1)}</span></span>
+            <span style="color:var(--muted)">${monthShort} <span style="color:${colorVal(t.may)}">${f(t.may,1)}</span></span>
             <span class="ticker-sector-tag">${t.sector.replace(/ETF/g,'').trim() || 'ETF'}</span>
           </div>
         </div>`).join('')}
@@ -872,7 +1048,7 @@ function render(sectors, tickers, filename) {
   </div>
 
   <div class="section">
-    <div class="section-label">Top 8 tickers — momentum mayo</div>
+    <div class="section-label">Top 8 tickers — momentum ${monthName}</div>
     <div class="ticker-grid">
       ${topMay.map(t => `
         <div class="ticker-card">
@@ -908,7 +1084,7 @@ function render(sectors, tickers, filename) {
         <div class="exec-box">
           <div class="exec-title">Dónde asignar capital</div>
           ${buys.length > 0
-            ? `Los sectores con mayor convicción: ${buys.map(s => `<strong>${s.sector}</strong> (${f(s.anual,1)} anual, ${f(s.may,1)} mayo)`).join(' · ')}. Momentum sólido con señal de sobreponderar.`
+            ? `Los sectores con mayor convicción: ${buys.map(s => `<strong>${s.sector}</strong> (${f(s.anual,1)} anual, ${f(s.may,1)} ${monthName})`).join(' · ')}. Momentum sólido con señal de sobreponderar.`
             : 'No hay sectores con señal clara de sobreponderar en este período. Esperar confirmación.'}
           ${watches.length > 0 ? `<br><br><strong>En vigilancia:</strong> ${watches.map(s => `<strong>${s.sector}</strong>`).join(', ')}. Tesis en formación — esperar catalizador técnico.` : ''}
         </div>
@@ -923,7 +1099,7 @@ function render(sectors, tickers, filename) {
         <div class="exec-box danger">
           <div class="exec-title">Qué evitar</div>
           ${avoids.length > 0
-            ? avoids.map(s => `<strong>${s.sector}</strong> (${f(s.anual,1)} anual, ${f(s.may,1)} mayo)`).join(' · ') + '. Momentum deteriorado — capital mejor asignado en sectores con señal de sobreponderar.'
+            ? avoids.map(s => `<strong>${s.sector}</strong> (${f(s.anual,1)} anual, ${f(s.may,1)} ${monthName})`).join(' · ') + '. Momentum deteriorado — capital mejor asignado en sectores con señal de sobreponderar.'
             : 'Ningún sector en zona de infraponderar en este período.'}
           ${cautions.length > 0 ? `<br><br><strong>Precaución:</strong> ${cautions.map(s => `<strong>${s.sector}</strong>`).join(', ')}. No añadir capital nuevo.` : ''}
         </div>
@@ -994,6 +1170,7 @@ function render(sectors, tickers, filename) {
   $('report').innerHTML = html;
   $('report').style.display = 'block';
   $('empty-state').style.display = 'none';
+  $('export-btn').style.display = 'flex';
 
   // Filter buttons
   $('filter-row').addEventListener('click', e => {
@@ -1007,30 +1184,6 @@ function render(sectors, tickers, filename) {
     });
   });
 }
-
-// ── FILE HANDLER ─────────────────────────────────────────────────────────
-$('file-input').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  $('file-label').textContent = file.name;
-
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const tables = parseHTMLTables(ev.target.result);
-      if (tables.length < 1) { alert('No se encontraron tablas en el archivo.'); return; }
-      const { sectorTable, tickerTable } = detectSchema(tables);
-      if (!sectorTable) { alert('No se encontró tabla de sectores. Asegúrate de cargar una tabla de market-analyze.'); return; }
-      const sectors = buildSectors(sectorTable);
-      const tickers = tickerTable ? buildTickers(tickerTable) : [];
-      render(sectors, tickers, file.name);
-    } catch(err) {
-      alert('Error procesando el archivo: ' + err.message);
-      console.error(err);
-    }
-  };
-  reader.readAsText(file);
-});
 
 // ── THEME TOGGLE ──────────────────────────────────────────────────────────
 (function() {
@@ -1049,6 +1202,47 @@ $('file-input').addEventListener('change', e => {
     moon.style.display = isLight ? 'none' : '';
   });
 })();
+
+// ── EXPORT REPORT ─────────────────────────────────────────────────────────
+$('export-btn').addEventListener('click', () => {
+  const clone = document.documentElement.cloneNode(true);
+  
+  // Clean up UI elements for the exported version
+  const uploadZone = clone.querySelector('.upload-zone');
+  if (uploadZone) uploadZone.remove();
+  const emptyState = clone.querySelector('.empty-state');
+  if (emptyState) emptyState.remove();
+  
+  // Remove all scripts to ensure it's a static report (except a new inline one for filters)
+  clone.querySelectorAll('script').forEach(s => s.remove());
+
+  // Inject a small script to make the filter buttons work in the exported file
+  const filterScript = document.createElement('script');
+  filterScript.textContent = `
+    document.getElementById('filter-row').addEventListener('click', e => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      document.querySelectorAll('.signal-card').forEach(el => {
+        el.style.display = (f === 'all' || el.dataset.signal === f) ? '' : 'none';
+      });
+    });
+  `;
+  clone.querySelector('body').appendChild(filterScript);
+
+  const htmlStr = '<!DOCTYPE html>\n<html lang="es">\n' + clone.innerHTML + '\n</html>';
+  const blob = new Blob([htmlStr], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  
+  const periodStr = window._currentPeriod || 'Export';
+  a.download = `Analysis_${periodStr}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
 </script>
 </body>
 </html>
