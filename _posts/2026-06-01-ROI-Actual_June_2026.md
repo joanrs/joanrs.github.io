@@ -1,6 +1,6 @@
 ---
 title: "Actual ROI Week To Date June 2026"
-date: 2026-06-2 8:00:00 +0100
+date: 2026-06-3 8:00:00 +0100
 categories: [Markets]
 tags: [ROI, Month]
 ---
