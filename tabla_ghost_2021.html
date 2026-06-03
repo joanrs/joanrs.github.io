@@ -1,227 +1,2812 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+/>
+<style>
+  .ghost-table th {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+  .ghost-table th:hover {
+    background-color: #1e3a8a !important;
+    filter: brightness(1.1);
+  }
+  .sort-icon {
+    font-size: 0.7em;
+    margin-left: 4px;
+    opacity: 0.8;
+  }
+  .ghost-table tbody tr.sector-selected {
+    background-color: #dbeafe !important;
+    outline: 2px solid #1e40af;
+  }
+  .ghost-table tbody tr {
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .ghost-table tbody tr:not(.sector-selected):hover {
+    background-color: #f0f7ff !important;
+  }
+</style>
+<script>
+  document.addEventListener("click", function (e) {
+    const th = e.target.closest("th");
+    if (!th || !th.dataset.type) return;
+    const table = th.closest("table");
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    const index = Array.from(th.parentNode.children).indexOf(th);
+    const type = th.dataset.type;
+    const isAsc = th.dataset.order !== "asc";
 
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-                    <style>
-                        .ghost-table th { cursor: pointer; position: relative; user-select: none; }
-                        .ghost-table th:hover { background-color: #1e3a8a !important; filter: brightness(1.1); }
-                        .sort-icon { font-size: 0.7em; margin-left: 4px; opacity: 0.8; }
-                        .ghost-table tbody tr.sector-selected { background-color: #dbeafe !important; outline: 2px solid #1e40af; }
-                        .ghost-table tbody tr { cursor: pointer; transition: background 0.15s; }
-                        .ghost-table tbody tr:not(.sector-selected):hover { background-color: #f0f7ff !important; }
-                    </style>
-                    <script>
-                    document.addEventListener('click', function (e) {
-                        const th = e.target.closest('th');
-                        if (!th || !th.dataset.type) return;
-                        const table = th.closest('table');
-                        const tbody = table.querySelector('tbody');
-                        const rows = Array.from(tbody.querySelectorAll('tr'));
-                        const index = Array.from(th.parentNode.children).indexOf(th);
-                        const type = th.dataset.type;
-                        const isAsc = th.dataset.order !== 'asc';
+    rows.sort((a, b) => {
+      let cellA = a.children[index].innerText || a.children[index].textContent;
+      let cellB = b.children[index].innerText || b.children[index].textContent;
 
-                        rows.sort((a, b) => {
-                            let cellA = a.children[index].innerText || a.children[index].textContent;
-                            let cellB = b.children[index].innerText || b.children[index].textContent;
-                            
-                            let valA = cellA.trim().replace('%', '').replace('$', '').replace(/,/g, '');
-                            let valB = cellB.trim().replace('%', '').replace('$', '').replace(/,/g, '');
+      let valA = cellA
+        .trim()
+        .replace("%", "")
+        .replace("$", "")
+        .replace(/,/g, "");
+      let valB = cellB
+        .trim()
+        .replace("%", "")
+        .replace("$", "")
+        .replace(/,/g, "");
 
-                            if (type === 'number') {
-                                let nA = parseFloat(valA);
-                                let nB = parseFloat(valB);
-                                if (isNaN(nA)) nA = isAsc ? -Infinity : Infinity;
-                                if (isNaN(nB)) nB = isAsc ? -Infinity : Infinity;
-                                return (nA - nB) * (isAsc ? 1 : -1);
-                            }
-                            return valA.localeCompare(valB) * (isAsc ? 1 : -1);
-                        });
+      if (type === "number") {
+        let nA = parseFloat(valA);
+        let nB = parseFloat(valB);
+        if (isNaN(nA)) nA = isAsc ? -Infinity : Infinity;
+        if (isNaN(nB)) nB = isAsc ? -Infinity : Infinity;
+        return (nA - nB) * (isAsc ? 1 : -1);
+      }
+      return valA.localeCompare(valB) * (isAsc ? 1 : -1);
+    });
 
-                        th.dataset.order = isAsc ? 'asc' : 'desc';
-                        th.parentNode.querySelectorAll('th').forEach(h => {
-                            const existingIcon = h.querySelector('.sort-icon');
-                            if (existingIcon) existingIcon.remove();
-                        });
-                        
-                        const icon = document.createElement('span');
-                        icon.className = 'sort-icon';
-                        icon.innerHTML = isAsc ? '▲' : '▼';
-                        th.appendChild(icon);
+    th.dataset.order = isAsc ? "asc" : "desc";
+    th.parentNode.querySelectorAll("th").forEach((h) => {
+      const existingIcon = h.querySelector(".sort-icon");
+      if (existingIcon) existingIcon.remove();
+    });
 
-                        rows.forEach(row => tbody.appendChild(row));
+    const icon = document.createElement("span");
+    icon.className = "sort-icon";
+    icon.innerHTML = isAsc ? "▲" : "▼";
+    th.appendChild(icon);
 
-                        // Si es la primera tabla, reordenar la segunda
-                        const tables = document.querySelectorAll('.ghost-table');
-                        if (table === tables[0] && tables.length > 1) {
-                            const table2 = tables[1];
-                            const tbody2 = table2.querySelector('tbody');
-                            const rows2 = Array.from(tbody2.querySelectorAll('tr'));
-                            
-                            const sectorOrderMap = new Map();
-                            rows.forEach((r, i) => {
-                                const secName = (r.children[0].innerText || r.children[0].textContent).trim();
-                                sectorOrderMap.set(secName, i);
-                            });
+    rows.forEach((row) => tbody.appendChild(row));
 
-                            const headers2 = Array.from(table2.querySelectorAll('thead th'));
-                            const clickedHeaderTitle = th.textContent.replace(/[▲▼s]/g, '').trim();
-                            const colIndex2 = headers2.findIndex(h => h.textContent.replace(/[▲▼s]/g, '').trim() === clickedHeaderTitle);
-                            
-                            let targetColIndex = colIndex2;
-                            if (targetColIndex === -1) {
-                                targetColIndex = headers2.length - 1; // Fallback al último índice (usualmente Anual)
-                            }
+    // Si es la primera tabla, reordenar la segunda
+    const tables = document.querySelectorAll(".ghost-table");
+    if (table === tables[0] && tables.length > 1) {
+      const table2 = tables[1];
+      const tbody2 = table2.querySelector("tbody");
+      const rows2 = Array.from(tbody2.querySelectorAll("tr"));
 
-                            const listaColIndex = headers2.findIndex(h => h.textContent.replace(/[▲▼s]/g, '').trim() === 'Lista');
-                            const finalListaColIndex = listaColIndex !== -1 ? listaColIndex : 3;
+      const sectorOrderMap = new Map();
+      rows.forEach((r, i) => {
+        const secName = (
+          r.children[0].innerText || r.children[0].textContent
+        ).trim();
+        sectorOrderMap.set(secName, i);
+      });
 
-                            rows2.sort((a, b) => {
-                                const tagsA = Array.from(a.children[finalListaColIndex].querySelectorAll('.tag-l')).map(el => (el.innerText || el.textContent).trim());
-                                const tagsB = Array.from(b.children[finalListaColIndex].querySelectorAll('.tag-l')).map(el => (el.innerText || el.textContent).trim());
-                                
-                                const secA = tagsA.find(t => sectorOrderMap.has(t)) || tagsA[0];
-                                const secB = tagsB.find(t => sectorOrderMap.has(t)) || tagsB[0];
-                                
-                                const orderA = sectorOrderMap.has(secA) ? sectorOrderMap.get(secA) : 999;
-                                const orderB = sectorOrderMap.has(secB) ? sectorOrderMap.get(secB) : 999;
+      const headers2 = Array.from(table2.querySelectorAll("thead th"));
+      const clickedHeaderTitle = th.textContent.replace(/[▲▼s]/g, "").trim();
+      const colIndex2 = headers2.findIndex(
+        (h) =>
+          h.textContent.replace(/[▲▼s]/g, "").trim() === clickedHeaderTitle,
+      );
 
-                                if (orderA !== orderB) {
-                                    return orderA - orderB;
-                                }
+      let targetColIndex = colIndex2;
+      if (targetColIndex === -1) {
+        targetColIndex = headers2.length - 1; // Fallback al último índice (usualmente Anual)
+      }
 
-                                let cellA = a.children[targetColIndex].innerText || a.children[targetColIndex].textContent;
-                                let cellB = b.children[targetColIndex].innerText || b.children[targetColIndex].textContent;
+      const listaColIndex = headers2.findIndex(
+        (h) => h.textContent.replace(/[▲▼s]/g, "").trim() === "Lista",
+      );
+      const finalListaColIndex = listaColIndex !== -1 ? listaColIndex : 3;
 
-                                let valA = cellA.trim().replace('%', '').replace('$', '').replace(/,/g, '');
-                                let valB = cellB.trim().replace('%', '').replace('$', '').replace(/,/g, '');
+      rows2.sort((a, b) => {
+        const tagsA = Array.from(
+          a.children[finalListaColIndex].querySelectorAll(".tag-l"),
+        ).map((el) => (el.innerText || el.textContent).trim());
+        const tagsB = Array.from(
+          b.children[finalListaColIndex].querySelectorAll(".tag-l"),
+        ).map((el) => (el.innerText || el.textContent).trim());
 
-                                let nA = parseFloat(valA);
-                                let nB = parseFloat(valB);
-                                
-                                if (isNaN(nA)) nA = -Infinity;
-                                if (isNaN(nB)) nB = -Infinity;
+        const secA = tagsA.find((t) => sectorOrderMap.has(t)) || tagsA[0];
+        const secB = tagsB.find((t) => sectorOrderMap.has(t)) || tagsB[0];
 
-                                return nB - nA; // De mayor a menor
-                            });
+        const orderA = sectorOrderMap.has(secA)
+          ? sectorOrderMap.get(secA)
+          : 999;
+        const orderB = sectorOrderMap.has(secB)
+          ? sectorOrderMap.get(secB)
+          : 999;
 
-                            rows2.forEach(row => tbody2.appendChild(row));
-                        }
-                    });
+        if (orderA !== orderB) {
+          return orderA - orderB;
+        }
 
-                    // --- Sector Filter: click on first table rows ---
-                    let _activeSector = null;
-                    document.addEventListener('click', function(e) {
-                        if (e.target.closest('th')) return; // ignore header clicks
-                        const tr = e.target.closest('tr');
-                        if (!tr) return;
-                        const tables = document.querySelectorAll('.ghost-table');
-                        if (!tables[0] || !tables[1]) return;
-                        if (!tables[0].querySelector('tbody').contains(tr)) return;
+        let cellA =
+          a.children[targetColIndex].innerText ||
+          a.children[targetColIndex].textContent;
+        let cellB =
+          b.children[targetColIndex].innerText ||
+          b.children[targetColIndex].textContent;
 
-                        const tagEl = tr.querySelector('.tag-l');
-                        if (!tagEl) return;
-                        const sectorName = tagEl.textContent.trim();
+        let valA = cellA
+          .trim()
+          .replace("%", "")
+          .replace("$", "")
+          .replace(/,/g, "");
+        let valB = cellB
+          .trim()
+          .replace("%", "")
+          .replace("$", "")
+          .replace(/,/g, "");
 
-                        const tbody2 = tables[1].querySelector('tbody');
-                        const heads2 = Array.from(tables[1].querySelectorAll('thead th'));
-                        const listaIdx = heads2.findIndex(h => h.textContent.replace(/[▲▼s]/g,'').trim() === 'Lista');
-                        const liIdx = listaIdx !== -1 ? listaIdx : 3;
+        let nA = parseFloat(valA);
+        let nB = parseFloat(valB);
 
-                        if (_activeSector === sectorName) {
-                            _activeSector = null;
-                            tables[0].querySelectorAll('tbody tr').forEach(r => r.classList.remove('sector-selected'));
-                            tbody2.querySelectorAll('tr').forEach(r => r.style.display = '');
-                        } else {
-                            _activeSector = sectorName;
-                            tables[0].querySelectorAll('tbody tr').forEach(r => r.classList.remove('sector-selected'));
-                            tr.classList.add('sector-selected');
-                            tbody2.querySelectorAll('tr').forEach(r => {
-                                const tags = Array.from(r.children[liIdx] ? r.children[liIdx].querySelectorAll('.tag-l') : []).map(t => t.textContent.trim());
-                                r.style.display = tags.includes(sectorName) ? '' : 'none';
-                            });
-                        }
-                    });
-                    </script>
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <span class="ticker-badge"> Sectors ROI 2026 </span><br>
-                        <a href="https://x.com/joanr" target="_blank" style="text-decoration: none; color: inherit; margin: 0 10px;">
-                            <i class="fab fa-x-twitter"></i>
-                            <span class="col-real_name"> joanr</span>
-                        </a>
-                        <a href="https://x.com/joanr" target="_blank" style="text-decoration: none; color: inherit; margin: 0 10px;">
-                            <i class="fab fa-github"></i>
-                            <span class="col-real_name"> joanrs</span>
-                        </a>
-                        <a href="https://instagram.com/jr.growth" target="_blank" style="text-decoration: none; color: inherit; margin: 0 10px;">
-                            <i class="fab fa-instagram"></i>
-                            <span class="col-real_name"> jr.growth</span>
-                        </a>
-                    </div><style>
-                        .ghost-table-wrapper { 
-                            margin: 1.5em 0; 
-                            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-                            color: #1a1f23;
-                            width: 100%;
-                            line-height: 1.2;
-                        }
-                        .ghost-table-wrapper * { box-sizing: border-box; }
-                        .ghost-table-container {
-                            width: 100%;
-                            overflow-x: auto;
-                            border: 1px solid #e5e7eb;
-                            border-radius: 6px;
-                        }
-                        .ghost-table { 
-                            width: 100%; 
-                            border-collapse: collapse; 
-                            background: white;
-                            font-size: 12px;
-                            table-layout: auto;
-                        }
-                        .ghost-table th { 
-                            background-color: #1e40af; 
-                            color: white; 
-                            padding: 4px 2px; 
-                            text-align: center; 
-                            font-weight: 600;
-                            border: 1px solid #1e3a8a;
-                            word-break: break-word;
-                        }
-                        .ghost-table td { 
-                            padding: 4px 2px; 
-                            border: 1px solid #f0f0f0; 
-                            text-align: center; 
-                            word-break: break-word;
-                        }
-                        .ghost-table tr:hover { background-color: #f9fafb; }
-                        .ticker-badge { font-weight: 800; color: #1e40af; }
-                        .pos { color: #15803d; background-color: #dcfce7; font-weight: 600; padding: 1px 3px; border-radius: 3px; display: inline-block; }
-                        .neg { color: #b91c1c; background-color: #fee2e2; font-weight: 600; padding: 1px 3px; border-radius: 3px; display: inline-block; }
-                        .neu { color: #4b5563; background-color: #f3f4f6; padding: 1px 3px; border-radius: 3px; display: inline-block; }
-                        .tag-l { padding: 1px 4px; border-radius: 10px; color: white; font-size: 9px; font-weight: 600; margin: 1px; display: inline-block; }
-                        .market-cap { color: #64748b; font-family: monospace; font-size: 10px; }
-                        .col-real_name { color: #64748b; font-weight: 400; font-size: 11px; }
+        if (isNaN(nA)) nA = -Infinity;
+        if (isNaN(nB)) nB = -Infinity;
 
-                        @media (max-width: 600px) {
-                            .ghost-table th, 
-                            .ghost-table td { 
-                                font-size: 10.5px !important; 
-                                line-height: 1.2 !important;
-                                padding: 3px 0px !important;
-                                text-align: center !important;
-                            }
-                            .ticker-badge, .market-cap, .pos, .neg, .neu { 
-                                font-size: inherit !important; 
-                            }
-                            .tag-l { 
-                                font-size: 9px !important; 
-                                padding: 1px 3px !important;
-                            }
-                        }
-                        @media (max-width: 400px) {
-                            .ghost-table th, 
-                            .ghost-table td { 
-                                font-size: 9.5px !important; 
-                                padding: 2px 0px !important;
-                            }
-                        }
-                    </style><div class="ghost-table-wrapper"><div style="margin-bottom: 10px; font-weight: bold; color: #1e40af; font-family: sans-serif; text-align: center;">Resumen de Medias por Sectores</div><div class="ghost-table-container"><table class="ghost-table"><thead><tr><th data-type="string">Sector</th><th data-type="number">Q1</th><th data-type="number">Jun</th><th data-type="number">Q2</th><th data-type="number">Q3</th><th data-type="number">Q4</th><th data-type="number">Anual</th><th data-type="string" title="Cambio de ranking entre Q4 y Jun">Trend</th><th data-type="number" title="Jun vs Q4/3 (media mensual equiv.)">Momentum</th></tr></thead><tbody><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(135, 84%, 47%)">BTC Mining</span></td><td><span class="pos">121.53%</span></td><td><span class="pos">29.75%</span></td><td><span class="neg">-6.49%</span></td><td><span class="pos">12.75%</span></td><td><span class="neg">-20.46%</span></td><td><span class="pos">62.18%</span></td><td style="text-align:center" title="Subió 19 posiciones respecto a Q4"><span style="color:#15803d;font-weight:bold">↑19</span></td><td><span class="pos" title="Jun vs Q4/3 (media mensual equiv.)">+36.57%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(54, 78%, 50%)">Big Tech</span></td><td><span class="pos">2.27%</span></td><td><span class="pos">7.26%</span></td><td><span class="pos">13.20%</span></td><td><span class="pos">3.48%</span></td><td><span class="pos">15.04%</span></td><td><span class="pos">37.58%</span></td><td style="text-align:center" title="Subió 1 posiciones respecto a Q4"><span style="color:#15803d;font-weight:bold">↑1</span></td><td><span class="pos" title="Jun vs Q4/3 (media mensual equiv.)">+2.25%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(23, 81%, 40%)">Bitcoin Rel.</span></td><td><span class="pos">20.71%</span></td><td><span class="pos">9.32%</span></td><td><span class="neg">-11.71%</span></td><td><span class="neg">-9.55%</span></td><td><span class="neg">-15.14%</span></td><td><span class="neg">-20.68%</span></td><td style="text-align:center" title="Subió 16 posiciones respecto a Q4"><span style="color:#15803d;font-weight:bold">↑16</span></td><td><span class="pos" title="Jun vs Q4/3 (media mensual equiv.)">+14.37%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(90, 76%, 43%)">CiberSec.</span></td><td><span class="neg">-3.93%</span></td><td><span class="pos">11.10%</span></td><td><span class="pos">28.83%</span></td><td><span class="pos">11.16%</span></td><td><span class="pos">12.30%</span></td><td><span class="pos">56.79%</span></td><td style="text-align:center" title="Subió 7 posiciones respecto a Q4"><span style="color:#15803d;font-weight:bold">↑7</span></td><td><span class="pos" title="Jun vs Q4/3 (media mensual equiv.)">+7.00%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(98, 82%, 47%)">Cons. Elect.</span></td><td><span class="pos">26.76%</span></td><td><span class="neg">-3.58%</span></td><td><span class="neg">-4.90%</span></td><td><span class="neg">-12.24%</span></td><td><span class="pos">12.19%</span></td><td><span class="pos">20.76%</span></td><td style="text-align:center" title="Bajó 7 posiciones respecto a Q4"><span style="color:#b91c1c;font-weight:bold">↓7</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-7.65%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(329, 65%, 41%)">Currency</span></td><td><span class="neg">-4.69%</span></td><td><span class="neg">-2.36%</span></td><td><span class="pos">1.52%</span></td><td><span class="neg">-2.52%</span></td><td><span class="neg">-2.38%</span></td><td><span class="neg">-7.93%</span></td><td style="text-align:center" title="Subió 1 posiciones respecto a Q4"><span style="color:#15803d;font-weight:bold">↑1</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-1.57%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(149, 68%, 45%)">Data Center</span></td><td><span class="pos">17.94%</span></td><td><span class="neg">-0.96%</span></td><td><span class="neg">-3.39%</span></td><td><span class="pos">8.73%</span></td><td><span class="pos">16.68%</span></td><td><span class="pos">41.77%</span></td><td style="text-align:center" title="Bajó 8 posiciones respecto a Q4"><span style="color:#b91c1c;font-weight:bold">↓8</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-6.52%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span></td><td><span class="pos">2.78%</span></td><td><span class="pos">2.81%</span></td><td><span class="pos">5.43%</span></td><td><span class="neg">-0.18%</span></td><td><span class="pos">9.28%</span></td><td><span class="pos">18.54%</span></td><td style="text-align:center" title="Subió 2 posiciones respecto a Q4"><span style="color:#15803d;font-weight:bold">↑2</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-0.28%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(61, 70%, 45%)">Electric</span></td><td><span class="neg">-1.93%</span></td><td><span class="neg">-0.20%</span></td><td><span class="pos">0.21%</span></td><td><span class="neg">-3.16%</span></td><td><span class="pos">12.54%</span></td><td><span class="pos">6.63%</span></td><td style="text-align:center" title="Bajó 3 posiciones respecto a Q4"><span style="color:#b91c1c;font-weight:bold">↓3</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-4.38%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(314, 84%, 49%)">Equipment</span></td><td><span class="pos">35.81%</span></td><td><span class="pos">1.83%</span></td><td><span class="pos">9.27%</span></td><td><span class="neg">-4.76%</span></td><td><span class="pos">18.48%</span></td><td><span class="pos">65.95%</span></td><td style="text-align:center" title="Bajó 6 posiciones respecto a Q4"><span style="color:#b91c1c;font-weight:bold">↓6</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-4.33%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(345, 81%, 53%)">Financial</span></td><td><span class="pos">12.68%</span></td><td><span class="neg">-0.63%</span></td><td><span class="pos">9.43%</span></td><td><span class="pos">0.16%</span></td><td><span class="pos">1.81%</span></td><td><span class="pos">28.24%</span></td><td style="text-align:center" title="Subió 2 posiciones respecto a Q4"><span style="color:#15803d;font-weight:bold">↑2</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-1.23%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(114, 81%, 40%)">Index</span></td><td><span class="pos">6.38%</span></td><td><span class="pos">4.51%</span></td><td><span class="pos">8.80%</span></td><td><span class="neg">-0.48%</span></td><td><span class="pos">14.29%</span></td><td><span class="pos">31.56%</span></td><td style="text-align:center" title="Bajó 1 posiciones respecto a Q4"><span style="color:#b91c1c;font-weight:bold">↓1</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-0.25%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(234, 68%, 45%)">Mid Tech</span></td><td><span class="pos">3.68%</span></td><td><span class="pos">7.93%</span></td><td><span class="pos">5.16%</span></td><td><span class="neg">-2.55%</span></td><td><span class="neg">-3.32%</span></td><td><span class="pos">2.02%</span></td><td style="text-align:center" title="Subió 13 posiciones respecto a Q4"><span style="color:#15803d;font-weight:bold">↑13</span></td><td><span class="pos" title="Jun vs Q4/3 (media mensual equiv.)">+9.04%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(82, 74%, 41%)">Oil</span></td><td><span class="pos">17.10%</span></td><td><span class="pos">4.87%</span></td><td><span class="pos">7.54%</span></td><td><span class="pos">1.09%</span></td><td><span class="pos">2.29%</span></td><td><span class="pos">29.40%</span></td><td style="text-align:center" title="Subió 6 posiciones respecto a Q4"><span style="color:#15803d;font-weight:bold">↑6</span></td><td><span class="pos" title="Jun vs Q4/3 (media mensual equiv.)">+4.11%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(312, 68%, 46%)">Privacy</span></td><td><span class="pos">108.62%</span></td><td><span class="neg">-21.50%</span></td><td><span class="neg">-20.35%</span></td><td><span class="pos">2.96%</span></td><td><span class="pos">2.99%</span></td><td><span class="pos">69.91%</span></td><td style="text-align:center" title="Bajó 8 posiciones respecto a Q4"><span style="color:#b91c1c;font-weight:bold">↓8</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-22.49%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(274, 65%, 48%)">Rare</span></td><td><span class="pos">16.79%</span></td><td><span class="neg">-1.00%</span></td><td><span class="pos">4.84%</span></td><td><span class="neg">-14.21%</span></td><td><span class="neg">-5.29%</span></td><td><span class="pos">1.69%</span></td><td style="text-align:center" title="Subió 4 posiciones respecto a Q4"><span style="color:#15803d;font-weight:bold">↑4</span></td><td><span class="pos" title="Jun vs Q4/3 (media mensual equiv.)">+0.76%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="pos">4.26%</span></td><td><span class="pos">7.11%</span></td><td><span class="pos">8.92%</span></td><td><span class="neg">-0.15%</span></td><td><span class="pos">23.80%</span></td><td><span class="pos">40.70%</span></td><td style="text-align:center" title="Bajó 5 posiciones respecto a Q4"><span style="color:#b91c1c;font-weight:bold">↓5</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-0.82%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="pos">9.52%</span></td><td><span class="neg">-5.09%</span></td><td><span class="pos">0.85%</span></td><td><span class="pos">4.40%</span></td><td><span class="neg">-0.36%</span></td><td><span class="pos">13.96%</span></td><td style="text-align:center" title="Bajó 3 posiciones respecto a Q4"><span style="color:#b91c1c;font-weight:bold">↓3</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-4.97%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(253, 79%, 47%)">Storage</span></td><td><span class="pos">111.57%</span></td><td><span class="neg">-2.89%</span></td><td><span class="pos">1.54%</span></td><td><span class="neg">-15.57%</span></td><td><span class="pos">23.67%</span></td><td><span class="pos">113.55%</span></td><td style="text-align:center" title="Bajó 14 posiciones respecto a Q4"><span style="color:#b91c1c;font-weight:bold">↓14</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-10.78%</span></td></tr><tr><td style="text-align: center; padding: 4px 8px;"><span class="tag-l" style="background-color: hsl(132, 71%, 44%)">Top Crypto</span></td><td><span class="pos">539.91%</span></td><td><span class="neg">-7.10%</span></td><td><span class="pos">15.28%</span></td><td><span class="pos">95.33%</span></td><td><span class="pos">20.34%</span></td><td><span class="pos">3224.81%</span></td><td style="text-align:center" title="Bajó 16 posiciones respecto a Q4"><span style="color:#b91c1c;font-weight:bold">↓16</span></td><td><span class="neg" title="Jun vs Q4/3 (media mensual equiv.)">-13.88%</span></td></tr></tbody></table></div></div><hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 30px 0;"><div class="ghost-table-wrapper"><div class="ghost-table-container"><table class="ghost-table"><thead><tr><th data-type="string">Ticker</th><th data-type="string">Nombre</th><th data-type="number">MktCap</th><th data-type="string">Lista</th><th data-type="number">Q1</th><th data-type="number">Jun</th><th data-type="number">Q2</th><th data-type="number">Q3</th><th data-type="number">Q4</th><th data-type="number">Anual</th></tr></thead><tbody><tr><td><span class="ticker-badge">SOL-USD</span></td><td>Solana USD</td><td><span class="market-cap">$48.56B</span></td><td><span class="tag-l" style="background-color: hsl(132, 71%, 44%)">Top Crypto</span></td><td><span class="pos">1188.32% 🚀</span></td><td><span class="pos">8.35% 📈</span></td><td><span class="pos">82.67% 🚀</span></td><td><span class="pos">296.75% 🚀</span></td><td><span class="pos">20.72% 🚀</span></td><td><span class="pos">11171.38% 🚀</span></td></tr><tr><td><span class="ticker-badge">BNB-USD</span></td><td>BNB USD</td><td><span class="market-cap">$83.79B</span></td><td><span class="tag-l" style="background-color: hsl(132, 71%, 44%)">Top Crypto</span></td><td><span class="pos">708.17% 🚀</span></td><td><span class="neg">-14.40% 📉</span></td><td><span class="pos">0.41% 📈</span></td><td><span class="pos">27.62% 🚀</span></td><td><span class="pos">32.20% 🚀</span></td><td><span class="pos">1269.08% 🚀</span></td></tr><tr><td><span class="ticker-badge">HY9H.F</span></td><td>SK Hynix</td><td><span class="market-cap">$541.44B</span></td><td><span class="tag-l" style="background-color: hsl(253, 79%, 47%)">Storage</span></td><td><span class="pos">496.59% 🚀</span></td><td><span class="neg">-0.51% 📉</span></td><td><span class="neg">-7.62% 📉</span></td><td><span class="neg">-22.16% 💀</span></td><td><span class="pos">29.14% 🚀</span></td><td><span class="pos">453.98% 🚀</span></td></tr><tr><td><span class="ticker-badge">ETH-USD</span></td><td>Ethereum USD</td><td><span class="market-cap">$275.03B</span></td><td><span class="tag-l" style="background-color: hsl(132, 71%, 44%)">Top Crypto</span></td><td><span class="pos">160.01% 🚀</span></td><td><span class="neg">-16.22% 📉</span></td><td><span class="pos">18.57% 📈</span></td><td><span class="pos">31.97% 🚀</span></td><td><span class="pos">22.69% 🚀</span></td><td><span class="pos">399.13% 🚀</span></td></tr><tr><td><span class="ticker-badge">MARA</span></td><td>MARA Holdings</td><td><span class="market-cap">$5.07B</span></td><td><span class="tag-l" style="background-color: hsl(135, 84%, 47%)">BTC Mining</span></td><td><span class="pos">359.96% 🚀</span></td><td><span class="pos">26.65% 🚀</span></td><td><span class="neg">-34.67% 💀</span></td><td><span class="pos">0.67% 📈</span></td><td><span class="pos">4.05% 📈</span></td><td><span class="pos">214.75% 🚀</span></td></tr><tr><td><span class="ticker-badge">HUT</span></td><td>Hut 8 Corp.</td><td><span class="market-cap">$12.31B</span></td><td><span class="tag-l" style="background-color: hsl(135, 84%, 47%)">BTC Mining</span></td><td><span class="pos">175.42% 🚀</span></td><td><span class="pos">8.11% 📈</span></td><td><span class="neg">-41.91% 💀</span></td><td><span class="pos">90.91% 🚀</span></td><td><span class="neg">-6.55% 📉</span></td><td><span class="pos">185.45% 🚀</span></td></tr><tr><td><span class="ticker-badge">FTNT</span></td><td>Fortinet</td><td><span class="market-cap">$89.28B</span></td><td><span class="tag-l" style="background-color: hsl(90, 76%, 43%)">CiberSec.</span></td><td><span class="pos">24.16% 🚀</span></td><td><span class="pos">8.99% 📈</span></td><td><span class="pos">29.16% 🚀</span></td><td><span class="pos">22.61% 🚀</span></td><td><span class="pos">23.07% 🚀</span></td><td><span class="pos">141.97% 🚀</span></td></tr><tr><td><span class="ticker-badge">ZEC-USD</span></td><td>Zcash USD</td><td><span class="market-cap">$5.85B</span></td><td><span class="tag-l" style="background-color: hsl(312, 68%, 46%)">Privacy</span></td><td><span class="pos">145.22% 🚀</span></td><td><span class="neg">-19.37% 📉</span></td><td><span class="neg">-16.63% 📉</span></td><td><span class="neg">-18.21% 📉</span></td><td><span class="pos">36.97% 🚀</span></td><td><span class="pos">129.04% 🚀</span></td></tr><tr><td><span class="ticker-badge">NVDA</span></td><td>NVIDIA Corp.</td><td><span class="market-cap">$5.13T</span></td><td><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="pos">2.25% 📈</span></td><td><span class="pos">23.13% 🚀</span></td><td><span class="pos">49.85% 🚀</span></td><td><span class="pos">3.57% 📈</span></td><td><span class="pos">41.97% 🚀</span></td><td><span class="pos">125.29% 🚀</span></td></tr><tr><td><span class="ticker-badge">BX</span></td><td>Blackstone</td><td><span class="market-cap">$149.68B</span></td><td><span class="tag-l" style="background-color: hsl(345, 81%, 53%)">Financial</span></td><td><span class="pos">15.00% 📈</span></td><td><span class="pos">4.82% 📈</span></td><td><span class="pos">30.34% 🚀</span></td><td><span class="pos">19.77% 📈</span></td><td><span class="pos">11.22% 📈</span></td><td><span class="pos">99.65% 🚀</span></td></tr><tr><td><span class="ticker-badge">MRVL</span></td><td>Marvell Tech.</td><td><span class="market-cap">$159.86B</span></td><td><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="pos">3.03% 📈</span></td><td><span class="pos">20.77% 🚀</span></td><td><span class="pos">19.09% 📈</span></td><td><span class="pos">3.39% 📈</span></td><td><span class="pos">45.07% 🚀</span></td><td><span class="pos">84.03% 🚀</span></td></tr><tr><td><span class="ticker-badge">AMAT</span></td><td>Applied Materials</td><td><span class="market-cap">$318.49B</span></td><td><span class="tag-l" style="background-color: hsl(314, 84%, 49%)">Equipment</span></td><td><span class="pos">54.81% 🚀</span></td><td><span class="pos">3.09% 📈</span></td><td><span class="pos">6.59% 📈</span></td><td><span class="neg">-9.60% 📉</span></td><td><span class="pos">22.24% 🚀</span></td><td><span class="pos">82.34% 🚀</span></td></tr><tr><td><span class="ticker-badge">STX</span></td><td>Seagate Technology</td><td><span class="market-cap">$133.01B</span></td><td><span class="tag-l" style="background-color: hsl(253, 79%, 47%)">Storage</span></td><td><span class="pos">23.47% 🚀</span></td><td><span class="neg">-8.17% 📉</span></td><td><span class="pos">14.57% 📈</span></td><td><span class="neg">-6.15% 📉</span></td><td><span class="pos">36.91% 🚀</span></td><td><span class="pos">81.76% 🚀</span></td></tr><tr><td><span class="ticker-badge">UUUU</span></td><td>Energy Fuels</td><td><span class="market-cap">$5.14B</span></td><td><span class="tag-l" style="background-color: hsl(274, 65%, 48%)">Rare</span></td><td><span class="pos">33.33% 🚀</span></td><td><span class="neg">-6.78% 📉</span></td><td><span class="pos">6.51% 📈</span></td><td><span class="pos">16.03% 📈</span></td><td><span class="pos">8.69% 📈</span></td><td><span class="pos">79.11% 🚀</span></td></tr><tr><td><span class="ticker-badge">NET</span></td><td>Cloudflare</td><td><span class="market-cap">$74.37B</span></td><td><span class="tag-l" style="background-color: hsl(90, 76%, 43%)">CiberSec.</span></td><td><span class="neg">-7.54% 📉</span></td><td><span class="pos">28.98% 🚀</span></td><td><span class="pos">50.64% 🚀</span></td><td><span class="pos">6.43% 📈</span></td><td><span class="pos">16.73% 📈</span></td><td><span class="pos">73.05% 🚀</span></td></tr><tr><td><span class="ticker-badge">SAB.MC</span></td><td>Banco Sabadell</td><td><span class="market-cap">$15.60B</span></td><td><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="pos">28.81% 🚀</span></td><td><span class="neg">-8.39% 📉</span></td><td><span class="pos">25.92% 🚀</span></td><td><span class="pos">26.37% 🚀</span></td><td><span class="neg">-18.44% 📉</span></td><td><span class="pos">67.18% 🚀</span></td></tr><tr><td><span class="ticker-badge">GOOG</span></td><td>Alphabet</td><td><span class="market-cap">$4.22T</span></td><td><span class="tag-l" style="background-color: hsl(54, 78%, 50%)">Big Tech</span></td><td><span class="pos">18.08% 📈</span></td><td><span class="pos">3.93% 📈</span></td><td><span class="pos">21.16% 🚀</span></td><td><span class="pos">6.34% 📈</span></td><td><span class="pos">8.56% 📈</span></td><td><span class="pos">65.17% 🚀</span></td></tr><tr><td><span class="ticker-badge">ASML</span></td><td>ASML Holding</td><td><span class="market-cap">$548.95B</span></td><td><span class="tag-l" style="background-color: hsl(314, 84%, 49%)">Equipment</span></td><td><span class="pos">26.58% 🚀</span></td><td><span class="pos">2.28% 📈</span></td><td><span class="pos">11.90% 📈</span></td><td><span class="pos">7.86% 📈</span></td><td><span class="pos">6.85% 📈</span></td><td><span class="pos">63.24% 🚀</span></td></tr><tr><td><span class="ticker-badge">ZS</span></td><td>Zscaler</td><td><span class="market-cap">$21.78B</span></td><td><span class="tag-l" style="background-color: hsl(90, 76%, 43%)">CiberSec.</span></td><td><span class="neg">-14.04% 📉</span></td><td><span class="pos">11.26% 📈</span></td><td><span class="pos">25.86% 🚀</span></td><td><span class="pos">21.36% 🚀</span></td><td><span class="pos">22.54% 🚀</span></td><td><span class="pos">60.90% 🚀</span></td></tr><tr><td><span class="ticker-badge">BTC-USD</span></td><td>Bitcoin USD</td><td><span class="market-cap">$1.54T</span></td><td><span class="tag-l" style="background-color: hsl(132, 71%, 44%)">Top Crypto</span></td><td><span class="pos">103.16% 🚀</span></td><td><span class="neg">-6.14% 📉</span></td><td><span class="neg">-40.53% 💀</span></td><td><span class="pos">24.97% 🚀</span></td><td><span class="pos">5.74% 📈</span></td><td><span class="pos">59.67% 🚀</span></td></tr><tr><td><span class="ticker-badge">VVSM.DE</span></td><td>VanEck Semic.</td><td><span class="market-cap">$4.54B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="pos">16.73% 📈</span></td><td><span class="pos">8.15% 📈</span></td><td><span class="pos">7.34% 📈</span></td><td><span class="pos">1.88% 📈</span></td><td><span class="pos">24.06% 🚀</span></td><td><span class="pos">58.37% 🚀</span></td></tr><tr><td><span class="ticker-badge">AMD</span></td><td>Advanced Micro Dev.</td><td><span class="market-cap">$733.28B</span></td><td><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="neg">-14.40% 📉</span></td><td><span class="pos">17.30% 📈</span></td><td><span class="pos">19.66% 📈</span></td><td><span class="pos">9.55% 📈</span></td><td><span class="pos">39.84% 🚀</span></td><td><span class="pos">56.91% 🚀</span></td></tr><tr><td><span class="ticker-badge">PANW</span></td><td>Palo Alto Net.</td><td><span class="market-cap">$147.90B</span></td><td><span class="tag-l" style="background-color: hsl(90, 76%, 43%)">CiberSec.</span></td><td><span class="neg">-9.38% 📉</span></td><td><span class="pos">2.15% 📈</span></td><td><span class="pos">15.21% 📈</span></td><td><span class="pos">29.09% 🚀</span></td><td><span class="pos">16.23% 📈</span></td><td><span class="pos">56.66% 🚀</span></td></tr><tr><td><span class="ticker-badge">HPQ</span></td><td>HP Inc.</td><td><span class="market-cap">$18.02B</span></td><td><span class="tag-l" style="background-color: hsl(98, 82%, 47%)">Cons. Elect.</span></td><td><span class="pos">29.12% 🚀</span></td><td><span class="pos">3.28% 📈</span></td><td><span class="neg">-4.91% 📉</span></td><td><span class="neg">-9.37% 📉</span></td><td><span class="pos">37.68% 🚀</span></td><td><span class="pos">53.19% 🚀</span></td></tr><tr><td><span class="ticker-badge">LRCX</span></td><td>Lam Research</td><td><span class="market-cap">$324.14B</span></td><td><span class="tag-l" style="background-color: hsl(314, 84%, 49%)">Equipment</span></td><td><span class="pos">26.04% 🚀</span></td><td><span class="pos">0.13% 📈</span></td><td><span class="pos">9.32% 📈</span></td><td><span class="neg">-12.53% 📉</span></td><td><span class="pos">26.36% 🚀</span></td><td><span class="pos">52.28% 🚀</span></td></tr><tr><td><span class="ticker-badge">AVGO</span></td><td>Broadcom</td><td><span class="market-cap">$1.97T</span></td><td><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="pos">5.89% 📈</span></td><td><span class="pos">0.95% 📈</span></td><td><span class="pos">2.84% 📈</span></td><td><span class="pos">1.70% 📈</span></td><td><span class="pos">37.22% 🚀</span></td><td><span class="pos">51.97% 🚀</span></td></tr><tr><td><span class="ticker-badge">MSFT</span></td><td>Microsoft Corp.</td><td><span class="market-cap">$3.15T</span></td><td><span class="tag-l" style="background-color: hsl(54, 78%, 50%)">Big Tech</span></td><td><span class="pos">6.00% 📈</span></td><td><span class="pos">8.50% 📈</span></td><td><span class="pos">14.90% 📈</span></td><td><span class="pos">4.07% 📈</span></td><td><span class="pos">19.30% 📈</span></td><td><span class="pos">51.21% 🚀</span></td></tr><tr><td><span class="ticker-badge">DELL</span></td><td>Dell Technologies</td><td><span class="market-cap">$161.18B</span></td><td><span class="tag-l" style="background-color: hsl(149, 68%, 45%)">Data Center</span></td><td><span class="pos">20.28% 🚀</span></td><td><span class="pos">1.04% 📈</span></td><td><span class="pos">13.07% 📈</span></td><td><span class="pos">4.38% 📈</span></td><td><span class="pos">6.52% 📈</span></td><td><span class="pos">51.21% 🚀</span></td></tr><tr><td><span class="ticker-badge">WULF</span></td><td>TeraWulf</td><td><span class="market-cap">$10.00B</span></td><td><span class="tag-l" style="background-color: hsl(135, 84%, 47%)">BTC Mining</span></td><td><span class="neg">-1.71% 📉</span></td><td><span class="pos">105.64% 🚀</span></td><td><span class="pos">97.04% 🚀</span></td><td><span class="pos">47.07% 🚀</span></td><td><span class="neg">-47.01% 💀</span></td><td><span class="pos">50.95% 🚀</span></td></tr><tr><td><span class="ticker-badge">2357.TW</span></td><td>ASUSTeK Computer</td><td><span class="market-cap">$436.74B</span></td><td><span class="tag-l" style="background-color: hsl(98, 82%, 47%)">Cons. Elect.</span></td><td><span class="pos">48.70% 🚀</span></td><td><span class="neg">-5.95% 📉</span></td><td><span class="neg">-0.27% 📉</span></td><td><span class="neg">-12.38% 📉</span></td><td><span class="pos">15.51% 📈</span></td><td><span class="pos">50.10% 🚀</span></td></tr><tr><td><span class="ticker-badge">TSLA</span></td><td>Tesla</td><td><span class="market-cap">$1.66T</span></td><td><span class="tag-l" style="background-color: hsl(54, 78%, 50%)">Big Tech</span></td><td><span class="neg">-5.35% 📉</span></td><td><span class="pos">8.71% 📈</span></td><td><span class="pos">1.76% 📈</span></td><td><span class="pos">14.09% 📈</span></td><td><span class="pos">36.27% 🚀</span></td><td><span class="pos">49.76% 🚀</span></td></tr><tr><td><span class="ticker-badge">XOM</span></td><td>Exxon Mobil</td><td><span class="market-cap">$633.26B</span></td><td><span class="tag-l" style="background-color: hsl(82, 74%, 41%)">Oil</span></td><td><span class="pos">35.44% 🚀</span></td><td><span class="pos">8.07% 📈</span></td><td><span class="pos">12.99% 📈</span></td><td><span class="neg">-6.75% 📉</span></td><td><span class="pos">4.03% 📈</span></td><td><span class="pos">48.45% 🚀</span></td></tr><tr><td><span class="ticker-badge">BAC</span></td><td>Bank of America</td><td><span class="market-cap">$353.20B</span></td><td><span class="tag-l" style="background-color: hsl(345, 81%, 53%)">Financial</span></td><td><span class="pos">27.65% 🚀</span></td><td><span class="neg">-2.74% 📉</span></td><td><span class="pos">6.57% 📈</span></td><td><span class="pos">2.96% 📈</span></td><td><span class="pos">4.81% 📈</span></td><td><span class="pos">46.78% 🚀</span></td></tr><tr><td><span class="ticker-badge">XMR-USD</span></td><td>Monero USD</td><td><span class="market-cap">$7.06B</span></td><td><span class="tag-l" style="background-color: hsl(312, 68%, 46%)">Privacy</span></td><td><span class="pos">57.21% 🚀</span></td><td><span class="neg">-18.56% 📉</span></td><td><span class="neg">-9.70% 📉</span></td><td><span class="pos">12.85% 📈</span></td><td><span class="neg">-8.77% 📉</span></td><td><span class="pos">46.15% 🚀</span></td></tr><tr><td><span class="ticker-badge">0857.HK</span></td><td>PetroChina</td><td><span class="market-cap">$2.02T</span></td><td><span class="tag-l" style="background-color: hsl(82, 74%, 41%)">Oil</span></td><td><span class="pos">17.57% 📈</span></td><td><span class="pos">19.24% 📈</span></td><td><span class="pos">34.52% 🚀</span></td><td><span class="neg">-2.38% 📉</span></td><td><span class="neg">-5.96% 📉</span></td><td><span class="pos">45.19% 🚀</span></td></tr><tr><td><span class="ticker-badge">GS</span></td><td>Goldman Sachs</td><td><span class="market-cap">$279.81B</span></td><td><span class="tag-l" style="background-color: hsl(345, 81%, 53%)">Financial</span></td><td><span class="pos">24.00% 🚀</span></td><td><span class="pos">2.02% 📈</span></td><td><span class="pos">16.06% 📈</span></td><td><span class="neg">-0.40% 📉</span></td><td><span class="pos">1.20% 📈</span></td><td><span class="pos">45.06% 🚀</span></td></tr><tr><td><span class="ticker-badge">P</span></td><td>Everpure</td><td><span class="market-cap">$27.83B</span></td><td><span class="tag-l" style="background-color: hsl(149, 68%, 45%)">Data Center</span></td><td><span class="neg">-4.73% 📉</span></td><td><span class="pos">2.52% 📈</span></td><td><span class="neg">-9.33% 📉</span></td><td><span class="pos">28.83% 🚀</span></td><td><span class="pos">29.37% 🚀</span></td><td><span class="pos">43.96% 🚀</span></td></tr><tr><td><span class="ticker-badge">MS</span></td><td>Morgan Stanley</td><td><span class="market-cap">$306.83B</span></td><td><span class="tag-l" style="background-color: hsl(345, 81%, 53%)">Financial</span></td><td><span class="pos">13.32% 📈</span></td><td><span class="pos">0.81% 📈</span></td><td><span class="pos">18.07% 📈</span></td><td><span class="pos">6.13% 📈</span></td><td><span class="pos">0.87% 📈</span></td><td><span class="pos">43.24% 🚀</span></td></tr><tr><td><span class="ticker-badge">BKT.MC</span></td><td>Bankinter</td><td><span class="market-cap">$12.43B</span></td><td><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="pos">33.82% 🚀</span></td><td><span class="neg">-9.62% 📉</span></td><td><span class="neg">-0.56% 📉</span></td><td><span class="pos">19.56% 📈</span></td><td><span class="neg">-11.03% 📉</span></td><td><span class="pos">41.54% 🚀</span></td></tr><tr><td><span class="ticker-badge">SMH</span></td><td>VanEck Semi.</td><td><span class="market-cap">$58.79B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="pos">11.51% 📈</span></td><td><span class="pos">5.24% 📈</span></td><td><span class="pos">7.67% 📈</span></td><td><span class="neg">-2.28% 📉</span></td><td><span class="pos">20.49% 🚀</span></td><td><span class="pos">41.37% 🚀</span></td></tr><tr><td><span class="ticker-badge">MP</span></td><td>MP Mat. Corp.</td><td><span class="market-cap">$11.31B</span></td><td><span class="tag-l" style="background-color: hsl(274, 65%, 48%)">Rare</span></td><td><span class="pos">11.75% 📈</span></td><td><span class="pos">31.27% 🚀</span></td><td><span class="pos">2.53% 📈</span></td><td><span class="neg">-12.56% 📉</span></td><td><span class="pos">40.92% 🚀</span></td><td><span class="pos">41.19% 🚀</span></td></tr><tr><td><span class="ticker-badge">^SOX</span></td><td>PHLX Semiconductor</td><td><span class="market-cap">-</span></td><td><span class="tag-l" style="background-color: hsl(114, 81%, 40%)">Index</span></td><td><span class="pos">11.78% 📈</span></td><td><span class="pos">4.98% 📈</span></td><td><span class="pos">7.05% 📈</span></td><td><span class="neg">-2.61% 📉</span></td><td><span class="pos">21.12% 🚀</span></td><td><span class="pos">41.16% 🚀</span></td></tr><tr><td><span class="ticker-badge">MSTR</span></td><td>Strategy</td><td><span class="market-cap">$58.99B</span></td><td><span class="tag-l" style="background-color: hsl(23, 81%, 40%)">Bitcoin Rel.</span></td><td><span class="pos">74.70% 🚀</span></td><td><span class="pos">41.38% 🚀</span></td><td><span class="neg">-2.11% 📉</span></td><td><span class="neg">-12.96% 📉</span></td><td><span class="neg">-5.86% 📉</span></td><td><span class="pos">40.13% 🚀</span></td></tr><tr><td><span class="ticker-badge">CVX</span></td><td>Chevron</td><td><span class="market-cap">$371.71B</span></td><td><span class="tag-l" style="background-color: hsl(82, 74%, 41%)">Oil</span></td><td><span class="pos">24.09% 🚀</span></td><td><span class="pos">0.92% 📈</span></td><td><span class="neg">-0.05% 📉</span></td><td><span class="neg">-3.14% 📉</span></td><td><span class="pos">15.67% 📈</span></td><td><span class="pos">38.96% 🚀</span></td></tr><tr><td><span class="ticker-badge">SMCI</span></td><td>Super Micro Computer</td><td><span class="market-cap">$16.74B</span></td><td><span class="tag-l" style="background-color: hsl(149, 68%, 45%)">Data Center</span></td><td><span class="pos">23.37% 🚀</span></td><td><span class="pos">1.27% 📈</span></td><td><span class="neg">-9.93% 📉</span></td><td><span class="pos">3.95% 📈</span></td><td><span class="pos">20.18% 🚀</span></td><td><span class="pos">38.82% 🚀</span></td></tr><tr><td><span class="ticker-badge">IDR.MC</span></td><td>Indra Sistemas</td><td><span class="market-cap">$8.76B</span></td><td><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="pos">7.38% 📈</span></td><td><span class="pos">9.77% 📈</span></td><td><span class="pos">2.67% 📈</span></td><td><span class="pos">20.60% 🚀</span></td><td><span class="pos">2.59% 📈</span></td><td><span class="pos">36.39% 🚀</span></td></tr><tr><td><span class="ticker-badge">ORCL</span></td><td>Oracle</td><td><span class="market-cap">$493.14B</span></td><td><span class="tag-l" style="background-color: hsl(234, 68%, 45%)">Mid Tech</span></td><td><span class="pos">8.47% 📈</span></td><td><span class="neg">-1.14% 📉</span></td><td><span class="pos">10.93% 📈</span></td><td><span class="pos">11.93% 📈</span></td><td><span class="pos">0.09% 📈</span></td><td><span class="pos">34.81% 🚀</span></td></tr><tr><td><span class="ticker-badge">DASH-USD</span></td><td>Dash USD</td><td><span class="market-cap">$576.41M</span></td><td><span class="tag-l" style="background-color: hsl(312, 68%, 46%)">Privacy</span></td><td><span class="pos">123.42% 🚀</span></td><td><span class="neg">-26.56% 💀</span></td><td><span class="neg">-34.72% 💀</span></td><td><span class="pos">14.23% 📈</span></td><td><span class="neg">-19.24% 📉</span></td><td><span class="pos">34.54% 🚀</span></td></tr><tr><td><span class="ticker-badge">AAPL</span></td><td>Apple Inc.</td><td><span class="market-cap">$3.91T</span></td><td><span class="tag-l" style="background-color: hsl(54, 78%, 50%)">Big Tech</span></td><td><span class="neg">-7.94% 📉</span></td><td><span class="pos">9.91% 📈</span></td><td><span class="pos">12.12% 📈</span></td><td><span class="pos">3.31% 📈</span></td><td><span class="pos">25.49% 🚀</span></td><td><span class="pos">33.82% 🚀</span></td></tr><tr><td><span class="ticker-badge">HPE</span></td><td>Hewlett Packard E.</td><td><span class="market-cap">$37.70B</span></td><td><span class="tag-l" style="background-color: hsl(149, 68%, 45%)">Data Center</span></td><td><span class="pos">32.83% 🚀</span></td><td><span class="neg">-8.65% 📉</span></td><td><span class="neg">-7.37% 📉</span></td><td><span class="neg">-2.26% 📉</span></td><td><span class="pos">10.67% 📈</span></td><td><span class="pos">33.08% 🚀</span></td></tr><tr><td><span class="ticker-badge">2B76.DE</span></td><td>iShares Auto.  Rob.</td><td><span class="market-cap">$4.73B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="pos">6.42% 📈</span></td><td><span class="pos">7.92% 📈</span></td><td><span class="pos">6.94% 📈</span></td><td><span class="pos">3.63% 📈</span></td><td><span class="pos">12.17% 📈</span></td><td><span class="pos">32.27% 🚀</span></td></tr><tr><td><span class="ticker-badge">RIOT</span></td><td>Riot Platforms</td><td><span class="market-cap">$6.89B</span></td><td><span class="tag-l" style="background-color: hsl(135, 84%, 47%)">BTC Mining</span></td><td><span class="pos">213.54% 🚀</span></td><td><span class="pos">38.85% 🚀</span></td><td><span class="neg">-29.28% 💀</span></td><td><span class="neg">-31.78% 💀</span></td><td><span class="neg">-13.11% 📉</span></td><td><span class="pos">31.43% 🚀</span></td></tr><tr><td><span class="ticker-badge">BBVA.MC</span></td><td>Banco Bilbao V.</td><td><span class="market-cap">$104.45B</span></td><td><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="pos">9.69% 📈</span></td><td><span class="pos">1.79% 📈</span></td><td><span class="pos">18.12% 📈</span></td><td><span class="pos">9.35% 📈</span></td><td><span class="neg">-8.17% 📉</span></td><td><span class="pos">30.11% 🚀</span></td></tr><tr><td><span class="ticker-badge">BRK-B</span></td><td>Berkshire Hat.</td><td><span class="market-cap">$1.02T</span></td><td><span class="tag-l" style="background-color: hsl(345, 81%, 53%)">Financial</span></td><td><span class="pos">10.18% 📈</span></td><td><span class="neg">-3.98% 📉</span></td><td><span class="pos">8.79% 📈</span></td><td><span class="neg">-1.79% 📉</span></td><td><span class="pos">9.55% 📈</span></td><td><span class="pos">28.95% 🚀</span></td></tr><tr><td><span class="ticker-badge">IVV</span></td><td>iShares Core S&P 500</td><td><span class="market-cap">$720.54B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span></td><td><span class="pos">5.98% 📈</span></td><td><span class="pos">1.96% 📈</span></td><td><span class="pos">8.07% 📈</span></td><td><span class="pos">0.21% 📈</span></td><td><span class="pos">10.72% 📈</span></td><td><span class="pos">27.07% 🚀</span></td></tr><tr><td><span class="ticker-badge">BLK</span></td><td>BlackRock</td><td><span class="market-cap">$171.38B</span></td><td><span class="tag-l" style="background-color: hsl(345, 81%, 53%)">Financial</span></td><td><span class="pos">4.49% 📈</span></td><td><span class="neg">-0.24% 📉</span></td><td><span class="pos">16.05% 📈</span></td><td><span class="neg">-4.15% 📉</span></td><td><span class="pos">9.17% 📈</span></td><td><span class="pos">26.89% 🚀</span></td></tr><tr><td><span class="ticker-badge">^SPX</span></td><td>S&P 500 INDEX</td><td><span class="market-cap">-</span></td><td><span class="tag-l" style="background-color: hsl(114, 81%, 40%)">Index</span></td><td><span class="pos">5.77% 📈</span></td><td><span class="pos">2.22% 📈</span></td><td><span class="pos">8.17% 📈</span></td><td><span class="pos">0.23% 📈</span></td><td><span class="pos">10.65% 📈</span></td><td><span class="pos">26.89% 🚀</span></td></tr><tr><td><span class="ticker-badge">QQQM</span></td><td>Invesco NASDAQ 100</td><td><span class="market-cap">$68.83B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span></td><td><span class="pos">1.79% 📈</span></td><td><span class="pos">6.19% 📈</span></td><td><span class="pos">11.06% 📈</span></td><td><span class="pos">0.95% 📈</span></td><td><span class="pos">11.18% 📈</span></td><td><span class="pos">26.87% 🚀</span></td></tr><tr><td><span class="ticker-badge">QQQ</span></td><td>Invesco QQQ Trust</td><td><span class="market-cap">$372.51B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span></td><td><span class="pos">1.72% 📈</span></td><td><span class="pos">6.14% 📈</span></td><td><span class="pos">11.06% 📈</span></td><td><span class="pos">1.00% 📈</span></td><td><span class="pos">11.14% 📈</span></td><td><span class="pos">26.81% 🚀</span></td></tr><tr><td><span class="ticker-badge">^NDX</span></td><td>NASDAQ-100</td><td><span class="market-cap">-</span></td><td><span class="tag-l" style="background-color: hsl(114, 81%, 40%)">Index</span></td><td><span class="pos">1.58% 📈</span></td><td><span class="pos">6.34% 📈</span></td><td><span class="pos">11.18% 📈</span></td><td><span class="pos">0.93% 📈</span></td><td><span class="pos">11.10% 📈</span></td><td><span class="pos">26.63% 🚀</span></td></tr><tr><td><span class="ticker-badge">JPM</span></td><td>JPMorgan</td><td><span class="market-cap">$797.99B</span></td><td><span class="tag-l" style="background-color: hsl(345, 81%, 53%)">Financial</span></td><td><span class="pos">19.80% 📈</span></td><td><span class="neg">-5.30% 📉</span></td><td><span class="pos">2.17% 📈</span></td><td><span class="pos">5.24% 📈</span></td><td><span class="neg">-3.26% 📉</span></td><td><span class="pos">24.62% 🚀</span></td></tr><tr><td><span class="ticker-badge">MU</span></td><td>Micron Tech.</td><td><span class="market-cap">$590.88B</span></td><td><span class="tag-l" style="background-color: hsl(253, 79%, 47%)">Storage</span></td><td><span class="pos">17.33% 📈</span></td><td><span class="pos">1.00% 📈</span></td><td><span class="neg">-3.66% 📉</span></td><td><span class="neg">-16.47% 📉</span></td><td><span class="pos">31.23% 🚀</span></td><td><span class="pos">23.90% 🚀</span></td></tr><tr><td><span class="ticker-badge">SHEL</span></td><td>Shell</td><td><span class="market-cap">$235.37B</span></td><td><span class="tag-l" style="background-color: hsl(82, 74%, 41%)">Oil</span></td><td><span class="pos">11.58% 📈</span></td><td><span class="pos">4.64% 📈</span></td><td><span class="pos">3.03% 📈</span></td><td><span class="pos">10.32% 📈</span></td><td><span class="neg">-2.63% 📉</span></td><td><span class="pos">23.51% 🚀</span></td></tr><tr><td><span class="ticker-badge">META</span></td><td>Meta Platforms</td><td><span class="market-cap">$1.71T</span></td><td><span class="tag-l" style="background-color: hsl(54, 78%, 50%)">Big Tech</span></td><td><span class="pos">7.82% 📈</span></td><td><span class="pos">5.77% 📈</span></td><td><span class="pos">18.06% 📈</span></td><td><span class="neg">-2.39% 📉</span></td><td><span class="neg">-0.90% 📉</span></td><td><span class="pos">23.13% 🚀</span></td></tr><tr><td><span class="ticker-badge">0992.HK</span></td><td>Lenovo Group</td><td><span class="market-cap">$150.34B</span></td><td><span class="tag-l" style="background-color: hsl(98, 82%, 47%)">Cons. Elect.</span></td><td><span class="pos">51.30% 🚀</span></td><td><span class="neg">-3.98% 📉</span></td><td><span class="neg">-19.26% 📉</span></td><td><span class="neg">-6.27% 📉</span></td><td><span class="pos">7.05% 📈</span></td><td><span class="pos">22.57% 🚀</span></td></tr><tr><td><span class="ticker-badge">SHOP</span></td><td>Shopify</td><td><span class="market-cap">$162.09B</span></td><td><span class="tag-l" style="background-color: hsl(234, 68%, 45%)">Mid Tech</span></td><td><span class="neg">-2.25% 📉</span></td><td><span class="pos">17.55% 📈</span></td><td><span class="pos">32.04% 🚀</span></td><td><span class="neg">-7.20% 📉</span></td><td><span class="pos">1.59% 📈</span></td><td><span class="pos">21.68% 🚀</span></td></tr><tr><td><span class="ticker-badge">SEC0.DE</span></td><td>iShares MSCI Gl. Semi.</td><td><span class="market-cap">$2.38B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neg">-1.83% 📉</span></td><td><span class="pos">23.77% 🚀</span></td><td><span class="pos">21.50% 🚀</span></td></tr><tr><td><span class="ticker-badge">QCOM</span></td><td>QUALCOMM</td><td><span class="market-cap">$159.44B</span></td><td><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="neg">-12.96% 📉</span></td><td><span class="pos">6.24% 📈</span></td><td><span class="pos">7.80% 📈</span></td><td><span class="neg">-9.76% 📉</span></td><td><span class="pos">41.78% 🚀</span></td><td><span class="pos">20.04% 🚀</span></td></tr><tr><td><span class="ticker-badge">TTE</span></td><td>TotalEnergies</td><td><span class="market-cap">$203.36B</span></td><td><span class="tag-l" style="background-color: hsl(82, 74%, 41%)">Oil</span></td><td><span class="pos">11.05% 📈</span></td><td><span class="neg">-3.06% 📉</span></td><td><span class="neg">-2.75% 📉</span></td><td><span class="pos">5.90% 📈</span></td><td><span class="pos">3.19% 📈</span></td><td><span class="pos">18.01% 📈</span></td></tr><tr><td><span class="ticker-badge">WDC</span></td><td>Western Digital</td><td><span class="market-cap">$137.98B</span></td><td><span class="tag-l" style="background-color: hsl(253, 79%, 47%)">Storage</span></td><td><span class="pos">20.51% 🚀</span></td><td><span class="neg">-5.40% 📉</span></td><td><span class="pos">6.62% 📈</span></td><td><span class="neg">-20.70% 💀</span></td><td><span class="pos">15.54% 📈</span></td><td><span class="pos">17.73% 📈</span></td></tr><tr><td><span class="ticker-badge">SAN.MC</span></td><td>Banco Santander</td><td><span class="market-cap">$148.10B</span></td><td><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="pos">14.14% 📈</span></td><td><span class="neg">-5.97% 📉</span></td><td><span class="pos">11.13% 📈</span></td><td><span class="neg">-2.58% 📉</span></td><td><span class="neg">-6.25% 📉</span></td><td><span class="pos">15.86% 📈</span></td></tr><tr><td><span class="ticker-badge">VST</span></td><td>Vistra</td><td><span class="market-cap">$47.85B</span></td><td><span class="tag-l" style="background-color: hsl(61, 70%, 45%)">Electric</span></td><td><span class="neg">-10.07% 📉</span></td><td><span class="pos">14.72% 📈</span></td><td><span class="pos">4.92% 📈</span></td><td><span class="neg">-7.82% 📉</span></td><td><span class="pos">33.16% 🚀</span></td><td><span class="pos">15.82% 📈</span></td></tr><tr><td><span class="ticker-badge">REEMF</span></td><td>Rare Element R.</td><td><span class="market-cap">$438.85M</span></td><td><span class="tag-l" style="background-color: hsl(274, 65%, 48%)">Rare</span></td><td><span class="pos">110.19% 🚀</span></td><td><span class="neg">-10.48% 📉</span></td><td><span class="neg">-17.18% 📉</span></td><td><span class="neg">-9.04% 📉</span></td><td><span class="neg">-26.90% 💀</span></td><td><span class="pos">15.74% 📈</span></td></tr><tr><td><span class="ticker-badge">SEMI.L</span></td><td>iShares MSCI Glob. Semi.</td><td><span class="market-cap">$2.38B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neg">-4.33% 📉</span></td><td><span class="pos">20.33% 🚀</span></td><td><span class="pos">15.11% 📈</span></td></tr><tr><td><span class="ticker-badge">CABK.MC</span></td><td>CaixaBank</td><td><span class="market-cap">$72.21B</span></td><td><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="pos">25.61% 🚀</span></td><td><span class="neg">-7.56% 📉</span></td><td><span class="neg">-1.71% 📉</span></td><td><span class="pos">3.47% 📈</span></td><td><span class="neg">-10.06% 📉</span></td><td><span class="pos">14.90% 📈</span></td></tr><tr><td><span class="ticker-badge">ABNB</span></td><td>Airbnb</td><td><span class="market-cap">$85.51B</span></td><td><span class="tag-l" style="background-color: hsl(234, 68%, 45%)">Mid Tech</span></td><td><span class="pos">28.02% 🚀</span></td><td><span class="pos">9.07% 📈</span></td><td><span class="neg">-18.52% 📉</span></td><td><span class="pos">9.54% 📈</span></td><td><span class="neg">-0.75% 📉</span></td><td><span class="pos">13.41% 📈</span></td></tr><tr><td><span class="ticker-badge">JEPI</span></td><td>JPMorgan Equity P.I.</td><td><span class="market-cap">$45.61B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span></td><td><span class="pos">4.25% 📈</span></td><td><span class="pos">1.07% 📈</span></td><td><span class="pos">4.22% 📈</span></td><td><span class="neg">-1.58% 📉</span></td><td><span class="pos">6.01% 📈</span></td><td><span class="pos">13.35% 📈</span></td></tr><tr><td><span class="ticker-badge">MAP.MC</span></td><td>Mapfre</td><td><span class="market-cap">$12.50B</span></td><td><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="pos">11.49% 📈</span></td><td><span class="neg">-4.35% 📉</span></td><td><span class="pos">0.37% 📈</span></td><td><span class="pos">5.75% 📈</span></td><td><span class="neg">-4.22% 📉</span></td><td><span class="pos">13.34% 📈</span></td></tr><tr><td><span class="ticker-badge">ETR</span></td><td>Entergy Corporation</td><td><span class="market-cap">$51.70B</span></td><td><span class="tag-l" style="background-color: hsl(61, 70%, 45%)">Electric</span></td><td><span class="neg">-0.37% 📉</span></td><td><span class="neg">-5.28% 📉</span></td><td><span class="pos">0.23% 📈</span></td><td><span class="neg">-0.39% 📉</span></td><td><span class="pos">13.43% 📈</span></td><td><span class="pos">12.83% 📈</span></td></tr><tr><td><span class="ticker-badge">IGV</span></td><td>iShares E.Tech-Software</td><td><span class="market-cap">$12.11B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span></td><td><span class="neg">-3.58% 📉</span></td><td><span class="pos">8.68% 📈</span></td><td><span class="pos">14.24% 📈</span></td><td><span class="pos">2.33% 📈</span></td><td><span class="neg">-0.37% 📉</span></td><td><span class="pos">12.30% 📈</span></td></tr><tr><td><span class="ticker-badge">AKAM</span></td><td>Akamai Tech.</td><td><span class="market-cap">$22.63B</span></td><td><span class="tag-l" style="background-color: hsl(90, 76%, 43%)">CiberSec.</span></td><td><span class="neg">-2.94% 📉</span></td><td><span class="pos">2.09% 📈</span></td><td><span class="pos">14.43% 📈</span></td><td><span class="neg">-10.30% 📉</span></td><td><span class="pos">11.90% 📈</span></td><td><span class="pos">11.48% 📈</span></td></tr><tr><td><span class="ticker-badge">NFLX</span></td><td>Netflix</td><td><span class="market-cap">$388.38B</span></td><td><span class="tag-l" style="background-color: hsl(234, 68%, 45%)">Mid Tech</span></td><td><span class="neg">-3.53% 📉</span></td><td><span class="pos">5.05% 📈</span></td><td><span class="pos">1.26% 📈</span></td><td><span class="pos">15.55% 📈</span></td><td><span class="neg">-1.29% 📉</span></td><td><span class="pos">11.41% 📈</span></td></tr><tr><td><span class="ticker-badge">TSM</span></td><td>Taiwan Sem.</td><td><span class="market-cap">$2.17T</span></td><td><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="pos">8.47% 📈</span></td><td><span class="pos">2.39% 📈</span></td><td><span class="pos">1.59% 📈</span></td><td><span class="neg">-7.08% 📉</span></td><td><span class="pos">7.76% 📈</span></td><td><span class="pos">10.34% 📈</span></td></tr><tr><td><span class="ticker-badge">ITX.MC</span></td><td>Ind. Diseño Textil</td><td><span class="market-cap">$162.34B</span></td><td><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="pos">7.91% 📈</span></td><td><span class="neg">-6.25% 📉</span></td><td><span class="pos">5.73% 📈</span></td><td><span class="pos">7.10% 📈</span></td><td><span class="neg">-10.34% 📉</span></td><td><span class="pos">9.56% 📈</span></td></tr><tr><td><span class="ticker-badge">XYLD</span></td><td>Global X S&P 500</td><td><span class="market-cap">$3.02B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span></td><td><span class="pos">3.06% 📈</span></td><td><span class="pos">1.49% 📈</span></td><td><span class="pos">2.55% 📈</span></td><td><span class="neg">-1.04% 📉</span></td><td><span class="pos">4.08% 📈</span></td><td><span class="pos">8.86% 📈</span></td></tr><tr><td><span class="ticker-badge">BOTZ</span></td><td>Global X Rob. A.I.</td><td><span class="market-cap">$2.94B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="pos">0.02% 📈</span></td><td><span class="pos">2.04% 📈</span></td><td><span class="pos">5.46% 📈</span></td><td><span class="pos">4.64% 📈</span></td><td><span class="neg">-1.72% 📉</span></td><td><span class="pos">8.47% 📈</span></td></tr><tr><td><span class="ticker-badge">RYLD</span></td><td>Global X Russell 2000</td><td><span class="market-cap">$1.26B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span></td><td><span class="pos">7.50% 📈</span></td><td><span class="pos">1.89% 📈</span></td><td><span class="pos">5.31% 📈</span></td><td><span class="neg">-2.66% 📉</span></td><td><span class="neg">-1.93% 📉</span></td><td><span class="pos">8.08% 📈</span></td></tr><tr><td><span class="ticker-badge">D</span></td><td>Dominion Energy</td><td><span class="market-cap">$55.38B</span></td><td><span class="tag-l" style="background-color: hsl(61, 70%, 45%)">Electric</span></td><td><span class="pos">1.01% 📈</span></td><td><span class="neg">-3.38% 📉</span></td><td><span class="neg">-3.15% 📉</span></td><td><span class="neg">-0.75% 📉</span></td><td><span class="pos">7.59% 📈</span></td><td><span class="pos">4.47% 📈</span></td></tr><tr><td><span class="ticker-badge">INTC</span></td><td>Intel Corp.</td><td><span class="market-cap">$582.66B</span></td><td><span class="tag-l" style="background-color: hsl(343, 65%, 49%)">Semic.</span></td><td><span class="pos">28.46% 🚀</span></td><td><span class="neg">-1.72% 📉</span></td><td><span class="neg">-12.28% 📉</span></td><td><span class="neg">-5.09% 📉</span></td><td><span class="neg">-3.34% 📉</span></td><td><span class="pos">3.37% 📈</span></td></tr><tr><td><span class="ticker-badge">PPFB.DE</span></td><td>iShares Physical Met.</td><td><span class="market-cap">-</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span><span class="tag-l" style="background-color: hsl(274, 65%, 48%)">Rare</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neg">-1.73% 📉</span></td><td><span class="pos">4.67% 📈</span></td><td><span class="pos">2.86% 📈</span></td></tr><tr><td><span class="ticker-badge">AMZN</span></td><td>Amazon</td><td><span class="market-cap">$2.82T</span></td><td><span class="tag-l" style="background-color: hsl(54, 78%, 50%)">Big Tech</span></td><td><span class="neg">-5.00% 📉</span></td><td><span class="pos">6.74% 📈</span></td><td><span class="pos">11.19% 📈</span></td><td><span class="neg">-4.51% 📉</span></td><td><span class="pos">1.50% 📈</span></td><td><span class="pos">2.38% 📈</span></td></tr><tr><td><span class="ticker-badge">2222.SR</span></td><td>Saudi Arabian Oil</td><td><span class="market-cap">$6.70T</span></td><td><span class="tag-l" style="background-color: hsl(82, 74%, 41%)">Oil</span></td><td><span class="pos">2.86% 📈</span></td><td><span class="neg">-0.57% 📉</span></td><td><span class="neg">-2.50% 📉</span></td><td><span class="pos">2.56% 📈</span></td><td><span class="neg">-0.56% 📉</span></td><td><span class="pos">2.29% 📈</span></td></tr><tr><td><span class="ticker-badge">XEL</span></td><td>Xcel Energy</td><td><span class="market-cap">$49.96B</span></td><td><span class="tag-l" style="background-color: hsl(61, 70%, 45%)">Electric</span></td><td><span class="neg">-0.24% 📉</span></td><td><span class="neg">-7.05% 📉</span></td><td><span class="neg">-0.95% 📉</span></td><td><span class="neg">-5.13% 📉</span></td><td><span class="pos">8.32% 📈</span></td><td><span class="pos">1.54% 📈</span></td></tr><tr><td><span class="ticker-badge">MA</span></td><td>Mastercard</td><td><span class="market-cap">$436.67B</span></td><td><span class="tag-l" style="background-color: hsl(345, 81%, 53%)">Financial</span></td><td><span class="neg">-0.25% 📉</span></td><td><span class="pos">1.25% 📈</span></td><td><span class="pos">2.54% 📈</span></td><td><span class="neg">-4.77% 📉</span></td><td><span class="pos">3.35% 📈</span></td><td><span class="pos">0.67% 📈</span></td></tr><tr><td><span class="ticker-badge">V</span></td><td>Visa Inc.</td><td><span class="market-cap">$619.49B</span></td><td><span class="tag-l" style="background-color: hsl(345, 81%, 53%)">Financial</span></td><td><span class="neg">-3.20% 📉</span></td><td><span class="pos">2.87% 📈</span></td><td><span class="pos">10.43% 📈</span></td><td><span class="neg">-4.73% 📉</span></td><td><span class="neg">-2.71% 📉</span></td><td><span class="neg">-0.92% 📉</span></td></tr><tr><td><span class="ticker-badge">OKLO</span></td><td>Oklo</td><td><span class="market-cap">$12.65B</span></td><td><span class="tag-l" style="background-color: hsl(61, 70%, 45%)">Electric</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neg">-1.70% 📉</span></td><td><span class="pos">0.20% 📈</span></td><td><span class="neg">-1.50% 📉</span></td></tr><tr><td><span class="ticker-badge">QYLD</span></td><td>Global X NASDAQ 100</td><td><span class="market-cap">$8.08B</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span></td><td><span class="neg">-1.01% 📉</span></td><td><span class="pos">0.99% 📈</span></td><td><span class="neg">-0.62% 📉</span></td><td><span class="neg">-1.65% 📉</span></td><td><span class="pos">0.59% 📈</span></td><td><span class="neg">-2.68% 📉</span></td></tr><tr><td><span class="ticker-badge">CRWD</span></td><td>CrowdStrike</td><td><span class="market-cap">$115.89B</span></td><td><span class="tag-l" style="background-color: hsl(90, 76%, 43%)">CiberSec.</span></td><td><span class="neg">-13.84% 📉</span></td><td><span class="pos">13.13% 📈</span></td><td><span class="pos">37.70% 🚀</span></td><td><span class="neg">-2.20% 📉</span></td><td><span class="neg">-16.69% 📉</span></td><td><span class="neg">-3.34% 📉</span></td></tr><tr><td><span class="ticker-badge">IGLN.L</span></td><td>iShares Physical Gold</td><td><span class="market-cap">-</span></td><td><span class="tag-l" style="background-color: hsl(223, 74%, 41%)">ETF</span><span class="tag-l" style="background-color: hsl(274, 65%, 48%)">Rare</span></td><td><span class="neg">-9.99% 📉</span></td><td><span class="neg">-6.79% 📉</span></td><td><span class="pos">3.58% 📈</span></td><td><span class="neg">-0.36% 📉</span></td><td><span class="pos">3.31% 📈</span></td><td><span class="neg">-4.03% 📉</span></td></tr><tr><td><span class="ticker-badge">ERO</span></td><td>Ero Copper</td><td><span class="market-cap">$2.85B</span></td><td><span class="tag-l" style="background-color: hsl(274, 65%, 48%)">Rare</span></td><td><span class="pos">5.33% 📈</span></td><td><span class="neg">-9.81% 📉</span></td><td><span class="pos">23.04% 🚀</span></td><td><span class="neg">-15.56% 📉</span></td><td><span class="neg">-13.86% 📉</span></td><td><span class="neg">-5.73% 📉</span></td></tr><tr><td><span class="ticker-badge">EURUSD=X</span></td><td>EUR/USD</td><td><span class="market-cap">-</span></td><td><span class="tag-l" style="background-color: hsl(329, 65%, 41%)">Currency</span></td><td><span class="neg">-4.69% 📉</span></td><td><span class="neg">-2.36% 📉</span></td><td><span class="pos">1.52% 📈</span></td><td><span class="neg">-2.52% 📉</span></td><td><span class="neg">-2.38% 📉</span></td><td><span class="neg">-7.93% 📉</span></td></tr><tr><td><span class="ticker-badge">ELE.MC</span></td><td>Endesa</td><td><span class="market-cap">$39.23B</span></td><td><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="pos">0.94% 📈</span></td><td><span class="neg">-8.25% 📉</span></td><td><span class="neg">-9.31% 📉</span></td><td><span class="neg">-14.86% 📉</span></td><td><span class="pos">15.96% 📈</span></td><td><span class="neg">-9.62% 📉</span></td></tr><tr><td><span class="ticker-badge">SMSN.IL</span></td><td>Samsung Electronics</td><td><span class="market-cap">$1.03T</span></td><td><span class="tag-l" style="background-color: hsl(253, 79%, 47%)">Storage</span></td><td><span class="neg">-0.05% 📉</span></td><td><span class="neg">-1.36% 📉</span></td><td><span class="neg">-2.22% 📉</span></td><td><span class="neg">-12.39% 📉</span></td><td><span class="pos">5.54% 📈</span></td><td><span class="neg">-9.64% 📉</span></td></tr><tr><td><span class="ticker-badge">IBE.MC</span></td><td>Iberdrola</td><td><span class="market-cap">$135.09B</span></td><td><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="neg">-6.11% 📉</span></td><td><span class="neg">-6.50% 📉</span></td><td><span class="neg">-6.42% 📉</span></td><td><span class="neg">-15.53% 📉</span></td><td><span class="pos">19.88% 📈</span></td><td><span class="neg">-11.03% 📉</span></td></tr><tr><td><span class="ticker-badge">ACS.MC</span></td><td>Act. Const. Serv.</td><td><span class="market-cap">$35.72B</span></td><td><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="pos">4.09% 📈</span></td><td><span class="neg">-11.41% 📉</span></td><td><span class="neg">-20.06% 💀</span></td><td><span class="pos">3.81% 📈</span></td><td><span class="pos">0.51% 📈</span></td><td><span class="neg">-13.19% 📉</span></td></tr><tr><td><span class="ticker-badge">BKKT</span></td><td>Bakkt, Inc.</td><td><span class="market-cap">$269.10M</span></td><td><span class="tag-l" style="background-color: hsl(23, 81%, 40%)">Bitcoin Rel.</span></td><td><span class="pos">28.87% 🚀</span></td><td><span class="neg">-1.86% 📉</span></td><td><span class="neg">-22.94% 💀</span></td><td><span class="pos">1.00% 📈</span></td><td><span class="neg">-15.83% 📉</span></td><td><span class="neg">-15.58% 📉</span></td></tr><tr><td><span class="ticker-badge">TCEHY</span></td><td>Tencent</td><td><span class="market-cap">$531.76B</span></td><td><span class="tag-l" style="background-color: hsl(234, 68%, 45%)">Mid Tech</span></td><td><span class="pos">11.00% 📈</span></td><td><span class="neg">-3.93% 📉</span></td><td><span class="neg">-5.64% 📉</span></td><td><span class="neg">-20.62% 💀</span></td><td><span class="neg">-2.46% 📉</span></td><td><span class="neg">-18.90% 📉</span></td></tr><tr><td><span class="ticker-badge">PLTR</span></td><td>Palantir Tech.</td><td><span class="market-cap">$342.64B</span></td><td><span class="tag-l" style="background-color: hsl(234, 68%, 45%)">Mid Tech</span></td><td><span class="neg">-1.10% 📉</span></td><td><span class="pos">14.86% 📈</span></td><td><span class="pos">13.18% 📈</span></td><td><span class="neg">-8.80% 📉</span></td><td><span class="neg">-24.25% 💀</span></td><td><span class="neg">-22.68% 💀</span></td></tr><tr><td><span class="ticker-badge">SPOT</span></td><td>Spotify Technology</td><td><span class="market-cap">$88.94B</span></td><td><span class="tag-l" style="background-color: hsl(234, 68%, 45%)">Mid Tech</span></td><td><span class="neg">-14.84% 📉</span></td><td><span class="pos">14.08% 📈</span></td><td><span class="pos">2.85% 📈</span></td><td><span class="neg">-18.23% 📉</span></td><td><span class="pos">3.86% 📈</span></td><td><span class="neg">-25.62% 💀</span></td></tr><tr><td><span class="ticker-badge">SLR.MC</span></td><td>Solaria Energía</td><td><span class="market-cap">$3.16B</span></td><td><span class="tag-l" style="background-color: hsl(177, 78%, 47%)">Spain</span></td><td><span class="neg">-23.52% 💀</span></td><td><span class="neg">-4.39% 📉</span></td><td><span class="neg">-15.71% 📉</span></td><td><span class="neg">-10.27% 📉</span></td><td><span class="pos">25.19% 🚀</span></td><td><span class="neg">-27.58% 💀</span></td></tr><tr><td><span class="ticker-badge">9984.T</span></td><td>SoftBank</td><td><span class="market-cap">$33.36T</span></td><td><span class="tag-l" style="background-color: hsl(345, 81%, 53%)">Financial</span></td><td><span class="pos">15.79% 📈</span></td><td><span class="neg">-5.83% 📉</span></td><td><span class="neg">-16.67% 📉</span></td><td><span class="neg">-16.66% 📉</span></td><td><span class="neg">-16.14% 📉</span></td><td><span class="neg">-32.56% 💀</span></td></tr><tr><td><span class="ticker-badge">COIN</span></td><td>Coinbase Global</td><td><span class="market-cap">$55.86B</span></td><td><span class="tag-l" style="background-color: hsl(23, 81%, 40%)">Bitcoin Rel.</span></td><td><span class="neu">0.00%</span></td><td><span class="pos">7.09% 📈</span></td><td><span class="neg">-33.52% 💀</span></td><td><span class="neg">-10.19% 📉</span></td><td><span class="pos">10.94% 📈</span></td><td><span class="neg">-33.76% 💀</span></td></tr><tr><td><span class="ticker-badge">PPTA</span></td><td>Perpetua Res.</td><td><span class="market-cap">$3.53B</span></td><td><span class="tag-l" style="background-color: hsl(274, 65%, 48%)">Rare</span></td><td><span class="neg">-16.28% 📉</span></td><td><span class="neg">-5.44% 📉</span></td><td><span class="pos">20.26% 🚀</span></td><td><span class="neg">-31.78% 💀</span></td><td><span class="neg">-4.62% 📉</span></td><td><span class="neg">-34.48% 💀</span></td></tr><tr><td><span class="ticker-badge">EXOD</span></td><td>Exodus Movement</td><td><span class="market-cap">$244.32M</span></td><td><span class="tag-l" style="background-color: hsl(23, 81%, 40%)">Bitcoin Rel.</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neg">-36.36% 💀</span></td><td><span class="neg">-7.14% 📉</span></td><td><span class="neg">-40.91% 💀</span></td></tr><tr><td><span class="ticker-badge">IREN</span></td><td>IREN Limited</td><td><span class="market-cap">$15.86B</span></td><td><span class="tag-l" style="background-color: hsl(135, 84%, 47%)">BTC Mining</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neg">-42.25% 💀</span></td><td><span class="neg">-42.25% 💀</span></td></tr><tr><td><span class="ticker-badge">1810.HK</span></td><td>Xiaomi Corp.</td><td><span class="market-cap">$803.92B</span></td><td><span class="tag-l" style="background-color: hsl(98, 82%, 47%)">Cons. Elect.</span></td><td><span class="neg">-22.09% 💀</span></td><td><span class="neg">-7.69% 📉</span></td><td><span class="pos">4.85% 📈</span></td><td><span class="neg">-20.93% 💀</span></td><td><span class="neg">-11.48% 📉</span></td><td><span class="neg">-42.81% 💀</span></td></tr><tr><td><span class="ticker-badge">HOOD</span></td><td>Robinhood Markets</td><td><span class="market-cap">$75.25B</span></td><td><span class="tag-l" style="background-color: hsl(23, 81%, 40%)">Bitcoin Rel.</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="pos">10.74% 📈</span></td><td><span class="neg">-57.79% 💀</span></td><td><span class="neg">-53.26% 💀</span></td></tr><tr><td><span class="ticker-badge">CLSK</span></td><td>CleanSpark</td><td><span class="market-cap">$3.08B</span></td><td><span class="tag-l" style="background-color: hsl(135, 84%, 47%)">BTC Mining</span></td><td><span class="neg">-18.00% 📉</span></td><td><span class="neg">-0.72% 📉</span></td><td><span class="neg">-30.14% 💀</span></td><td><span class="neg">-30.35% 💀</span></td><td><span class="neg">-17.86% 📉</span></td><td><span class="neg">-67.23% 💀</span></td></tr><tr><td><span class="ticker-badge">TMC</span></td><td>TMC the metals c.</td><td><span class="market-cap">$3.19B</span></td><td><span class="tag-l" style="background-color: hsl(274, 65%, 48%)">Rare</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neu">0.00%</span></td><td><span class="neg">-58.66% 💀</span></td><td><span class="neg">-54.49% 💀</span></td><td><span class="neg">-81.18% 💀</span></td></tr></tbody></table></div></div>
+        return nB - nA; // De mayor a menor
+      });
+
+      rows2.forEach((row) => tbody2.appendChild(row));
+    }
+  });
+
+  // --- Sector Filter: click on first table rows ---
+  let _activeSector = null;
+  document.addEventListener("click", function (e) {
+    if (e.target.closest("th")) return; // ignore header clicks
+    const tr = e.target.closest("tr");
+    if (!tr) return;
+    const tables = document.querySelectorAll(".ghost-table");
+    if (!tables[0] || !tables[1]) return;
+    if (!tables[0].querySelector("tbody").contains(tr)) return;
+
+    const tagEl = tr.querySelector(".tag-l");
+    if (!tagEl) return;
+    const sectorName = tagEl.textContent.trim();
+
+    const tbody2 = tables[1].querySelector("tbody");
+    const heads2 = Array.from(tables[1].querySelectorAll("thead th"));
+    const listaIdx = heads2.findIndex(
+      (h) => h.textContent.replace(/[▲▼s]/g, "").trim() === "Lista",
+    );
+    const liIdx = listaIdx !== -1 ? listaIdx : 3;
+
+    if (_activeSector === sectorName) {
+      _activeSector = null;
+      tables[0]
+        .querySelectorAll("tbody tr")
+        .forEach((r) => r.classList.remove("sector-selected"));
+      tbody2.querySelectorAll("tr").forEach((r) => (r.style.display = ""));
+    } else {
+      _activeSector = sectorName;
+      tables[0]
+        .querySelectorAll("tbody tr")
+        .forEach((r) => r.classList.remove("sector-selected"));
+      tr.classList.add("sector-selected");
+      tbody2.querySelectorAll("tr").forEach((r) => {
+        const tags = Array.from(
+          r.children[liIdx] ? r.children[liIdx].querySelectorAll(".tag-l") : [],
+        ).map((t) => t.textContent.trim());
+        r.style.display = tags.includes(sectorName) ? "" : "none";
+      });
+    }
+  });
+</script>
+<div style="text-align: center; margin-bottom: 20px">
+  <span class="ticker-badge"> Sectors ROI 2021 </span><br />
+  <a
+    href="https://x.com/joanr"
+    target="_blank"
+    style="text-decoration: none; color: inherit; margin: 0 10px"
+  >
+    <i class="fab fa-x-twitter"></i>
+    <span class="col-real_name"> joanr</span>
+  </a>
+  <a
+    href="https://x.com/joanr"
+    target="_blank"
+    style="text-decoration: none; color: inherit; margin: 0 10px"
+  >
+    <i class="fab fa-github"></i>
+    <span class="col-real_name"> joanrs</span>
+  </a>
+  <a
+    href="https://instagram.com/jr.growth"
+    target="_blank"
+    style="text-decoration: none; color: inherit; margin: 0 10px"
+  >
+    <i class="fab fa-instagram"></i>
+    <span class="col-real_name"> jr.growth</span>
+  </a>
+</div>
+<style>
+  .ghost-table-wrapper {
+    margin: 1.5em 0;
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+      sans-serif;
+    color: #1a1f23;
+    width: 100%;
+    line-height: 1.2;
+  }
+  .ghost-table-wrapper * {
+    box-sizing: border-box;
+  }
+  .ghost-table-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+  }
+  .ghost-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 12px;
+    table-layout: auto;
+  }
+  .ghost-table th {
+    background-color: #1e40af;
+    color: white;
+    padding: 4px 2px;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid #1e3a8a;
+    word-break: break-word;
+  }
+  .ghost-table td {
+    padding: 4px 2px;
+    border: 1px solid #f0f0f0;
+    text-align: center;
+    word-break: break-word;
+  }
+  .ghost-table tr:hover {
+    background-color: #f9fafb;
+  }
+  .ticker-badge {
+    font-weight: 800;
+    color: #1e40af;
+  }
+  .pos {
+    color: #15803d;
+    background-color: #dcfce7;
+    font-weight: 600;
+    padding: 1px 3px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .neg {
+    color: #b91c1c;
+    background-color: #fee2e2;
+    font-weight: 600;
+    padding: 1px 3px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .neu {
+    color: #4b5563;
+    background-color: #f3f4f6;
+    padding: 1px 3px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .tag-l {
+    padding: 1px 4px;
+    border-radius: 10px;
+    color: white;
+    font-size: 9px;
+    font-weight: 600;
+    margin: 1px;
+    display: inline-block;
+  }
+  .market-cap {
+    color: #64748b;
+    font-family: monospace;
+    font-size: 10px;
+  }
+  .col-real_name {
+    color: #64748b;
+    font-weight: 400;
+    font-size: 11px;
+  }
+
+  @media (max-width: 600px) {
+    .ghost-table th,
+    .ghost-table td {
+      font-size: 10.5px !important;
+      line-height: 1.2 !important;
+      padding: 3px 0px !important;
+      text-align: center !important;
+    }
+    .ticker-badge,
+    .market-cap,
+    .pos,
+    .neg,
+    .neu {
+      font-size: inherit !important;
+    }
+    .tag-l {
+      font-size: 9px !important;
+      padding: 1px 3px !important;
+    }
+  }
+  @media (max-width: 400px) {
+    .ghost-table th,
+    .ghost-table td {
+      font-size: 9.5px !important;
+      padding: 2px 0px !important;
+    }
+  }
+</style>
+<div class="ghost-table-wrapper">
+  <div
+    style="
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #1e40af;
+      font-family: sans-serif;
+      text-align: center;
+    "
+  >
+    Resumen de Medias por Sectores
+  </div>
+  <div class="ghost-table-container">
+    <table class="ghost-table">
+      <thead>
+        <tr>
+          <th data-type="string">Sector</th>
+          <th data-type="number">Q1</th>
+          <th data-type="number">Jun</th>
+          <th data-type="number">Q2</th>
+          <th data-type="number">Q3</th>
+          <th data-type="number">Q4</th>
+          <th data-type="number">Anual</th>
+          <th data-type="string" title="Cambio de ranking entre Q4 y Jun">
+            Trend
+          </th>
+          <th data-type="number" title="Jun vs Q4/3 (media mensual equiv.)">
+            Momentum
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(135, 84%, 47%)"
+              >BTC Mining</span
+            >
+          </td>
+          <td><span class="pos">121.53%</span></td>
+          <td><span class="pos">29.75%</span></td>
+          <td><span class="neg">-6.49%</span></td>
+          <td><span class="pos">12.75%</span></td>
+          <td><span class="neg">-20.46%</span></td>
+          <td><span class="pos">62.18%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 19 posiciones respecto a Q4"
+          >
+            <span style="color: #15803d; font-weight: bold">↑19</span>
+          </td>
+          <td>
+            <span class="pos" title="Jun vs Q4/3 (media mensual equiv.)"
+              >+36.57%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(54, 78%, 50%)"
+              >Big Tech</span
+            >
+          </td>
+          <td><span class="pos">2.27%</span></td>
+          <td><span class="pos">7.26%</span></td>
+          <td><span class="pos">13.20%</span></td>
+          <td><span class="pos">3.48%</span></td>
+          <td><span class="pos">15.04%</span></td>
+          <td><span class="pos">37.58%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 1 posiciones respecto a Q4"
+          >
+            <span style="color: #15803d; font-weight: bold">↑1</span>
+          </td>
+          <td>
+            <span class="pos" title="Jun vs Q4/3 (media mensual equiv.)"
+              >+2.25%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(23, 81%, 40%)"
+              >Bitcoin Rel.</span
+            >
+          </td>
+          <td><span class="pos">20.71%</span></td>
+          <td><span class="pos">9.32%</span></td>
+          <td><span class="neg">-11.71%</span></td>
+          <td><span class="neg">-9.55%</span></td>
+          <td><span class="neg">-15.14%</span></td>
+          <td><span class="neg">-20.68%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 16 posiciones respecto a Q4"
+          >
+            <span style="color: #15803d; font-weight: bold">↑16</span>
+          </td>
+          <td>
+            <span class="pos" title="Jun vs Q4/3 (media mensual equiv.)"
+              >+14.37%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(90, 76%, 43%)"
+              >CiberSec.</span
+            >
+          </td>
+          <td><span class="neg">-3.93%</span></td>
+          <td><span class="pos">11.10%</span></td>
+          <td><span class="pos">28.83%</span></td>
+          <td><span class="pos">11.16%</span></td>
+          <td><span class="pos">12.30%</span></td>
+          <td><span class="pos">56.79%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 7 posiciones respecto a Q4"
+          >
+            <span style="color: #15803d; font-weight: bold">↑7</span>
+          </td>
+          <td>
+            <span class="pos" title="Jun vs Q4/3 (media mensual equiv.)"
+              >+7.00%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(98, 82%, 47%)"
+              >Cons. Elect.</span
+            >
+          </td>
+          <td><span class="pos">26.76%</span></td>
+          <td><span class="neg">-3.58%</span></td>
+          <td><span class="neg">-4.90%</span></td>
+          <td><span class="neg">-12.24%</span></td>
+          <td><span class="pos">12.19%</span></td>
+          <td><span class="pos">20.76%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 7 posiciones respecto a Q4"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓7</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-7.65%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(329, 65%, 41%)"
+              >Currency</span
+            >
+          </td>
+          <td><span class="neg">-4.69%</span></td>
+          <td><span class="neg">-2.36%</span></td>
+          <td><span class="pos">1.52%</span></td>
+          <td><span class="neg">-2.52%</span></td>
+          <td><span class="neg">-2.38%</span></td>
+          <td><span class="neg">-7.93%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 1 posiciones respecto a Q4"
+          >
+            <span style="color: #15803d; font-weight: bold">↑1</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-1.57%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(149, 68%, 45%)"
+              >Data Center</span
+            >
+          </td>
+          <td><span class="pos">17.94%</span></td>
+          <td><span class="neg">-0.96%</span></td>
+          <td><span class="neg">-3.39%</span></td>
+          <td><span class="pos">8.73%</span></td>
+          <td><span class="pos">16.68%</span></td>
+          <td><span class="pos">41.77%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 8 posiciones respecto a Q4"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓8</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-6.52%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            >
+          </td>
+          <td><span class="pos">2.78%</span></td>
+          <td><span class="pos">2.81%</span></td>
+          <td><span class="pos">5.43%</span></td>
+          <td><span class="neg">-0.18%</span></td>
+          <td><span class="pos">9.28%</span></td>
+          <td><span class="pos">18.54%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 2 posiciones respecto a Q4"
+          >
+            <span style="color: #15803d; font-weight: bold">↑2</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-0.28%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(61, 70%, 45%)"
+              >Electric</span
+            >
+          </td>
+          <td><span class="neg">-1.93%</span></td>
+          <td><span class="neg">-0.20%</span></td>
+          <td><span class="pos">0.21%</span></td>
+          <td><span class="neg">-3.16%</span></td>
+          <td><span class="pos">12.54%</span></td>
+          <td><span class="pos">6.63%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 3 posiciones respecto a Q4"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓3</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-4.38%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(314, 84%, 49%)"
+              >Equipment</span
+            >
+          </td>
+          <td><span class="pos">35.81%</span></td>
+          <td><span class="pos">1.83%</span></td>
+          <td><span class="pos">9.27%</span></td>
+          <td><span class="neg">-4.76%</span></td>
+          <td><span class="pos">18.48%</span></td>
+          <td><span class="pos">65.95%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 6 posiciones respecto a Q4"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓6</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-4.33%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="pos">12.68%</span></td>
+          <td><span class="neg">-0.63%</span></td>
+          <td><span class="pos">9.43%</span></td>
+          <td><span class="pos">0.16%</span></td>
+          <td><span class="pos">1.81%</span></td>
+          <td><span class="pos">28.24%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 2 posiciones respecto a Q4"
+          >
+            <span style="color: #15803d; font-weight: bold">↑2</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-1.23%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(114, 81%, 40%)"
+              >Index</span
+            >
+          </td>
+          <td><span class="pos">6.38%</span></td>
+          <td><span class="pos">4.51%</span></td>
+          <td><span class="pos">8.80%</span></td>
+          <td><span class="neg">-0.48%</span></td>
+          <td><span class="pos">14.29%</span></td>
+          <td><span class="pos">31.56%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 1 posiciones respecto a Q4"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓1</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-0.25%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(234, 68%, 45%)"
+              >Mid Tech</span
+            >
+          </td>
+          <td><span class="pos">3.68%</span></td>
+          <td><span class="pos">7.93%</span></td>
+          <td><span class="pos">5.16%</span></td>
+          <td><span class="neg">-2.55%</span></td>
+          <td><span class="neg">-3.32%</span></td>
+          <td><span class="pos">2.02%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 13 posiciones respecto a Q4"
+          >
+            <span style="color: #15803d; font-weight: bold">↑13</span>
+          </td>
+          <td>
+            <span class="pos" title="Jun vs Q4/3 (media mensual equiv.)"
+              >+9.04%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(82, 74%, 41%)"
+              >Oil</span
+            >
+          </td>
+          <td><span class="pos">17.10%</span></td>
+          <td><span class="pos">4.87%</span></td>
+          <td><span class="pos">7.54%</span></td>
+          <td><span class="pos">1.09%</span></td>
+          <td><span class="pos">2.29%</span></td>
+          <td><span class="pos">29.40%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 6 posiciones respecto a Q4"
+          >
+            <span style="color: #15803d; font-weight: bold">↑6</span>
+          </td>
+          <td>
+            <span class="pos" title="Jun vs Q4/3 (media mensual equiv.)"
+              >+4.11%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(312, 68%, 46%)"
+              >Privacy</span
+            >
+          </td>
+          <td><span class="pos">108.62%</span></td>
+          <td><span class="neg">-21.50%</span></td>
+          <td><span class="neg">-20.35%</span></td>
+          <td><span class="pos">2.96%</span></td>
+          <td><span class="pos">2.99%</span></td>
+          <td><span class="pos">69.91%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 8 posiciones respecto a Q4"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓8</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-22.49%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(274, 65%, 48%)"
+              >Rare</span
+            >
+          </td>
+          <td><span class="pos">16.79%</span></td>
+          <td><span class="neg">-1.00%</span></td>
+          <td><span class="pos">4.84%</span></td>
+          <td><span class="neg">-14.21%</span></td>
+          <td><span class="neg">-5.29%</span></td>
+          <td><span class="pos">1.69%</span></td>
+          <td
+            style="text-align: center"
+            title="Subió 4 posiciones respecto a Q4"
+          >
+            <span style="color: #15803d; font-weight: bold">↑4</span>
+          </td>
+          <td>
+            <span class="pos" title="Jun vs Q4/3 (media mensual equiv.)"
+              >+0.76%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="pos">4.26%</span></td>
+          <td><span class="pos">7.11%</span></td>
+          <td><span class="pos">8.92%</span></td>
+          <td><span class="neg">-0.15%</span></td>
+          <td><span class="pos">23.80%</span></td>
+          <td><span class="pos">40.70%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 5 posiciones respecto a Q4"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓5</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-0.82%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="pos">9.52%</span></td>
+          <td><span class="neg">-5.09%</span></td>
+          <td><span class="pos">0.85%</span></td>
+          <td><span class="pos">4.40%</span></td>
+          <td><span class="neg">-0.36%</span></td>
+          <td><span class="pos">13.96%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 3 posiciones respecto a Q4"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓3</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-4.97%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(253, 79%, 47%)"
+              >Storage</span
+            >
+          </td>
+          <td><span class="pos">111.57%</span></td>
+          <td><span class="neg">-2.89%</span></td>
+          <td><span class="pos">1.54%</span></td>
+          <td><span class="neg">-15.57%</span></td>
+          <td><span class="pos">23.67%</span></td>
+          <td><span class="pos">113.55%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 14 posiciones respecto a Q4"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓14</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-10.78%</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; padding: 4px 8px">
+            <span class="tag-l" style="background-color: hsl(132, 71%, 44%)"
+              >Top Crypto</span
+            >
+          </td>
+          <td><span class="pos">539.91%</span></td>
+          <td><span class="neg">-7.10%</span></td>
+          <td><span class="pos">15.28%</span></td>
+          <td><span class="pos">95.33%</span></td>
+          <td><span class="pos">20.34%</span></td>
+          <td><span class="pos">3224.81%</span></td>
+          <td
+            style="text-align: center"
+            title="Bajó 16 posiciones respecto a Q4"
+          >
+            <span style="color: #b91c1c; font-weight: bold">↓16</span>
+          </td>
+          <td>
+            <span class="neg" title="Jun vs Q4/3 (media mensual equiv.)"
+              >-13.88%</span
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 30px 0" />
+<div class="ghost-table-wrapper">
+  <div class="ghost-table-container">
+    <table class="ghost-table">
+      <thead>
+        <tr>
+          <th data-type="string">Ticker</th>
+          <th data-type="string">Nombre</th>
+          <th data-type="number">MktCap</th>
+          <th data-type="string">Lista</th>
+          <th data-type="number">Q1</th>
+          <th data-type="number">Jun</th>
+          <th data-type="number">Q2</th>
+          <th data-type="number">Q3</th>
+          <th data-type="number">Q4</th>
+          <th data-type="number">Anual</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="ticker-badge">SOL-USD</span></td>
+          <td>Solana USD</td>
+          <td><span class="market-cap">$48.56B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(132, 71%, 44%)"
+              >Top Crypto</span
+            >
+          </td>
+          <td><span class="pos">1188.32% 🚀</span></td>
+          <td><span class="pos">8.35% 📈</span></td>
+          <td><span class="pos">82.67% 🚀</span></td>
+          <td><span class="pos">296.75% 🚀</span></td>
+          <td><span class="pos">20.72% 🚀</span></td>
+          <td><span class="pos">11171.38% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">BNB-USD</span></td>
+          <td>BNB USD</td>
+          <td><span class="market-cap">$83.79B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(132, 71%, 44%)"
+              >Top Crypto</span
+            >
+          </td>
+          <td><span class="pos">708.17% 🚀</span></td>
+          <td><span class="neg">-14.40% 📉</span></td>
+          <td><span class="pos">0.41% 📈</span></td>
+          <td><span class="pos">27.62% 🚀</span></td>
+          <td><span class="pos">32.20% 🚀</span></td>
+          <td><span class="pos">1269.08% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">HY9H.F</span></td>
+          <td>SK Hynix</td>
+          <td><span class="market-cap">$541.44B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(253, 79%, 47%)"
+              >Storage</span
+            >
+          </td>
+          <td><span class="pos">496.59% 🚀</span></td>
+          <td><span class="neg">-0.51% 📉</span></td>
+          <td><span class="neg">-7.62% 📉</span></td>
+          <td><span class="neg">-22.16% 💀</span></td>
+          <td><span class="pos">29.14% 🚀</span></td>
+          <td><span class="pos">453.98% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">ETH-USD</span></td>
+          <td>Ethereum USD</td>
+          <td><span class="market-cap">$275.03B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(132, 71%, 44%)"
+              >Top Crypto</span
+            >
+          </td>
+          <td><span class="pos">160.01% 🚀</span></td>
+          <td><span class="neg">-16.22% 📉</span></td>
+          <td><span class="pos">18.57% 📈</span></td>
+          <td><span class="pos">31.97% 🚀</span></td>
+          <td><span class="pos">22.69% 🚀</span></td>
+          <td><span class="pos">399.13% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">MARA</span></td>
+          <td>MARA Holdings</td>
+          <td><span class="market-cap">$5.07B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(135, 84%, 47%)"
+              >BTC Mining</span
+            >
+          </td>
+          <td><span class="pos">359.96% 🚀</span></td>
+          <td><span class="pos">26.65% 🚀</span></td>
+          <td><span class="neg">-34.67% 💀</span></td>
+          <td><span class="pos">0.67% 📈</span></td>
+          <td><span class="pos">4.05% 📈</span></td>
+          <td><span class="pos">214.75% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">HUT</span></td>
+          <td>Hut 8 Corp.</td>
+          <td><span class="market-cap">$12.31B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(135, 84%, 47%)"
+              >BTC Mining</span
+            >
+          </td>
+          <td><span class="pos">175.42% 🚀</span></td>
+          <td><span class="pos">8.11% 📈</span></td>
+          <td><span class="neg">-41.91% 💀</span></td>
+          <td><span class="pos">90.91% 🚀</span></td>
+          <td><span class="neg">-6.55% 📉</span></td>
+          <td><span class="pos">185.45% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">FTNT</span></td>
+          <td>Fortinet</td>
+          <td><span class="market-cap">$89.28B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(90, 76%, 43%)"
+              >CiberSec.</span
+            >
+          </td>
+          <td><span class="pos">24.16% 🚀</span></td>
+          <td><span class="pos">8.99% 📈</span></td>
+          <td><span class="pos">29.16% 🚀</span></td>
+          <td><span class="pos">22.61% 🚀</span></td>
+          <td><span class="pos">23.07% 🚀</span></td>
+          <td><span class="pos">141.97% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">ZEC-USD</span></td>
+          <td>Zcash USD</td>
+          <td><span class="market-cap">$5.85B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(312, 68%, 46%)"
+              >Privacy</span
+            >
+          </td>
+          <td><span class="pos">145.22% 🚀</span></td>
+          <td><span class="neg">-19.37% 📉</span></td>
+          <td><span class="neg">-16.63% 📉</span></td>
+          <td><span class="neg">-18.21% 📉</span></td>
+          <td><span class="pos">36.97% 🚀</span></td>
+          <td><span class="pos">129.04% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">NVDA</span></td>
+          <td>NVIDIA Corp.</td>
+          <td><span class="market-cap">$5.13T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="pos">2.25% 📈</span></td>
+          <td><span class="pos">23.13% 🚀</span></td>
+          <td><span class="pos">49.85% 🚀</span></td>
+          <td><span class="pos">3.57% 📈</span></td>
+          <td><span class="pos">41.97% 🚀</span></td>
+          <td><span class="pos">125.29% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">BX</span></td>
+          <td>Blackstone</td>
+          <td><span class="market-cap">$149.68B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="pos">15.00% 📈</span></td>
+          <td><span class="pos">4.82% 📈</span></td>
+          <td><span class="pos">30.34% 🚀</span></td>
+          <td><span class="pos">19.77% 📈</span></td>
+          <td><span class="pos">11.22% 📈</span></td>
+          <td><span class="pos">99.65% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">MRVL</span></td>
+          <td>Marvell Tech.</td>
+          <td><span class="market-cap">$159.86B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="pos">3.03% 📈</span></td>
+          <td><span class="pos">20.77% 🚀</span></td>
+          <td><span class="pos">19.09% 📈</span></td>
+          <td><span class="pos">3.39% 📈</span></td>
+          <td><span class="pos">45.07% 🚀</span></td>
+          <td><span class="pos">84.03% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">AMAT</span></td>
+          <td>Applied Materials</td>
+          <td><span class="market-cap">$318.49B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(314, 84%, 49%)"
+              >Equipment</span
+            >
+          </td>
+          <td><span class="pos">54.81% 🚀</span></td>
+          <td><span class="pos">3.09% 📈</span></td>
+          <td><span class="pos">6.59% 📈</span></td>
+          <td><span class="neg">-9.60% 📉</span></td>
+          <td><span class="pos">22.24% 🚀</span></td>
+          <td><span class="pos">82.34% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">STX</span></td>
+          <td>Seagate Technology</td>
+          <td><span class="market-cap">$133.01B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(253, 79%, 47%)"
+              >Storage</span
+            >
+          </td>
+          <td><span class="pos">23.47% 🚀</span></td>
+          <td><span class="neg">-8.17% 📉</span></td>
+          <td><span class="pos">14.57% 📈</span></td>
+          <td><span class="neg">-6.15% 📉</span></td>
+          <td><span class="pos">36.91% 🚀</span></td>
+          <td><span class="pos">81.76% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">UUUU</span></td>
+          <td>Energy Fuels</td>
+          <td><span class="market-cap">$5.14B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(274, 65%, 48%)"
+              >Rare</span
+            >
+          </td>
+          <td><span class="pos">33.33% 🚀</span></td>
+          <td><span class="neg">-6.78% 📉</span></td>
+          <td><span class="pos">6.51% 📈</span></td>
+          <td><span class="pos">16.03% 📈</span></td>
+          <td><span class="pos">8.69% 📈</span></td>
+          <td><span class="pos">79.11% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">NET</span></td>
+          <td>Cloudflare</td>
+          <td><span class="market-cap">$74.37B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(90, 76%, 43%)"
+              >CiberSec.</span
+            >
+          </td>
+          <td><span class="neg">-7.54% 📉</span></td>
+          <td><span class="pos">28.98% 🚀</span></td>
+          <td><span class="pos">50.64% 🚀</span></td>
+          <td><span class="pos">6.43% 📈</span></td>
+          <td><span class="pos">16.73% 📈</span></td>
+          <td><span class="pos">73.05% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">SAB.MC</span></td>
+          <td>Banco Sabadell</td>
+          <td><span class="market-cap">$15.60B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="pos">28.81% 🚀</span></td>
+          <td><span class="neg">-8.39% 📉</span></td>
+          <td><span class="pos">25.92% 🚀</span></td>
+          <td><span class="pos">26.37% 🚀</span></td>
+          <td><span class="neg">-18.44% 📉</span></td>
+          <td><span class="pos">67.18% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">GOOG</span></td>
+          <td>Alphabet</td>
+          <td><span class="market-cap">$4.22T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(54, 78%, 50%)"
+              >Big Tech</span
+            >
+          </td>
+          <td><span class="pos">18.08% 📈</span></td>
+          <td><span class="pos">3.93% 📈</span></td>
+          <td><span class="pos">21.16% 🚀</span></td>
+          <td><span class="pos">6.34% 📈</span></td>
+          <td><span class="pos">8.56% 📈</span></td>
+          <td><span class="pos">65.17% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">ASML</span></td>
+          <td>ASML Holding</td>
+          <td><span class="market-cap">$548.95B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(314, 84%, 49%)"
+              >Equipment</span
+            >
+          </td>
+          <td><span class="pos">26.58% 🚀</span></td>
+          <td><span class="pos">2.28% 📈</span></td>
+          <td><span class="pos">11.90% 📈</span></td>
+          <td><span class="pos">7.86% 📈</span></td>
+          <td><span class="pos">6.85% 📈</span></td>
+          <td><span class="pos">63.24% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">ZS</span></td>
+          <td>Zscaler</td>
+          <td><span class="market-cap">$21.78B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(90, 76%, 43%)"
+              >CiberSec.</span
+            >
+          </td>
+          <td><span class="neg">-14.04% 📉</span></td>
+          <td><span class="pos">11.26% 📈</span></td>
+          <td><span class="pos">25.86% 🚀</span></td>
+          <td><span class="pos">21.36% 🚀</span></td>
+          <td><span class="pos">22.54% 🚀</span></td>
+          <td><span class="pos">60.90% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">BTC-USD</span></td>
+          <td>Bitcoin USD</td>
+          <td><span class="market-cap">$1.54T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(132, 71%, 44%)"
+              >Top Crypto</span
+            >
+          </td>
+          <td><span class="pos">103.16% 🚀</span></td>
+          <td><span class="neg">-6.14% 📉</span></td>
+          <td><span class="neg">-40.53% 💀</span></td>
+          <td><span class="pos">24.97% 🚀</span></td>
+          <td><span class="pos">5.74% 📈</span></td>
+          <td><span class="pos">59.67% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">VVSM.DE</span></td>
+          <td>VanEck Semic.</td>
+          <td><span class="market-cap">$4.54B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            ><span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="pos">16.73% 📈</span></td>
+          <td><span class="pos">8.15% 📈</span></td>
+          <td><span class="pos">7.34% 📈</span></td>
+          <td><span class="pos">1.88% 📈</span></td>
+          <td><span class="pos">24.06% 🚀</span></td>
+          <td><span class="pos">58.37% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">AMD</span></td>
+          <td>Advanced Micro Dev.</td>
+          <td><span class="market-cap">$733.28B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="neg">-14.40% 📉</span></td>
+          <td><span class="pos">17.30% 📈</span></td>
+          <td><span class="pos">19.66% 📈</span></td>
+          <td><span class="pos">9.55% 📈</span></td>
+          <td><span class="pos">39.84% 🚀</span></td>
+          <td><span class="pos">56.91% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">PANW</span></td>
+          <td>Palo Alto Net.</td>
+          <td><span class="market-cap">$147.90B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(90, 76%, 43%)"
+              >CiberSec.</span
+            >
+          </td>
+          <td><span class="neg">-9.38% 📉</span></td>
+          <td><span class="pos">2.15% 📈</span></td>
+          <td><span class="pos">15.21% 📈</span></td>
+          <td><span class="pos">29.09% 🚀</span></td>
+          <td><span class="pos">16.23% 📈</span></td>
+          <td><span class="pos">56.66% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">HPQ</span></td>
+          <td>HP Inc.</td>
+          <td><span class="market-cap">$18.02B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(98, 82%, 47%)"
+              >Cons. Elect.</span
+            >
+          </td>
+          <td><span class="pos">29.12% 🚀</span></td>
+          <td><span class="pos">3.28% 📈</span></td>
+          <td><span class="neg">-4.91% 📉</span></td>
+          <td><span class="neg">-9.37% 📉</span></td>
+          <td><span class="pos">37.68% 🚀</span></td>
+          <td><span class="pos">53.19% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">LRCX</span></td>
+          <td>Lam Research</td>
+          <td><span class="market-cap">$324.14B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(314, 84%, 49%)"
+              >Equipment</span
+            >
+          </td>
+          <td><span class="pos">26.04% 🚀</span></td>
+          <td><span class="pos">0.13% 📈</span></td>
+          <td><span class="pos">9.32% 📈</span></td>
+          <td><span class="neg">-12.53% 📉</span></td>
+          <td><span class="pos">26.36% 🚀</span></td>
+          <td><span class="pos">52.28% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">AVGO</span></td>
+          <td>Broadcom</td>
+          <td><span class="market-cap">$1.97T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="pos">5.89% 📈</span></td>
+          <td><span class="pos">0.95% 📈</span></td>
+          <td><span class="pos">2.84% 📈</span></td>
+          <td><span class="pos">1.70% 📈</span></td>
+          <td><span class="pos">37.22% 🚀</span></td>
+          <td><span class="pos">51.97% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">MSFT</span></td>
+          <td>Microsoft Corp.</td>
+          <td><span class="market-cap">$3.15T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(54, 78%, 50%)"
+              >Big Tech</span
+            >
+          </td>
+          <td><span class="pos">6.00% 📈</span></td>
+          <td><span class="pos">8.50% 📈</span></td>
+          <td><span class="pos">14.90% 📈</span></td>
+          <td><span class="pos">4.07% 📈</span></td>
+          <td><span class="pos">19.30% 📈</span></td>
+          <td><span class="pos">51.21% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">DELL</span></td>
+          <td>Dell Technologies</td>
+          <td><span class="market-cap">$161.18B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(149, 68%, 45%)"
+              >Data Center</span
+            >
+          </td>
+          <td><span class="pos">20.28% 🚀</span></td>
+          <td><span class="pos">1.04% 📈</span></td>
+          <td><span class="pos">13.07% 📈</span></td>
+          <td><span class="pos">4.38% 📈</span></td>
+          <td><span class="pos">6.52% 📈</span></td>
+          <td><span class="pos">51.21% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">WULF</span></td>
+          <td>TeraWulf</td>
+          <td><span class="market-cap">$10.00B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(135, 84%, 47%)"
+              >BTC Mining</span
+            >
+          </td>
+          <td><span class="neg">-1.71% 📉</span></td>
+          <td><span class="pos">105.64% 🚀</span></td>
+          <td><span class="pos">97.04% 🚀</span></td>
+          <td><span class="pos">47.07% 🚀</span></td>
+          <td><span class="neg">-47.01% 💀</span></td>
+          <td><span class="pos">50.95% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">2357.TW</span></td>
+          <td>ASUSTeK Computer</td>
+          <td><span class="market-cap">$436.74B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(98, 82%, 47%)"
+              >Cons. Elect.</span
+            >
+          </td>
+          <td><span class="pos">48.70% 🚀</span></td>
+          <td><span class="neg">-5.95% 📉</span></td>
+          <td><span class="neg">-0.27% 📉</span></td>
+          <td><span class="neg">-12.38% 📉</span></td>
+          <td><span class="pos">15.51% 📈</span></td>
+          <td><span class="pos">50.10% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">TSLA</span></td>
+          <td>Tesla</td>
+          <td><span class="market-cap">$1.66T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(54, 78%, 50%)"
+              >Big Tech</span
+            >
+          </td>
+          <td><span class="neg">-5.35% 📉</span></td>
+          <td><span class="pos">8.71% 📈</span></td>
+          <td><span class="pos">1.76% 📈</span></td>
+          <td><span class="pos">14.09% 📈</span></td>
+          <td><span class="pos">36.27% 🚀</span></td>
+          <td><span class="pos">49.76% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">XOM</span></td>
+          <td>Exxon Mobil</td>
+          <td><span class="market-cap">$633.26B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(82, 74%, 41%)"
+              >Oil</span
+            >
+          </td>
+          <td><span class="pos">35.44% 🚀</span></td>
+          <td><span class="pos">8.07% 📈</span></td>
+          <td><span class="pos">12.99% 📈</span></td>
+          <td><span class="neg">-6.75% 📉</span></td>
+          <td><span class="pos">4.03% 📈</span></td>
+          <td><span class="pos">48.45% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">BAC</span></td>
+          <td>Bank of America</td>
+          <td><span class="market-cap">$353.20B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="pos">27.65% 🚀</span></td>
+          <td><span class="neg">-2.74% 📉</span></td>
+          <td><span class="pos">6.57% 📈</span></td>
+          <td><span class="pos">2.96% 📈</span></td>
+          <td><span class="pos">4.81% 📈</span></td>
+          <td><span class="pos">46.78% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">XMR-USD</span></td>
+          <td>Monero USD</td>
+          <td><span class="market-cap">$7.06B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(312, 68%, 46%)"
+              >Privacy</span
+            >
+          </td>
+          <td><span class="pos">57.21% 🚀</span></td>
+          <td><span class="neg">-18.56% 📉</span></td>
+          <td><span class="neg">-9.70% 📉</span></td>
+          <td><span class="pos">12.85% 📈</span></td>
+          <td><span class="neg">-8.77% 📉</span></td>
+          <td><span class="pos">46.15% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">0857.HK</span></td>
+          <td>PetroChina</td>
+          <td><span class="market-cap">$2.02T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(82, 74%, 41%)"
+              >Oil</span
+            >
+          </td>
+          <td><span class="pos">17.57% 📈</span></td>
+          <td><span class="pos">19.24% 📈</span></td>
+          <td><span class="pos">34.52% 🚀</span></td>
+          <td><span class="neg">-2.38% 📉</span></td>
+          <td><span class="neg">-5.96% 📉</span></td>
+          <td><span class="pos">45.19% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">GS</span></td>
+          <td>Goldman Sachs</td>
+          <td><span class="market-cap">$279.81B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="pos">24.00% 🚀</span></td>
+          <td><span class="pos">2.02% 📈</span></td>
+          <td><span class="pos">16.06% 📈</span></td>
+          <td><span class="neg">-0.40% 📉</span></td>
+          <td><span class="pos">1.20% 📈</span></td>
+          <td><span class="pos">45.06% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">P</span></td>
+          <td>Everpure</td>
+          <td><span class="market-cap">$27.83B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(149, 68%, 45%)"
+              >Data Center</span
+            >
+          </td>
+          <td><span class="neg">-4.73% 📉</span></td>
+          <td><span class="pos">2.52% 📈</span></td>
+          <td><span class="neg">-9.33% 📉</span></td>
+          <td><span class="pos">28.83% 🚀</span></td>
+          <td><span class="pos">29.37% 🚀</span></td>
+          <td><span class="pos">43.96% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">MS</span></td>
+          <td>Morgan Stanley</td>
+          <td><span class="market-cap">$306.83B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="pos">13.32% 📈</span></td>
+          <td><span class="pos">0.81% 📈</span></td>
+          <td><span class="pos">18.07% 📈</span></td>
+          <td><span class="pos">6.13% 📈</span></td>
+          <td><span class="pos">0.87% 📈</span></td>
+          <td><span class="pos">43.24% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">BKT.MC</span></td>
+          <td>Bankinter</td>
+          <td><span class="market-cap">$12.43B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="pos">33.82% 🚀</span></td>
+          <td><span class="neg">-9.62% 📉</span></td>
+          <td><span class="neg">-0.56% 📉</span></td>
+          <td><span class="pos">19.56% 📈</span></td>
+          <td><span class="neg">-11.03% 📉</span></td>
+          <td><span class="pos">41.54% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">SMH</span></td>
+          <td>VanEck Semi.</td>
+          <td><span class="market-cap">$58.79B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            ><span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="pos">11.51% 📈</span></td>
+          <td><span class="pos">5.24% 📈</span></td>
+          <td><span class="pos">7.67% 📈</span></td>
+          <td><span class="neg">-2.28% 📉</span></td>
+          <td><span class="pos">20.49% 🚀</span></td>
+          <td><span class="pos">41.37% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">MP</span></td>
+          <td>MP Mat. Corp.</td>
+          <td><span class="market-cap">$11.31B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(274, 65%, 48%)"
+              >Rare</span
+            >
+          </td>
+          <td><span class="pos">11.75% 📈</span></td>
+          <td><span class="pos">31.27% 🚀</span></td>
+          <td><span class="pos">2.53% 📈</span></td>
+          <td><span class="neg">-12.56% 📉</span></td>
+          <td><span class="pos">40.92% 🚀</span></td>
+          <td><span class="pos">41.19% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">^SOX</span></td>
+          <td>PHLX Semiconductor</td>
+          <td><span class="market-cap">-</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(114, 81%, 40%)"
+              >Index</span
+            >
+          </td>
+          <td><span class="pos">11.78% 📈</span></td>
+          <td><span class="pos">4.98% 📈</span></td>
+          <td><span class="pos">7.05% 📈</span></td>
+          <td><span class="neg">-2.61% 📉</span></td>
+          <td><span class="pos">21.12% 🚀</span></td>
+          <td><span class="pos">41.16% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">MSTR</span></td>
+          <td>Strategy</td>
+          <td><span class="market-cap">$58.99B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(23, 81%, 40%)"
+              >Bitcoin Rel.</span
+            >
+          </td>
+          <td><span class="pos">74.70% 🚀</span></td>
+          <td><span class="pos">41.38% 🚀</span></td>
+          <td><span class="neg">-2.11% 📉</span></td>
+          <td><span class="neg">-12.96% 📉</span></td>
+          <td><span class="neg">-5.86% 📉</span></td>
+          <td><span class="pos">40.13% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">CVX</span></td>
+          <td>Chevron</td>
+          <td><span class="market-cap">$371.71B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(82, 74%, 41%)"
+              >Oil</span
+            >
+          </td>
+          <td><span class="pos">24.09% 🚀</span></td>
+          <td><span class="pos">0.92% 📈</span></td>
+          <td><span class="neg">-0.05% 📉</span></td>
+          <td><span class="neg">-3.14% 📉</span></td>
+          <td><span class="pos">15.67% 📈</span></td>
+          <td><span class="pos">38.96% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">SMCI</span></td>
+          <td>Super Micro Computer</td>
+          <td><span class="market-cap">$16.74B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(149, 68%, 45%)"
+              >Data Center</span
+            >
+          </td>
+          <td><span class="pos">23.37% 🚀</span></td>
+          <td><span class="pos">1.27% 📈</span></td>
+          <td><span class="neg">-9.93% 📉</span></td>
+          <td><span class="pos">3.95% 📈</span></td>
+          <td><span class="pos">20.18% 🚀</span></td>
+          <td><span class="pos">38.82% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">IDR.MC</span></td>
+          <td>Indra Sistemas</td>
+          <td><span class="market-cap">$8.76B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="pos">7.38% 📈</span></td>
+          <td><span class="pos">9.77% 📈</span></td>
+          <td><span class="pos">2.67% 📈</span></td>
+          <td><span class="pos">20.60% 🚀</span></td>
+          <td><span class="pos">2.59% 📈</span></td>
+          <td><span class="pos">36.39% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">ORCL</span></td>
+          <td>Oracle</td>
+          <td><span class="market-cap">$493.14B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(234, 68%, 45%)"
+              >Mid Tech</span
+            >
+          </td>
+          <td><span class="pos">8.47% 📈</span></td>
+          <td><span class="neg">-1.14% 📉</span></td>
+          <td><span class="pos">10.93% 📈</span></td>
+          <td><span class="pos">11.93% 📈</span></td>
+          <td><span class="pos">0.09% 📈</span></td>
+          <td><span class="pos">34.81% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">DASH-USD</span></td>
+          <td>Dash USD</td>
+          <td><span class="market-cap">$576.41M</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(312, 68%, 46%)"
+              >Privacy</span
+            >
+          </td>
+          <td><span class="pos">123.42% 🚀</span></td>
+          <td><span class="neg">-26.56% 💀</span></td>
+          <td><span class="neg">-34.72% 💀</span></td>
+          <td><span class="pos">14.23% 📈</span></td>
+          <td><span class="neg">-19.24% 📉</span></td>
+          <td><span class="pos">34.54% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">AAPL</span></td>
+          <td>Apple Inc.</td>
+          <td><span class="market-cap">$3.91T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(54, 78%, 50%)"
+              >Big Tech</span
+            >
+          </td>
+          <td><span class="neg">-7.94% 📉</span></td>
+          <td><span class="pos">9.91% 📈</span></td>
+          <td><span class="pos">12.12% 📈</span></td>
+          <td><span class="pos">3.31% 📈</span></td>
+          <td><span class="pos">25.49% 🚀</span></td>
+          <td><span class="pos">33.82% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">HPE</span></td>
+          <td>Hewlett Packard E.</td>
+          <td><span class="market-cap">$37.70B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(149, 68%, 45%)"
+              >Data Center</span
+            >
+          </td>
+          <td><span class="pos">32.83% 🚀</span></td>
+          <td><span class="neg">-8.65% 📉</span></td>
+          <td><span class="neg">-7.37% 📉</span></td>
+          <td><span class="neg">-2.26% 📉</span></td>
+          <td><span class="pos">10.67% 📈</span></td>
+          <td><span class="pos">33.08% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">2B76.DE</span></td>
+          <td>iShares Auto. Rob.</td>
+          <td><span class="market-cap">$4.73B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            ><span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="pos">6.42% 📈</span></td>
+          <td><span class="pos">7.92% 📈</span></td>
+          <td><span class="pos">6.94% 📈</span></td>
+          <td><span class="pos">3.63% 📈</span></td>
+          <td><span class="pos">12.17% 📈</span></td>
+          <td><span class="pos">32.27% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">RIOT</span></td>
+          <td>Riot Platforms</td>
+          <td><span class="market-cap">$6.89B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(135, 84%, 47%)"
+              >BTC Mining</span
+            >
+          </td>
+          <td><span class="pos">213.54% 🚀</span></td>
+          <td><span class="pos">38.85% 🚀</span></td>
+          <td><span class="neg">-29.28% 💀</span></td>
+          <td><span class="neg">-31.78% 💀</span></td>
+          <td><span class="neg">-13.11% 📉</span></td>
+          <td><span class="pos">31.43% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">BBVA.MC</span></td>
+          <td>Banco Bilbao V.</td>
+          <td><span class="market-cap">$104.45B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="pos">9.69% 📈</span></td>
+          <td><span class="pos">1.79% 📈</span></td>
+          <td><span class="pos">18.12% 📈</span></td>
+          <td><span class="pos">9.35% 📈</span></td>
+          <td><span class="neg">-8.17% 📉</span></td>
+          <td><span class="pos">30.11% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">BRK-B</span></td>
+          <td>Berkshire Hat.</td>
+          <td><span class="market-cap">$1.02T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="pos">10.18% 📈</span></td>
+          <td><span class="neg">-3.98% 📉</span></td>
+          <td><span class="pos">8.79% 📈</span></td>
+          <td><span class="neg">-1.79% 📉</span></td>
+          <td><span class="pos">9.55% 📈</span></td>
+          <td><span class="pos">28.95% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">IVV</span></td>
+          <td>iShares Core S&P 500</td>
+          <td><span class="market-cap">$720.54B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            >
+          </td>
+          <td><span class="pos">5.98% 📈</span></td>
+          <td><span class="pos">1.96% 📈</span></td>
+          <td><span class="pos">8.07% 📈</span></td>
+          <td><span class="pos">0.21% 📈</span></td>
+          <td><span class="pos">10.72% 📈</span></td>
+          <td><span class="pos">27.07% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">BLK</span></td>
+          <td>BlackRock</td>
+          <td><span class="market-cap">$171.38B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="pos">4.49% 📈</span></td>
+          <td><span class="neg">-0.24% 📉</span></td>
+          <td><span class="pos">16.05% 📈</span></td>
+          <td><span class="neg">-4.15% 📉</span></td>
+          <td><span class="pos">9.17% 📈</span></td>
+          <td><span class="pos">26.89% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">^SPX</span></td>
+          <td>S&P 500 INDEX</td>
+          <td><span class="market-cap">-</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(114, 81%, 40%)"
+              >Index</span
+            >
+          </td>
+          <td><span class="pos">5.77% 📈</span></td>
+          <td><span class="pos">2.22% 📈</span></td>
+          <td><span class="pos">8.17% 📈</span></td>
+          <td><span class="pos">0.23% 📈</span></td>
+          <td><span class="pos">10.65% 📈</span></td>
+          <td><span class="pos">26.89% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">QQQM</span></td>
+          <td>Invesco NASDAQ 100</td>
+          <td><span class="market-cap">$68.83B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            >
+          </td>
+          <td><span class="pos">1.79% 📈</span></td>
+          <td><span class="pos">6.19% 📈</span></td>
+          <td><span class="pos">11.06% 📈</span></td>
+          <td><span class="pos">0.95% 📈</span></td>
+          <td><span class="pos">11.18% 📈</span></td>
+          <td><span class="pos">26.87% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">QQQ</span></td>
+          <td>Invesco QQQ Trust</td>
+          <td><span class="market-cap">$372.51B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            >
+          </td>
+          <td><span class="pos">1.72% 📈</span></td>
+          <td><span class="pos">6.14% 📈</span></td>
+          <td><span class="pos">11.06% 📈</span></td>
+          <td><span class="pos">1.00% 📈</span></td>
+          <td><span class="pos">11.14% 📈</span></td>
+          <td><span class="pos">26.81% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">^NDX</span></td>
+          <td>NASDAQ-100</td>
+          <td><span class="market-cap">-</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(114, 81%, 40%)"
+              >Index</span
+            >
+          </td>
+          <td><span class="pos">1.58% 📈</span></td>
+          <td><span class="pos">6.34% 📈</span></td>
+          <td><span class="pos">11.18% 📈</span></td>
+          <td><span class="pos">0.93% 📈</span></td>
+          <td><span class="pos">11.10% 📈</span></td>
+          <td><span class="pos">26.63% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">JPM</span></td>
+          <td>JPMorgan</td>
+          <td><span class="market-cap">$797.99B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="pos">19.80% 📈</span></td>
+          <td><span class="neg">-5.30% 📉</span></td>
+          <td><span class="pos">2.17% 📈</span></td>
+          <td><span class="pos">5.24% 📈</span></td>
+          <td><span class="neg">-3.26% 📉</span></td>
+          <td><span class="pos">24.62% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">MU</span></td>
+          <td>Micron Tech.</td>
+          <td><span class="market-cap">$590.88B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(253, 79%, 47%)"
+              >Storage</span
+            >
+          </td>
+          <td><span class="pos">17.33% 📈</span></td>
+          <td><span class="pos">1.00% 📈</span></td>
+          <td><span class="neg">-3.66% 📉</span></td>
+          <td><span class="neg">-16.47% 📉</span></td>
+          <td><span class="pos">31.23% 🚀</span></td>
+          <td><span class="pos">23.90% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">SHEL</span></td>
+          <td>Shell</td>
+          <td><span class="market-cap">$235.37B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(82, 74%, 41%)"
+              >Oil</span
+            >
+          </td>
+          <td><span class="pos">11.58% 📈</span></td>
+          <td><span class="pos">4.64% 📈</span></td>
+          <td><span class="pos">3.03% 📈</span></td>
+          <td><span class="pos">10.32% 📈</span></td>
+          <td><span class="neg">-2.63% 📉</span></td>
+          <td><span class="pos">23.51% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">META</span></td>
+          <td>Meta Platforms</td>
+          <td><span class="market-cap">$1.71T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(54, 78%, 50%)"
+              >Big Tech</span
+            >
+          </td>
+          <td><span class="pos">7.82% 📈</span></td>
+          <td><span class="pos">5.77% 📈</span></td>
+          <td><span class="pos">18.06% 📈</span></td>
+          <td><span class="neg">-2.39% 📉</span></td>
+          <td><span class="neg">-0.90% 📉</span></td>
+          <td><span class="pos">23.13% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">0992.HK</span></td>
+          <td>Lenovo Group</td>
+          <td><span class="market-cap">$150.34B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(98, 82%, 47%)"
+              >Cons. Elect.</span
+            >
+          </td>
+          <td><span class="pos">51.30% 🚀</span></td>
+          <td><span class="neg">-3.98% 📉</span></td>
+          <td><span class="neg">-19.26% 📉</span></td>
+          <td><span class="neg">-6.27% 📉</span></td>
+          <td><span class="pos">7.05% 📈</span></td>
+          <td><span class="pos">22.57% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">SHOP</span></td>
+          <td>Shopify</td>
+          <td><span class="market-cap">$162.09B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(234, 68%, 45%)"
+              >Mid Tech</span
+            >
+          </td>
+          <td><span class="neg">-2.25% 📉</span></td>
+          <td><span class="pos">17.55% 📈</span></td>
+          <td><span class="pos">32.04% 🚀</span></td>
+          <td><span class="neg">-7.20% 📉</span></td>
+          <td><span class="pos">1.59% 📈</span></td>
+          <td><span class="pos">21.68% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">SEC0.DE</span></td>
+          <td>iShares MSCI Gl. Semi.</td>
+          <td><span class="market-cap">$2.38B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            ><span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neg">-1.83% 📉</span></td>
+          <td><span class="pos">23.77% 🚀</span></td>
+          <td><span class="pos">21.50% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">QCOM</span></td>
+          <td>QUALCOMM</td>
+          <td><span class="market-cap">$159.44B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="neg">-12.96% 📉</span></td>
+          <td><span class="pos">6.24% 📈</span></td>
+          <td><span class="pos">7.80% 📈</span></td>
+          <td><span class="neg">-9.76% 📉</span></td>
+          <td><span class="pos">41.78% 🚀</span></td>
+          <td><span class="pos">20.04% 🚀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">TTE</span></td>
+          <td>TotalEnergies</td>
+          <td><span class="market-cap">$203.36B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(82, 74%, 41%)"
+              >Oil</span
+            >
+          </td>
+          <td><span class="pos">11.05% 📈</span></td>
+          <td><span class="neg">-3.06% 📉</span></td>
+          <td><span class="neg">-2.75% 📉</span></td>
+          <td><span class="pos">5.90% 📈</span></td>
+          <td><span class="pos">3.19% 📈</span></td>
+          <td><span class="pos">18.01% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">WDC</span></td>
+          <td>Western Digital</td>
+          <td><span class="market-cap">$137.98B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(253, 79%, 47%)"
+              >Storage</span
+            >
+          </td>
+          <td><span class="pos">20.51% 🚀</span></td>
+          <td><span class="neg">-5.40% 📉</span></td>
+          <td><span class="pos">6.62% 📈</span></td>
+          <td><span class="neg">-20.70% 💀</span></td>
+          <td><span class="pos">15.54% 📈</span></td>
+          <td><span class="pos">17.73% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">SAN.MC</span></td>
+          <td>Banco Santander</td>
+          <td><span class="market-cap">$148.10B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="pos">14.14% 📈</span></td>
+          <td><span class="neg">-5.97% 📉</span></td>
+          <td><span class="pos">11.13% 📈</span></td>
+          <td><span class="neg">-2.58% 📉</span></td>
+          <td><span class="neg">-6.25% 📉</span></td>
+          <td><span class="pos">15.86% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">VST</span></td>
+          <td>Vistra</td>
+          <td><span class="market-cap">$47.85B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(61, 70%, 45%)"
+              >Electric</span
+            >
+          </td>
+          <td><span class="neg">-10.07% 📉</span></td>
+          <td><span class="pos">14.72% 📈</span></td>
+          <td><span class="pos">4.92% 📈</span></td>
+          <td><span class="neg">-7.82% 📉</span></td>
+          <td><span class="pos">33.16% 🚀</span></td>
+          <td><span class="pos">15.82% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">REEMF</span></td>
+          <td>Rare Element R.</td>
+          <td><span class="market-cap">$438.85M</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(274, 65%, 48%)"
+              >Rare</span
+            >
+          </td>
+          <td><span class="pos">110.19% 🚀</span></td>
+          <td><span class="neg">-10.48% 📉</span></td>
+          <td><span class="neg">-17.18% 📉</span></td>
+          <td><span class="neg">-9.04% 📉</span></td>
+          <td><span class="neg">-26.90% 💀</span></td>
+          <td><span class="pos">15.74% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">SEMI.L</span></td>
+          <td>iShares MSCI Glob. Semi.</td>
+          <td><span class="market-cap">$2.38B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            ><span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neg">-4.33% 📉</span></td>
+          <td><span class="pos">20.33% 🚀</span></td>
+          <td><span class="pos">15.11% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">CABK.MC</span></td>
+          <td>CaixaBank</td>
+          <td><span class="market-cap">$72.21B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="pos">25.61% 🚀</span></td>
+          <td><span class="neg">-7.56% 📉</span></td>
+          <td><span class="neg">-1.71% 📉</span></td>
+          <td><span class="pos">3.47% 📈</span></td>
+          <td><span class="neg">-10.06% 📉</span></td>
+          <td><span class="pos">14.90% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">ABNB</span></td>
+          <td>Airbnb</td>
+          <td><span class="market-cap">$85.51B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(234, 68%, 45%)"
+              >Mid Tech</span
+            >
+          </td>
+          <td><span class="pos">28.02% 🚀</span></td>
+          <td><span class="pos">9.07% 📈</span></td>
+          <td><span class="neg">-18.52% 📉</span></td>
+          <td><span class="pos">9.54% 📈</span></td>
+          <td><span class="neg">-0.75% 📉</span></td>
+          <td><span class="pos">13.41% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">JEPI</span></td>
+          <td>JPMorgan Equity P.I.</td>
+          <td><span class="market-cap">$45.61B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            >
+          </td>
+          <td><span class="pos">4.25% 📈</span></td>
+          <td><span class="pos">1.07% 📈</span></td>
+          <td><span class="pos">4.22% 📈</span></td>
+          <td><span class="neg">-1.58% 📉</span></td>
+          <td><span class="pos">6.01% 📈</span></td>
+          <td><span class="pos">13.35% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">MAP.MC</span></td>
+          <td>Mapfre</td>
+          <td><span class="market-cap">$12.50B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="pos">11.49% 📈</span></td>
+          <td><span class="neg">-4.35% 📉</span></td>
+          <td><span class="pos">0.37% 📈</span></td>
+          <td><span class="pos">5.75% 📈</span></td>
+          <td><span class="neg">-4.22% 📉</span></td>
+          <td><span class="pos">13.34% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">ETR</span></td>
+          <td>Entergy Corporation</td>
+          <td><span class="market-cap">$51.70B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(61, 70%, 45%)"
+              >Electric</span
+            >
+          </td>
+          <td><span class="neg">-0.37% 📉</span></td>
+          <td><span class="neg">-5.28% 📉</span></td>
+          <td><span class="pos">0.23% 📈</span></td>
+          <td><span class="neg">-0.39% 📉</span></td>
+          <td><span class="pos">13.43% 📈</span></td>
+          <td><span class="pos">12.83% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">IGV</span></td>
+          <td>iShares E.Tech-Software</td>
+          <td><span class="market-cap">$12.11B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            >
+          </td>
+          <td><span class="neg">-3.58% 📉</span></td>
+          <td><span class="pos">8.68% 📈</span></td>
+          <td><span class="pos">14.24% 📈</span></td>
+          <td><span class="pos">2.33% 📈</span></td>
+          <td><span class="neg">-0.37% 📉</span></td>
+          <td><span class="pos">12.30% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">AKAM</span></td>
+          <td>Akamai Tech.</td>
+          <td><span class="market-cap">$22.63B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(90, 76%, 43%)"
+              >CiberSec.</span
+            >
+          </td>
+          <td><span class="neg">-2.94% 📉</span></td>
+          <td><span class="pos">2.09% 📈</span></td>
+          <td><span class="pos">14.43% 📈</span></td>
+          <td><span class="neg">-10.30% 📉</span></td>
+          <td><span class="pos">11.90% 📈</span></td>
+          <td><span class="pos">11.48% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">NFLX</span></td>
+          <td>Netflix</td>
+          <td><span class="market-cap">$388.38B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(234, 68%, 45%)"
+              >Mid Tech</span
+            >
+          </td>
+          <td><span class="neg">-3.53% 📉</span></td>
+          <td><span class="pos">5.05% 📈</span></td>
+          <td><span class="pos">1.26% 📈</span></td>
+          <td><span class="pos">15.55% 📈</span></td>
+          <td><span class="neg">-1.29% 📉</span></td>
+          <td><span class="pos">11.41% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">TSM</span></td>
+          <td>Taiwan Sem.</td>
+          <td><span class="market-cap">$2.17T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="pos">8.47% 📈</span></td>
+          <td><span class="pos">2.39% 📈</span></td>
+          <td><span class="pos">1.59% 📈</span></td>
+          <td><span class="neg">-7.08% 📉</span></td>
+          <td><span class="pos">7.76% 📈</span></td>
+          <td><span class="pos">10.34% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">ITX.MC</span></td>
+          <td>Ind. Diseño Textil</td>
+          <td><span class="market-cap">$162.34B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="pos">7.91% 📈</span></td>
+          <td><span class="neg">-6.25% 📉</span></td>
+          <td><span class="pos">5.73% 📈</span></td>
+          <td><span class="pos">7.10% 📈</span></td>
+          <td><span class="neg">-10.34% 📉</span></td>
+          <td><span class="pos">9.56% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">XYLD</span></td>
+          <td>Global X S&P 500</td>
+          <td><span class="market-cap">$3.02B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            >
+          </td>
+          <td><span class="pos">3.06% 📈</span></td>
+          <td><span class="pos">1.49% 📈</span></td>
+          <td><span class="pos">2.55% 📈</span></td>
+          <td><span class="neg">-1.04% 📉</span></td>
+          <td><span class="pos">4.08% 📈</span></td>
+          <td><span class="pos">8.86% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">BOTZ</span></td>
+          <td>Global X Rob. A.I.</td>
+          <td><span class="market-cap">$2.94B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            ><span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="pos">0.02% 📈</span></td>
+          <td><span class="pos">2.04% 📈</span></td>
+          <td><span class="pos">5.46% 📈</span></td>
+          <td><span class="pos">4.64% 📈</span></td>
+          <td><span class="neg">-1.72% 📉</span></td>
+          <td><span class="pos">8.47% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">RYLD</span></td>
+          <td>Global X Russell 2000</td>
+          <td><span class="market-cap">$1.26B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            >
+          </td>
+          <td><span class="pos">7.50% 📈</span></td>
+          <td><span class="pos">1.89% 📈</span></td>
+          <td><span class="pos">5.31% 📈</span></td>
+          <td><span class="neg">-2.66% 📉</span></td>
+          <td><span class="neg">-1.93% 📉</span></td>
+          <td><span class="pos">8.08% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">D</span></td>
+          <td>Dominion Energy</td>
+          <td><span class="market-cap">$55.38B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(61, 70%, 45%)"
+              >Electric</span
+            >
+          </td>
+          <td><span class="pos">1.01% 📈</span></td>
+          <td><span class="neg">-3.38% 📉</span></td>
+          <td><span class="neg">-3.15% 📉</span></td>
+          <td><span class="neg">-0.75% 📉</span></td>
+          <td><span class="pos">7.59% 📈</span></td>
+          <td><span class="pos">4.47% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">INTC</span></td>
+          <td>Intel Corp.</td>
+          <td><span class="market-cap">$582.66B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(343, 65%, 49%)"
+              >Semic.</span
+            >
+          </td>
+          <td><span class="pos">28.46% 🚀</span></td>
+          <td><span class="neg">-1.72% 📉</span></td>
+          <td><span class="neg">-12.28% 📉</span></td>
+          <td><span class="neg">-5.09% 📉</span></td>
+          <td><span class="neg">-3.34% 📉</span></td>
+          <td><span class="pos">3.37% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">PPFB.DE</span></td>
+          <td>iShares Physical Met.</td>
+          <td><span class="market-cap">-</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            ><span class="tag-l" style="background-color: hsl(274, 65%, 48%)"
+              >Rare</span
+            >
+          </td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neg">-1.73% 📉</span></td>
+          <td><span class="pos">4.67% 📈</span></td>
+          <td><span class="pos">2.86% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">AMZN</span></td>
+          <td>Amazon</td>
+          <td><span class="market-cap">$2.82T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(54, 78%, 50%)"
+              >Big Tech</span
+            >
+          </td>
+          <td><span class="neg">-5.00% 📉</span></td>
+          <td><span class="pos">6.74% 📈</span></td>
+          <td><span class="pos">11.19% 📈</span></td>
+          <td><span class="neg">-4.51% 📉</span></td>
+          <td><span class="pos">1.50% 📈</span></td>
+          <td><span class="pos">2.38% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">2222.SR</span></td>
+          <td>Saudi Arabian Oil</td>
+          <td><span class="market-cap">$6.70T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(82, 74%, 41%)"
+              >Oil</span
+            >
+          </td>
+          <td><span class="pos">2.86% 📈</span></td>
+          <td><span class="neg">-0.57% 📉</span></td>
+          <td><span class="neg">-2.50% 📉</span></td>
+          <td><span class="pos">2.56% 📈</span></td>
+          <td><span class="neg">-0.56% 📉</span></td>
+          <td><span class="pos">2.29% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">XEL</span></td>
+          <td>Xcel Energy</td>
+          <td><span class="market-cap">$49.96B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(61, 70%, 45%)"
+              >Electric</span
+            >
+          </td>
+          <td><span class="neg">-0.24% 📉</span></td>
+          <td><span class="neg">-7.05% 📉</span></td>
+          <td><span class="neg">-0.95% 📉</span></td>
+          <td><span class="neg">-5.13% 📉</span></td>
+          <td><span class="pos">8.32% 📈</span></td>
+          <td><span class="pos">1.54% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">MA</span></td>
+          <td>Mastercard</td>
+          <td><span class="market-cap">$436.67B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="neg">-0.25% 📉</span></td>
+          <td><span class="pos">1.25% 📈</span></td>
+          <td><span class="pos">2.54% 📈</span></td>
+          <td><span class="neg">-4.77% 📉</span></td>
+          <td><span class="pos">3.35% 📈</span></td>
+          <td><span class="pos">0.67% 📈</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">V</span></td>
+          <td>Visa Inc.</td>
+          <td><span class="market-cap">$619.49B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="neg">-3.20% 📉</span></td>
+          <td><span class="pos">2.87% 📈</span></td>
+          <td><span class="pos">10.43% 📈</span></td>
+          <td><span class="neg">-4.73% 📉</span></td>
+          <td><span class="neg">-2.71% 📉</span></td>
+          <td><span class="neg">-0.92% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">OKLO</span></td>
+          <td>Oklo</td>
+          <td><span class="market-cap">$12.65B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(61, 70%, 45%)"
+              >Electric</span
+            >
+          </td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neg">-1.70% 📉</span></td>
+          <td><span class="pos">0.20% 📈</span></td>
+          <td><span class="neg">-1.50% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">QYLD</span></td>
+          <td>Global X NASDAQ 100</td>
+          <td><span class="market-cap">$8.08B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            >
+          </td>
+          <td><span class="neg">-1.01% 📉</span></td>
+          <td><span class="pos">0.99% 📈</span></td>
+          <td><span class="neg">-0.62% 📉</span></td>
+          <td><span class="neg">-1.65% 📉</span></td>
+          <td><span class="pos">0.59% 📈</span></td>
+          <td><span class="neg">-2.68% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">CRWD</span></td>
+          <td>CrowdStrike</td>
+          <td><span class="market-cap">$115.89B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(90, 76%, 43%)"
+              >CiberSec.</span
+            >
+          </td>
+          <td><span class="neg">-13.84% 📉</span></td>
+          <td><span class="pos">13.13% 📈</span></td>
+          <td><span class="pos">37.70% 🚀</span></td>
+          <td><span class="neg">-2.20% 📉</span></td>
+          <td><span class="neg">-16.69% 📉</span></td>
+          <td><span class="neg">-3.34% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">IGLN.L</span></td>
+          <td>iShares Physical Gold</td>
+          <td><span class="market-cap">-</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(223, 74%, 41%)"
+              >ETF</span
+            ><span class="tag-l" style="background-color: hsl(274, 65%, 48%)"
+              >Rare</span
+            >
+          </td>
+          <td><span class="neg">-9.99% 📉</span></td>
+          <td><span class="neg">-6.79% 📉</span></td>
+          <td><span class="pos">3.58% 📈</span></td>
+          <td><span class="neg">-0.36% 📉</span></td>
+          <td><span class="pos">3.31% 📈</span></td>
+          <td><span class="neg">-4.03% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">ERO</span></td>
+          <td>Ero Copper</td>
+          <td><span class="market-cap">$2.85B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(274, 65%, 48%)"
+              >Rare</span
+            >
+          </td>
+          <td><span class="pos">5.33% 📈</span></td>
+          <td><span class="neg">-9.81% 📉</span></td>
+          <td><span class="pos">23.04% 🚀</span></td>
+          <td><span class="neg">-15.56% 📉</span></td>
+          <td><span class="neg">-13.86% 📉</span></td>
+          <td><span class="neg">-5.73% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">EURUSD=X</span></td>
+          <td>EUR/USD</td>
+          <td><span class="market-cap">-</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(329, 65%, 41%)"
+              >Currency</span
+            >
+          </td>
+          <td><span class="neg">-4.69% 📉</span></td>
+          <td><span class="neg">-2.36% 📉</span></td>
+          <td><span class="pos">1.52% 📈</span></td>
+          <td><span class="neg">-2.52% 📉</span></td>
+          <td><span class="neg">-2.38% 📉</span></td>
+          <td><span class="neg">-7.93% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">ELE.MC</span></td>
+          <td>Endesa</td>
+          <td><span class="market-cap">$39.23B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="pos">0.94% 📈</span></td>
+          <td><span class="neg">-8.25% 📉</span></td>
+          <td><span class="neg">-9.31% 📉</span></td>
+          <td><span class="neg">-14.86% 📉</span></td>
+          <td><span class="pos">15.96% 📈</span></td>
+          <td><span class="neg">-9.62% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">SMSN.IL</span></td>
+          <td>Samsung Electronics</td>
+          <td><span class="market-cap">$1.03T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(253, 79%, 47%)"
+              >Storage</span
+            >
+          </td>
+          <td><span class="neg">-0.05% 📉</span></td>
+          <td><span class="neg">-1.36% 📉</span></td>
+          <td><span class="neg">-2.22% 📉</span></td>
+          <td><span class="neg">-12.39% 📉</span></td>
+          <td><span class="pos">5.54% 📈</span></td>
+          <td><span class="neg">-9.64% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">IBE.MC</span></td>
+          <td>Iberdrola</td>
+          <td><span class="market-cap">$135.09B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="neg">-6.11% 📉</span></td>
+          <td><span class="neg">-6.50% 📉</span></td>
+          <td><span class="neg">-6.42% 📉</span></td>
+          <td><span class="neg">-15.53% 📉</span></td>
+          <td><span class="pos">19.88% 📈</span></td>
+          <td><span class="neg">-11.03% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">ACS.MC</span></td>
+          <td>Act. Const. Serv.</td>
+          <td><span class="market-cap">$35.72B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="pos">4.09% 📈</span></td>
+          <td><span class="neg">-11.41% 📉</span></td>
+          <td><span class="neg">-20.06% 💀</span></td>
+          <td><span class="pos">3.81% 📈</span></td>
+          <td><span class="pos">0.51% 📈</span></td>
+          <td><span class="neg">-13.19% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">BKKT</span></td>
+          <td>Bakkt, Inc.</td>
+          <td><span class="market-cap">$269.10M</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(23, 81%, 40%)"
+              >Bitcoin Rel.</span
+            >
+          </td>
+          <td><span class="pos">28.87% 🚀</span></td>
+          <td><span class="neg">-1.86% 📉</span></td>
+          <td><span class="neg">-22.94% 💀</span></td>
+          <td><span class="pos">1.00% 📈</span></td>
+          <td><span class="neg">-15.83% 📉</span></td>
+          <td><span class="neg">-15.58% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">TCEHY</span></td>
+          <td>Tencent</td>
+          <td><span class="market-cap">$531.76B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(234, 68%, 45%)"
+              >Mid Tech</span
+            >
+          </td>
+          <td><span class="pos">11.00% 📈</span></td>
+          <td><span class="neg">-3.93% 📉</span></td>
+          <td><span class="neg">-5.64% 📉</span></td>
+          <td><span class="neg">-20.62% 💀</span></td>
+          <td><span class="neg">-2.46% 📉</span></td>
+          <td><span class="neg">-18.90% 📉</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">PLTR</span></td>
+          <td>Palantir Tech.</td>
+          <td><span class="market-cap">$342.64B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(234, 68%, 45%)"
+              >Mid Tech</span
+            >
+          </td>
+          <td><span class="neg">-1.10% 📉</span></td>
+          <td><span class="pos">14.86% 📈</span></td>
+          <td><span class="pos">13.18% 📈</span></td>
+          <td><span class="neg">-8.80% 📉</span></td>
+          <td><span class="neg">-24.25% 💀</span></td>
+          <td><span class="neg">-22.68% 💀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">SPOT</span></td>
+          <td>Spotify Technology</td>
+          <td><span class="market-cap">$88.94B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(234, 68%, 45%)"
+              >Mid Tech</span
+            >
+          </td>
+          <td><span class="neg">-14.84% 📉</span></td>
+          <td><span class="pos">14.08% 📈</span></td>
+          <td><span class="pos">2.85% 📈</span></td>
+          <td><span class="neg">-18.23% 📉</span></td>
+          <td><span class="pos">3.86% 📈</span></td>
+          <td><span class="neg">-25.62% 💀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">SLR.MC</span></td>
+          <td>Solaria Energía</td>
+          <td><span class="market-cap">$3.16B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(177, 78%, 47%)"
+              >Spain</span
+            >
+          </td>
+          <td><span class="neg">-23.52% 💀</span></td>
+          <td><span class="neg">-4.39% 📉</span></td>
+          <td><span class="neg">-15.71% 📉</span></td>
+          <td><span class="neg">-10.27% 📉</span></td>
+          <td><span class="pos">25.19% 🚀</span></td>
+          <td><span class="neg">-27.58% 💀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">9984.T</span></td>
+          <td>SoftBank</td>
+          <td><span class="market-cap">$33.36T</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(345, 81%, 53%)"
+              >Financial</span
+            >
+          </td>
+          <td><span class="pos">15.79% 📈</span></td>
+          <td><span class="neg">-5.83% 📉</span></td>
+          <td><span class="neg">-16.67% 📉</span></td>
+          <td><span class="neg">-16.66% 📉</span></td>
+          <td><span class="neg">-16.14% 📉</span></td>
+          <td><span class="neg">-32.56% 💀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">COIN</span></td>
+          <td>Coinbase Global</td>
+          <td><span class="market-cap">$55.86B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(23, 81%, 40%)"
+              >Bitcoin Rel.</span
+            >
+          </td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="pos">7.09% 📈</span></td>
+          <td><span class="neg">-33.52% 💀</span></td>
+          <td><span class="neg">-10.19% 📉</span></td>
+          <td><span class="pos">10.94% 📈</span></td>
+          <td><span class="neg">-33.76% 💀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">PPTA</span></td>
+          <td>Perpetua Res.</td>
+          <td><span class="market-cap">$3.53B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(274, 65%, 48%)"
+              >Rare</span
+            >
+          </td>
+          <td><span class="neg">-16.28% 📉</span></td>
+          <td><span class="neg">-5.44% 📉</span></td>
+          <td><span class="pos">20.26% 🚀</span></td>
+          <td><span class="neg">-31.78% 💀</span></td>
+          <td><span class="neg">-4.62% 📉</span></td>
+          <td><span class="neg">-34.48% 💀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">EXOD</span></td>
+          <td>Exodus Movement</td>
+          <td><span class="market-cap">$244.32M</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(23, 81%, 40%)"
+              >Bitcoin Rel.</span
+            >
+          </td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neg">-36.36% 💀</span></td>
+          <td><span class="neg">-7.14% 📉</span></td>
+          <td><span class="neg">-40.91% 💀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">IREN</span></td>
+          <td>IREN Limited</td>
+          <td><span class="market-cap">$15.86B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(135, 84%, 47%)"
+              >BTC Mining</span
+            >
+          </td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neg">-42.25% 💀</span></td>
+          <td><span class="neg">-42.25% 💀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">1810.HK</span></td>
+          <td>Xiaomi Corp.</td>
+          <td><span class="market-cap">$803.92B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(98, 82%, 47%)"
+              >Cons. Elect.</span
+            >
+          </td>
+          <td><span class="neg">-22.09% 💀</span></td>
+          <td><span class="neg">-7.69% 📉</span></td>
+          <td><span class="pos">4.85% 📈</span></td>
+          <td><span class="neg">-20.93% 💀</span></td>
+          <td><span class="neg">-11.48% 📉</span></td>
+          <td><span class="neg">-42.81% 💀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">HOOD</span></td>
+          <td>Robinhood Markets</td>
+          <td><span class="market-cap">$75.25B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(23, 81%, 40%)"
+              >Bitcoin Rel.</span
+            >
+          </td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="pos">10.74% 📈</span></td>
+          <td><span class="neg">-57.79% 💀</span></td>
+          <td><span class="neg">-53.26% 💀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">CLSK</span></td>
+          <td>CleanSpark</td>
+          <td><span class="market-cap">$3.08B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(135, 84%, 47%)"
+              >BTC Mining</span
+            >
+          </td>
+          <td><span class="neg">-18.00% 📉</span></td>
+          <td><span class="neg">-0.72% 📉</span></td>
+          <td><span class="neg">-30.14% 💀</span></td>
+          <td><span class="neg">-30.35% 💀</span></td>
+          <td><span class="neg">-17.86% 📉</span></td>
+          <td><span class="neg">-67.23% 💀</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker-badge">TMC</span></td>
+          <td>TMC the metals c.</td>
+          <td><span class="market-cap">$3.19B</span></td>
+          <td>
+            <span class="tag-l" style="background-color: hsl(274, 65%, 48%)"
+              >Rare</span
+            >
+          </td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neu">0.00%</span></td>
+          <td><span class="neg">-58.66% 💀</span></td>
+          <td><span class="neg">-54.49% 💀</span></td>
+          <td><span class="neg">-81.18% 💀</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
