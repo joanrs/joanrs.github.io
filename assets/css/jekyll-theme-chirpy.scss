@@ -7,3 +7,18 @@
 /* ==========================================================================
    Estilo alternativo: Clean Stack Table - Sin scroll horizontal
    ========================================================================== */
+
+/* Reducir los márgenes laterales (ampliar el área de lectura) en PC / Pantalla completa */
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1550px !important; /* Original suele ser ~1140px o 1320px */
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1350px !important;
+  }
+}
+.post-content {
+  max-width: 100% !important;
+}
