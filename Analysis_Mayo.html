@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<div id="in-page-channel-node-id" data-channel-name="in_page_channel_8XnKoT"></div><head>
+<div id="in-page-channel-node-id" data-channel-name="in_page_channel_aaGZkz"></div><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sector Analyzer — market-analyze</title>
@@ -89,8 +89,11 @@
 
   /* ── HEADER ── */
   .header {
-    padding: 2.5rem 2rem 1.5rem;
     border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    max-width: 1400px;
+    padding: 2.5rem 2rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -114,6 +117,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-left: auto;
   }
   .upload-btn {
     background: var(--surface2);
@@ -364,6 +368,7 @@
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
+    justify-content: flex-end;
   }
   .api-input {
     background: var(--surface2);
@@ -434,6 +439,45 @@
   .derived-pill.hi  { background: var(--blue-bg);  color: var(--blue); }
 
 
+  /* ── PRELIMINARY BADGE ── */
+  .report-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    margin-top: 6px;
+    border: 1px solid;
+  }
+  .report-status-badge.preliminary {
+    color: var(--blue);
+    background: var(--blue-bg);
+    border-color: var(--blue-border);
+  }
+  .report-status-badge.definitive {
+    color: var(--green);
+    background: var(--green-bg);
+    border-color: var(--green-border);
+  }
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .preliminary .status-dot {
+    background: var(--blue);
+    animation: pulse-dot 1.6s ease-in-out infinite;
+  }
+  .definitive .status-dot { background: var(--green); }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.45; transform: scale(0.75); }
+  }
+
   .footer {
     padding: 1.5rem 2rem;
     border-top: 1px solid var(--border);
@@ -447,7 +491,7 @@
   }
 
   @media (max-width: 600px) {
-    .header, .main, .footer { padding-left: 1rem; padding-right: 1rem; }
+    .header-inner, .main, .footer { padding-left: 1rem; padding-right: 1rem; }
     .kpi-val { font-size: 18px; }
     
     /* Hacer la tabla más compacta para smartphone */
@@ -673,16 +717,21 @@
 <body class="light">
 
 <div class="header">
-  <div class="header-left">
+  <div class="header-inner">
+  <div class="header-left" id="header-left">
     <h1>Sector Analyzer</h1>
     <p id="header-meta">API · 21 sectores · 50 tickers</p>
-  </div>
+  <div class="report-status-badge definitive"><span class="status-dot"></span>Informe definitivo — mes cerrado</div></div>
   
+  </div>
 </div>
 
 <div class="main" id="main-content">
   
   <div id="report" style="display: block;">
+  <!-- PRELIMINARY GUIDANCE: solo cuando isPrelim -->
+  
+
   <!-- KPIs -->
   <div class="kpi-grid">
     <div class="kpi-card">
@@ -731,7 +780,7 @@
           <tr>
             <th style="text-align:left">Sector</th>
             <th>Q1</th>
-            <th>Abr</th>
+            <th>Abril</th>
             <th>Mayo</th>
             <th>Anual</th>
             <th>Momentum</th>
@@ -746,7 +795,7 @@
           <tr>
               <td><span class="sector-name-cell">Storage</span></td>
               <td><span class="chip g">+58.30%</span></td>
-              <td><span class="chip g">+137.96%</span></td>
+              <td><span class="chip g">+56.55%</span></td>
               <td><span class="chip g">+52.00%</span></td>
               <td><span class="chip g">+276.69%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-4.55%</span></td>
@@ -758,7 +807,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Cloud AI</span></td>
               <td><span class="chip g">+17.77%</span></td>
-              <td><span class="chip g">+83.93%</span></td>
+              <td><span class="chip g">+38.64%</span></td>
               <td><span class="chip g">+32.66%</span></td>
               <td><span class="chip g">+116.62%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-5.97%</span></td>
@@ -770,7 +819,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">BTC Mining</span></td>
               <td><span class="chip r">-0.67%</span></td>
-              <td><span class="chip g">+106.25%</span></td>
+              <td><span class="chip g">+46.42%</span></td>
               <td><span class="chip g">+40.85%</span></td>
               <td><span class="chip g">+104.87%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-5.57%</span></td>
@@ -782,7 +831,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Data Center</span></td>
               <td><span class="chip n">-0.36%</span></td>
-              <td><span class="chip g">+92.90%</span></td>
+              <td><span class="chip g">+22.37%</span></td>
               <td><span class="chip g">+57.63%</span></td>
               <td><span class="chip g">+92.20%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+35.26%</span></td>
@@ -794,7 +843,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Semic.</span></td>
               <td><span class="chip g">+3.44%</span></td>
-              <td><span class="chip g">+73.55%</span></td>
+              <td><span class="chip g">+40.45%</span></td>
               <td><span class="chip g">+23.57%</span></td>
               <td><span class="chip g">+79.52%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-16.88%</span></td>
@@ -806,7 +855,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Equipment</span></td>
               <td><span class="chip g">+27.36%</span></td>
-              <td><span class="chip g">+34.02%</span></td>
+              <td><span class="chip g">+15.02%</span></td>
               <td><span class="chip g">+16.52%</span></td>
               <td><span class="chip g">+70.69%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+1.50%</span></td>
@@ -818,7 +867,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Cons. Elect.</span></td>
               <td><span class="chip r">-8.51%</span></td>
-              <td><span class="chip g">+52.44%</span></td>
+              <td><span class="chip g">+8.36%</span></td>
               <td><span class="chip g">+40.68%</span></td>
               <td><span class="chip g">+39.46%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+32.32%</span></td>
@@ -830,7 +879,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">CiberSec.</span></td>
               <td><span class="chip r">-6.02%</span></td>
-              <td><span class="chip g">+45.17%</span></td>
+              <td><span class="chip g">+1.89%</span></td>
               <td><span class="chip g">+42.48%</span></td>
               <td><span class="chip g">+36.43%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+40.59%</span></td>
@@ -842,7 +891,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Index</span></td>
               <td><span class="chip r">-1.19%</span></td>
-              <td><span class="chip g">+36.79%</span></td>
+              <td><span class="chip g">+21.49%</span></td>
               <td><span class="chip g">+12.59%</span></td>
               <td><span class="chip g">+35.17%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-8.90%</span></td>
@@ -854,7 +903,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Oil</span></td>
               <td><span class="chip g">+32.29%</span></td>
-              <td><span class="chip r">-7.16%</span></td>
+              <td><span class="chip r">-1.10%</span></td>
               <td><span class="chip r">-6.13%</span></td>
               <td><span class="chip g">+22.82%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-5.02%</span></td>
@@ -866,7 +915,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Rare</span></td>
               <td><span class="chip g">+5.24%</span></td>
-              <td><span class="chip g">+16.66%</span></td>
+              <td><span class="chip g">+13.72%</span></td>
               <td><span class="chip g">+2.58%</span></td>
               <td><span class="chip g">+22.78%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-11.14%</span></td>
@@ -878,7 +927,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">ETF</span></td>
               <td><span class="chip r">-2.36%</span></td>
-              <td><span class="chip g">+24.66%</span></td>
+              <td><span class="chip g">+14.37%</span></td>
               <td><span class="chip g">+9.00%</span></td>
               <td><span class="chip g">+21.73%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-5.37%</span></td>
@@ -890,7 +939,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Electric</span></td>
               <td><span class="chip g">+2.47%</span></td>
-              <td><span class="chip g">+7.09%</span></td>
+              <td><span class="chip g">+13.31%</span></td>
               <td><span class="chip r">-5.49%</span></td>
               <td><span class="chip g">+9.73%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-18.80%</span></td>
@@ -902,7 +951,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Spain</span></td>
               <td><span class="chip g">+1.67%</span></td>
-              <td><span class="chip g">+7.63%</span></td>
+              <td><span class="chip g">+6.26%</span></td>
               <td><span class="chip g">+1.29%</span></td>
               <td><span class="chip g">+9.42%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-4.97%</span></td>
@@ -914,7 +963,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Big Tech</span></td>
               <td><span class="chip r">-13.01%</span></td>
-              <td><span class="chip g">+22.85%</span></td>
+              <td><span class="chip g">+14.52%</span></td>
               <td><span class="chip g">+7.27%</span></td>
               <td><span class="chip g">+6.87%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-7.25%</span></td>
@@ -926,7 +975,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Financial</span></td>
               <td><span class="chip r">-11.52%</span></td>
-              <td><span class="chip g">+16.62%</span></td>
+              <td><span class="chip g">+11.66%</span></td>
               <td><span class="chip g">+4.45%</span></td>
               <td><span class="chip g">+3.19%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-7.21%</span></td>
@@ -938,7 +987,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Privacy</span></td>
               <td><span class="chip r">-31.08%</span></td>
-              <td><span class="chip g">+48.20%</span></td>
+              <td><span class="chip g">+21.29%</span></td>
               <td><span class="chip g">+22.19%</span></td>
               <td><span class="chip g">+2.14%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+0.89%</span></td>
@@ -950,7 +999,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Currency</span></td>
               <td><span class="chip r">-2.45%</span></td>
-              <td><span class="chip g">+1.74%</span></td>
+              <td><span class="chip g">+1.96%</span></td>
               <td><span class="chip n">-0.22%</span></td>
               <td><span class="chip r">-0.76%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-2.18%</span></td>
@@ -962,7 +1011,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Bitcoin Rel.</span></td>
               <td><span class="chip r">-21.64%</span></td>
-              <td><span class="chip g">+25.24%</span></td>
+              <td><span class="chip g">+15.64%</span></td>
               <td><span class="chip g">+8.30%</span></td>
               <td><span class="chip r">-1.86%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">-7.35%</span></td>
@@ -974,7 +1023,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Top Crypto</span></td>
               <td><span class="chip r">-16.33%</span></td>
-              <td><span class="chip g">+16.07%</span></td>
+              <td><span class="chip g">+5.40%</span></td>
               <td><span class="chip g">+10.13%</span></td>
               <td><span class="chip r">-2.89%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+4.73%</span></td>
@@ -986,7 +1035,7 @@
             </tr><tr>
               <td><span class="sector-name-cell">Mid Tech</span></td>
               <td><span class="chip r">-18.69%</span></td>
-              <td><span class="chip g">+9.02%</span></td>
+              <td><span class="chip g">+1.67%</span></td>
               <td><span class="chip g">+7.22%</span></td>
               <td><span class="chip r">-11.36%</span></td>
               <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--green)">+5.55%</span></td>
@@ -1338,8 +1387,8 @@
               <span class="sig-metric-val" style="color:var(--green)">+58.3%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+138.0%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+56.5%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1380,8 +1429,8 @@
               <span class="sig-metric-val" style="color:var(--red)">-0.7%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+106.2%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+46.4%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1422,8 +1471,8 @@
               <span class="sig-metric-val" style="color:var(--muted2)">-0.4%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+92.9%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+22.4%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1464,8 +1513,8 @@
               <span class="sig-metric-val" style="color:var(--green)">+27.4%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+34.0%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+15.0%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1506,8 +1555,8 @@
               <span class="sig-metric-val" style="color:var(--red)">-8.5%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+52.4%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+8.4%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1548,8 +1597,8 @@
               <span class="sig-metric-val" style="color:var(--red)">-6.0%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+45.2%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+1.9%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1590,8 +1639,8 @@
               <span class="sig-metric-val" style="color:var(--green)">+17.8%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+83.9%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+38.6%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1632,8 +1681,8 @@
               <span class="sig-metric-val" style="color:var(--green)">+3.4%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+73.6%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+40.5%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1674,8 +1723,8 @@
               <span class="sig-metric-val" style="color:var(--red)">-1.2%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+36.8%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+21.5%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1716,8 +1765,8 @@
               <span class="sig-metric-val" style="color:var(--red)">-2.4%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+24.7%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+14.4%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1758,8 +1807,8 @@
               <span class="sig-metric-val" style="color:var(--red)">-31.1%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+48.2%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+21.3%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1800,8 +1849,8 @@
               <span class="sig-metric-val" style="color:var(--green)">+5.2%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+16.7%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+13.7%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1842,8 +1891,8 @@
               <span class="sig-metric-val" style="color:var(--green)">+1.7%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+7.6%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+6.3%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1884,8 +1933,8 @@
               <span class="sig-metric-val" style="color:var(--red)">-13.0%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+22.8%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+14.5%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1926,8 +1975,8 @@
               <span class="sig-metric-val" style="color:var(--red)">-11.5%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+16.6%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+11.7%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -1968,8 +2017,8 @@
               <span class="sig-metric-val" style="color:var(--red)">-16.3%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+16.1%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+5.4%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -2010,8 +2059,8 @@
               <span class="sig-metric-val" style="color:var(--green)">+32.3%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--red)">-7.2%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--red)">-1.1%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -2052,8 +2101,8 @@
               <span class="sig-metric-val" style="color:var(--green)">+2.5%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+7.1%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+13.3%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -2094,8 +2143,8 @@
               <span class="sig-metric-val" style="color:var(--red)">-2.4%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+1.7%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+2.0%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -2136,8 +2185,8 @@
               <span class="sig-metric-val" style="color:var(--red)">-21.6%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+25.2%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+15.6%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -2178,8 +2227,8 @@
               <span class="sig-metric-val" style="color:var(--red)">-18.7%</span>
             </div>
             <div class="sig-metric">
-              <span class="sig-metric-label">Abr</span>
-              <span class="sig-metric-val" style="color:var(--green)">+9.0%</span>
+              <span class="sig-metric-label">Abril</span>
+              <span class="sig-metric-val" style="color:var(--green)">+1.7%</span>
             </div>
             <div class="sig-metric">
               <span class="sig-metric-label">May</span>
@@ -2219,7 +2268,7 @@
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">SNDK</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+614.0%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+591.7%</span>
           </div>
           <div class="ticker-name">Sandisk Corporation</div>
           <div class="ticker-stats">
@@ -2230,20 +2279,20 @@
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
-            <span class="ticker-sym">HY9H.F</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+244.2%</span>
+            <span class="ticker-sym">MRVL</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+239.9%</span>
           </div>
-          <div class="ticker-name">SK Hynix</div>
+          <div class="ticker-name">Marvell Tech.</div>
           <div class="ticker-stats">
             <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+74.3%</span></span>
-            <span class="ticker-sector-tag">Storage</span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+24.1%</span></span>
+            <span class="ticker-sector-tag">Semic.</span>
           </div>
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">MU</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+240.2%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+232.6%</span>
           </div>
           <div class="ticker-name">Micron Tech.</div>
           <div class="ticker-stats">
@@ -2255,7 +2304,7 @@
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">DELL</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+234.4%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+218.4%</span>
           </div>
           <div class="ticker-name">Dell Technologies</div>
           <div class="ticker-stats">
@@ -2266,20 +2315,8 @@
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
-            <span class="ticker-sym">ARM</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+223.2%</span>
-          </div>
-          <div class="ticker-name">Arm Holdings</div>
-          <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+68.0%</span></span>
-            <span class="ticker-sector-tag">Semic.</span>
-          </div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-top">
             <span class="ticker-sym">STX</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+219.5%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+218.4%</span>
           </div>
           <div class="ticker-name">Seagate Technology</div>
           <div class="ticker-stats">
@@ -2290,20 +2327,20 @@
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
-            <span class="ticker-sym">INTC</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+210.8%</span>
+            <span class="ticker-sym">ARM</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+216.9%</span>
           </div>
-          <div class="ticker-name">Intel Corp.</div>
+          <div class="ticker-name">Arm Holdings</div>
           <div class="ticker-stats">
             <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+21.4%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+68.0%</span></span>
             <span class="ticker-sector-tag">Semic.</span>
           </div>
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">WDC</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+208.4%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+205.9%</span>
           </div>
           <div class="ticker-name">Western Digital</div>
           <div class="ticker-stats">
@@ -2314,8 +2351,32 @@
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
+            <span class="ticker-sym">HY9H.F</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+201.3%</span>
+          </div>
+          <div class="ticker-name">SK Hynix</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+74.3%</span></span>
+            <span class="ticker-sector-tag">Storage</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">INTC</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+198.8%</span>
+          </div>
+          <div class="ticker-name">Intel Corp.</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+21.4%</span></span>
+            <span class="ticker-sector-tag">Semic.</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
             <span class="ticker-sym">NBIS</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+176.1%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+160.4%</span>
           </div>
           <div class="ticker-name">Nebius Group</div>
           <div class="ticker-stats">
@@ -2327,7 +2388,7 @@
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">HUT</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+171.7%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+160.3%</span>
           </div>
           <div class="ticker-name">Hut 8 Corp.</div>
           <div class="ticker-stats">
@@ -2338,20 +2399,8 @@
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
-            <span class="ticker-sym">SMSNL.XC</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+160.5%</span>
-          </div>
-          <div class="ticker-name">Samsung Electronics</div>
-          <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+42.5%</span></span>
-            <span class="ticker-sector-tag">ETF</span>
-          </div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-top">
             <span class="ticker-sym">0992.HK</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+159.2%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+147.1%</span>
           </div>
           <div class="ticker-name">Lenovo Group</div>
           <div class="ticker-stats">
@@ -2362,8 +2411,20 @@
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
+            <span class="ticker-sym">SMSNL.XC</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+142.2%</span>
+          </div>
+          <div class="ticker-name">Samsung Electronics</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+42.5%</span></span>
+            <span class="ticker-sector-tag">ETF</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
             <span class="ticker-sym">SMSN.IL</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+158.2%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+140.1%</span>
           </div>
           <div class="ticker-name">Samsung Electronics</div>
           <div class="ticker-stats">
@@ -2374,32 +2435,8 @@
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
-            <span class="ticker-sym">HYPE32196-USD</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+153.0%</span>
-          </div>
-          <div class="ticker-name">Hyperliquid USD</div>
-          <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+62.2%</span></span>
-            <span class="ticker-sector-tag">Top Crypto</span>
-          </div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-top">
-            <span class="ticker-sym">MRVL</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+141.2%</span>
-          </div>
-          <div class="ticker-name">Marvell Tech.</div>
-          <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+24.1%</span></span>
-            <span class="ticker-sector-tag">Semic.</span>
-          </div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-top">
             <span class="ticker-sym">AMD</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+141.0%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+128.9%</span>
           </div>
           <div class="ticker-name">Advanced Micro Dev.</div>
           <div class="ticker-stats">
@@ -2411,7 +2448,7 @@
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">WULF</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+122.5%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+125.1%</span>
           </div>
           <div class="ticker-name">TeraWulf</div>
           <div class="ticker-stats">
@@ -2422,8 +2459,32 @@
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
+            <span class="ticker-sym">HYPE32196-USD</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+119.8%</span>
+          </div>
+          <div class="ticker-name">Hyperliquid USD</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+62.2%</span></span>
+            <span class="ticker-sector-tag">Top Crypto</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">HPE</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+107.6%</span>
+          </div>
+          <div class="ticker-name">Hewlett Packard E.</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+49.6%</span></span>
+            <span class="ticker-sector-tag">Data Center</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
             <span class="ticker-sym">RIOT</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+114.0%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+102.8%</span>
           </div>
           <div class="ticker-name">Riot Platforms</div>
           <div class="ticker-stats">
@@ -2434,26 +2495,14 @@
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
-            <span class="ticker-sym">SEC0.DE</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+91.4%</span>
+            <span class="ticker-sym">LRCX</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+89.5%</span>
           </div>
-          <div class="ticker-name">iShares MSCI Gl. Semi.</div>
+          <div class="ticker-name">Lam Research</div>
           <div class="ticker-stats">
             <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+27.4%</span></span>
-            <span class="ticker-sector-tag">, Semic.</span>
-          </div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-top">
-            <span class="ticker-sym">SEMI.L</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+91.1%</span>
-          </div>
-          <div class="ticker-name">iShares MSCI Glob. Semi.</div>
-          <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+28.3%</span></span>
-            <span class="ticker-sector-tag">, Semic.</span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+23.4%</span></span>
+            <span class="ticker-sector-tag">Equipment</span>
           </div>
         </div>
     </div>
@@ -2470,7 +2519,7 @@
           </div>
           <div class="ticker-name">Lenovo Group</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+159.2%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+147.1%</span></span>
             <span class="ticker-sector-tag">Cons. Elect.</span>
           </div>
         </div>
@@ -2481,7 +2530,7 @@
           </div>
           <div class="ticker-name">Dell Technologies</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+234.4%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+218.4%</span></span>
             <span class="ticker-sector-tag">Data Center</span>
           </div>
         </div>
@@ -2492,7 +2541,7 @@
           </div>
           <div class="ticker-name">Micron Tech.</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+240.2%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+232.6%</span></span>
             <span class="ticker-sector-tag">Storage</span>
           </div>
         </div>
@@ -2503,7 +2552,7 @@
           </div>
           <div class="ticker-name">SK Hynix</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+244.2%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+201.3%</span></span>
             <span class="ticker-sector-tag">Storage</span>
           </div>
         </div>
@@ -2514,7 +2563,7 @@
           </div>
           <div class="ticker-name">Super Micro Computer</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+57.5%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+50.3%</span></span>
             <span class="ticker-sector-tag">Data Center</span>
           </div>
         </div>
@@ -2525,7 +2574,7 @@
           </div>
           <div class="ticker-name">Arm Holdings</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+223.2%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+216.9%</span></span>
             <span class="ticker-sector-tag">Semic.</span>
           </div>
         </div>
@@ -2536,7 +2585,7 @@
           </div>
           <div class="ticker-name">Nebius Group</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+176.1%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+160.4%</span></span>
             <span class="ticker-sector-tag">Cloud AI</span>
           </div>
         </div>
@@ -2547,7 +2596,7 @@
           </div>
           <div class="ticker-name">Hut 8 Corp.</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+171.7%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+160.3%</span></span>
             <span class="ticker-sector-tag">BTC Mining</span>
           </div>
         </div>
@@ -2558,7 +2607,7 @@
           </div>
           <div class="ticker-name">CrowdStrike</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+55.9%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+40.5%</span></span>
             <span class="ticker-sector-tag">CiberSec.</span>
           </div>
         </div>
@@ -2569,7 +2618,7 @@
           </div>
           <div class="ticker-name">Fortinet</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+73.7%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+80.1%</span></span>
             <span class="ticker-sector-tag">CiberSec.</span>
           </div>
         </div>
@@ -2580,7 +2629,7 @@
           </div>
           <div class="ticker-name">Hyperliquid USD</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+153.0%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+119.8%</span></span>
             <span class="ticker-sector-tag">Top Crypto</span>
           </div>
         </div>
@@ -2591,7 +2640,7 @@
           </div>
           <div class="ticker-name">Riot Platforms</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+114.0%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+102.8%</span></span>
             <span class="ticker-sector-tag">BTC Mining</span>
           </div>
         </div>
@@ -2602,7 +2651,7 @@
           </div>
           <div class="ticker-name">Palo Alto Net.</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+52.9%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+44.6%</span></span>
             <span class="ticker-sector-tag">CiberSec.</span>
           </div>
         </div>
@@ -2613,7 +2662,7 @@
           </div>
           <div class="ticker-name">Sandisk Corporation</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+614.0%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+591.7%</span></span>
             <span class="ticker-sector-tag">Storage</span>
           </div>
         </div>
@@ -2624,7 +2673,7 @@
           </div>
           <div class="ticker-name">Zcash USD</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+3.4%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--red)">-14.5%</span></span>
             <span class="ticker-sector-tag">Privacy</span>
           </div>
         </div>
@@ -2782,7 +2831,7 @@
 
 <div class="footer">
   <span>market-analyze · sector-analyzer v2.0</span>
-  <span id="footer-ts">Generado: 2/6/2026, 11:43:18</span>
+  <span id="footer-ts">Generado: 10/6/2026, 8:35:30</span>
 </div>
 
 
