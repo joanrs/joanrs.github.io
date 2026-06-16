@@ -164,7 +164,7 @@
   });
 
   // --- Sector Filter: click on first table rows ---
-  let _activeSector = null;
+  let _activeSectors = new Set();
   document.addEventListener("click", function (e) {
     if (e.target.closest("th")) return; // ignore header clicks
     const tr = e.target.closest("tr");
@@ -180,27 +180,27 @@
     const tbody2 = tables[1].querySelector("tbody");
     const heads2 = Array.from(tables[1].querySelectorAll("thead th"));
     const listaIdx = heads2.findIndex(
-      (h) => h.textContent.replace(/[▲▼s]/g, "").trim() === "Lista",
+      (h) => h.textContent.replace(/[▲▼\s]/g, "").trim() === "Lista",
     );
     const liIdx = listaIdx !== -1 ? listaIdx : 3;
 
-    if (_activeSector === sectorName) {
-      _activeSector = null;
-      tables[0]
-        .querySelectorAll("tbody tr")
-        .forEach((r) => r.classList.remove("sector-selected"));
+    if (_activeSectors.has(sectorName)) {
+      _activeSectors.delete(sectorName);
+      tr.classList.remove("sector-selected");
+    } else {
+      _activeSectors.add(sectorName);
+      tr.classList.add("sector-selected");
+    }
+
+    if (_activeSectors.size === 0) {
       tbody2.querySelectorAll("tr").forEach((r) => (r.style.display = ""));
     } else {
-      _activeSector = sectorName;
-      tables[0]
-        .querySelectorAll("tbody tr")
-        .forEach((r) => r.classList.remove("sector-selected"));
-      tr.classList.add("sector-selected");
       tbody2.querySelectorAll("tr").forEach((r) => {
         const tags = Array.from(
           r.children[liIdx] ? r.children[liIdx].querySelectorAll(".tag-l") : [],
         ).map((t) => t.textContent.trim());
-        r.style.display = tags.includes(sectorName) ? "" : "none";
+        const hasIntersection = tags.some((t) => _activeSectors.has(t));
+        r.style.display = hasIntersection ? "" : "none";
       });
     }
   });
