@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
-<div id="in-page-channel-node-id" data-channel-name="in_page_channel_qhWnQG"></div><head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sector Analyzer — market-analyze</title>
+<div id="in-page-channel-node-id" data-channel-name="in_page_channel_j9MXb2"></div><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sector Analyzer</title>
+
+    <!-- Material Design Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+
+    
+
+
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
 
@@ -536,7 +544,224 @@
   .gloss-body p { margin-bottom: 0.5rem; }
   .gloss-body p:last-child { margin-bottom: 0; }
 </style>
-<style>@keyframes slide-in-one-tap {
+
+
+    <style>
+        /* Estilos personalizados */
+        .positive {
+            color: #155724;
+        }
+
+        .negative {
+            color: #721c24;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 500px;
+        }
+
+        /* Estilos para navegación lateral */
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 40;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.collapsed {
+            width: 64px;
+        }
+
+        /* Ocultar elementos cuando está colapsado */
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .submenu,
+        .sidebar.collapsed .nav-section>button .mdi:last-child,
+        .sidebar.collapsed .external-links-title {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding: 1rem 0.5rem;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .sidebar-header .flex {
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .nav-section>button,
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 0.75rem 0.5rem;
+        }
+
+        .sidebar.collapsed .nav-section>button .flex,
+        .sidebar.collapsed .nav-item .flex {
+            justify-content: center;
+            margin-right: 0;
+        }
+
+        .sidebar.collapsed .mdi {
+            margin-right: 0 !important;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: 260px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            width: calc(100% - 260px);
+        }
+
+        .main-content.sidebar-collapsed {
+            margin-left: 64px;
+            width: calc(100% - 64px);
+        }
+
+        .content-container {
+            padding: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Estilos para móvil */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+
+            .main-content.sidebar-collapsed {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+
+            .content-container {
+                padding: 0.75rem;
+            }
+
+            .mobile-header {
+                background: white;
+                border-bottom: 1px solid #e5e7eb;
+                padding: 0.75rem 1rem;
+                position: sticky;
+                top: 0;
+                z-index: 30;
+            }
+
+            .mobile-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 35;
+                cursor: pointer;
+            }
+
+            .mobile-overlay.active {
+                display: block;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .content-container {
+                padding: 1.5rem;
+            }
+        }
+
+        .nav-item {
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .submenu.open {
+            max-height: 500px;
+        }
+
+        .sidebar-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e0 transparent;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 2px;
+        }
+
+        .sidebar-toggle {
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-toggle {
+            transform: rotate(180deg);
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .sidebar.collapsed .nav-item::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            margin-left: 0.5rem;
+            z-index: 50;
+        }
+
+        .sidebar.collapsed .nav-item:hover::after {
+            opacity: 1;
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mx-auto{margin-left:auto;margin-right:auto}.ml-2{margin-left:0.5rem}.ml-3{margin-left:0.75rem}.ml-4{margin-left:1rem}.mr-2{margin-right:0.5rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.hidden{display:none}.h-\[calc\(100vh-80px\)\]{height:calc(100vh - 80px)}.w-full{width:100%}.w-8{width:2rem}.flex-1{flex:1 1 0%}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:0.25rem}.rounded-md{border-radius:0.375rem}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-4{padding:1rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.pt-4{padding-top:1rem}.text-center{text-align:center}.font-sans{font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-2xl{font-size:1.5rem;line-height:2rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.tracking-wider{letter-spacing:0.05em}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:text-blue-600:hover{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}@media (min-width: 768px){.md\:flex{display:flex}.md\:hidden{display:none}}@media (prefers-color-scheme: dark){.dark\:bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.dark\:text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}}</style><style>@keyframes slide-in-one-tap {
   from {
     transform: translateY(80px);
   }
@@ -714,7 +939,243 @@
 }
 
 /*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL2FwcC9zcmMvb25lVGFwL3N0eWxlLmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFO0lBQ0UsMkJBQTJCO0VBQzdCO0VBQ0E7SUFDRSwwQkFBMEI7RUFDNUI7QUFDRjs7QUFFQTtFQUNFLFVBQVU7QUFDWjs7QUFHRTtJQUNFLGFBQWE7RUFDZjs7QUFFQTtJQUNFLGdCQUFnQjtFQUNsQjs7QUFFQTtJQUNFLHNCQUFzQjtFQUN4Qjs7QUFFQTtJQUNFLGtCQUFrQjtFQUNwQjs7QUFFQTtJQUNFLGFBQWE7RUFDZjs7QUFFQTtJQUNFLHNCQUFzQjtFQUN4Qjs7QUFFQTtJQUNFLG1CQUFtQjtFQUNyQjs7QUFFQTtJQUNFLDhCQUE4QjtFQUNoQzs7QUFFQTtJQUNFLHVCQUF1QjtFQUN6Qjs7QUFFQTtJQUNFLFdBQVc7RUFDYjs7QUFFQTtJQUNFLGdEQUFnRDtJQUNoRCw0REFBNEQ7SUFDNUQsWUFBWTtJQUNaLG1CQUFtQjtJQUNuQixnQkFBZ0I7SUFDaEIsK0NBQStDO0lBQy9DLGVBQWU7SUFDZixXQUFXO0lBQ1gsWUFBWTtJQUNaLGFBQWE7RUFDZjs7QUFFQTtJQUNFLFNBQVM7SUFDVCxnQ0FBZ0M7SUFDaEMsa0JBQWtCO0VBdUJwQjs7QUFyQkU7TUFDRSxTQUFTO0lBQ1g7O0FBRUE7TUFDRSxjQUFjO01BQ2QsZUFBZTtNQUNmLGdCQUFnQjtNQUNoQixpQkFBaUI7SUFDbkI7O0FBRUE7TUFDRSxjQUFjO01BQ2QsZUFBZTtNQUNmLGlCQUFpQjtJQUNuQjs7QUFFQTtNQUNFLGNBQWM7TUFDZCxlQUFlO0lBQ2pCOztBQUdGO0lBQ0UsaUJBQWlCO0lBQ2pCLFNBQVM7RUFtQlg7O0FBakJFO01BQ0UsU0FBUztNQUNULFdBQVc7SUFjYjs7QUFaRTtRQUNFLGNBQWM7UUFDZCxlQUFlO1FBQ2YsZ0JBQWdCO1FBQ2hCLGlCQUFpQjtNQUNuQjs7QUFFQTtRQUNFLGNBQWM7UUFDZCxlQUFlO1FBQ2YsaUJBQWlCO01BQ25COztBQUlKO0lBQ0UsU0FBUztJQUNULGNBQWM7RUFLaEI7O0FBSEU7TUFDRSxjQUFjO0lBQ2hCOztBQUdGO0lBQ0UsV0FBVztFQUNiOztBQUVBO0lBQ0UsbUJBQW1CO0lBQ25CLDhCQUE4QjtJQUM5QixtQkFBbUI7SUFDbkIsZ0NBQWdDO0lBQ2hDLGdDQUFnQztJQUNoQyxlQUFlO0lBQ2Ysa0JBQWtCO0lBQ2xCLFlBQVk7RUFRZDs7QUFORTtNQUNFLFdBQVc7TUFDWCxlQUFlO01BQ2YsZ0JBQWdCO01BQ2hCLGlCQUFpQjtJQUNuQjs7QUFHRjtJQUNFLGlCQUFpQjtFQUNuQjs7QUFFQTtJQUNFLFdBQVc7RUFDYjs7QUFHRjtFQUNFLHNCQUFzQjtFQUN0QiwrREFBMEU7RUFDMUUsZ0JBQWdCO0VBQ2hCLGtCQUFrQjtBQUNwQjs7QUFFQTtFQUNFLHNCQUFzQjtFQUN0QiwrREFBeUU7RUFDekUsZ0JBQWdCO0VBQ2hCLGtCQUFrQjtBQUNwQjs7QUFFQTtFQUNFLHNCQUFzQjtFQUN0QiwrREFBMkU7RUFDM0UsZ0JBQWdCO0VBQ2hCLGtCQUFrQjtBQUNwQiIsInNvdXJjZXNDb250ZW50IjpbIkBrZXlmcmFtZXMgc2xpZGUtaW4tb25lLXRhcCB7XG4gIGZyb20ge1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlWSg4MHB4KTtcbiAgfVxuICB0byB7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDBweCk7XG4gIH1cbn1cblxuLnRydXN0LWhpZGUtZ3JhY2VmdWxseSB7XG4gIG9wYWNpdHk6IDA7XG59XG5cbi50cnVzdC13YWxsZXQtb25lLXRhcCB7XG4gIC5oaWRkZW4ge1xuICAgIGRpc3BsYXk6IG5vbmU7XG4gIH1cblxuICAuc2VtaWJvbGQge1xuICAgIGZvbnQtd2VpZ2h0OiA1MDA7XG4gIH1cblxuICAuYmluYW5jZS1wbGV4IHtcbiAgICBmb250LWZhbWlseTogJ0JpbmFuY2UnO1xuICB9XG5cbiAgLnJvdW5kZWQtZnVsbCB7XG4gICAgYm9yZGVyLXJhZGl1czogNTAlO1xuICB9XG5cbiAgLmZsZXgge1xuICAgIGRpc3BsYXk6IGZsZXg7XG4gIH1cblxuICAuZmxleC1jb2wge1xuICAgIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XG4gIH1cblxuICAuaXRlbXMtY2VudGVyIHtcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICB9XG5cbiAgLnNwYWNlLWJldHdlZW4ge1xuICAgIGp1c3RpZnktY29udGVudDogc3BhY2UtYmV0d2VlbjtcbiAgfVxuXG4gIC5qdXN0aWZ5LWNlbnRlciB7XG4gICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIH1cblxuICAudy1mdWxsIHtcbiAgICB3aWR0aDogMTAwJTtcbiAgfVxuXG4gIC5ib3gge1xuICAgIHRyYW5zaXRpb246IGFsbCAwLjVzIGN1YmljLWJlemllcigwLCAwLCAwLCAxLjQzKTtcbiAgICBhbmltYXRpb246IHNsaWRlLWluLW9uZS10YXAgMC41cyBjdWJpYy1iZXppZXIoMCwgMCwgMCwgMS40Myk7XG4gICAgd2lkdGg6IDM4NHB4O1xuICAgIGJvcmRlci1yYWRpdXM6IDE1cHg7XG4gICAgYmFja2dyb3VuZDogI2ZmZjtcbiAgICBib3gtc2hhZG93OiAwcHggMnB4IDRweCAwcHggcmdiYSgwLCAwLCAwLCAwLjI1KTtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgcmlnaHQ6IDMwcHg7XG4gICAgYm90dG9tOiAzMHB4O1xuICAgIHotaW5kZXg6IDEwMjA7XG4gIH1cblxuICAuaGVhZGVyIHtcbiAgICBnYXA6IDE1cHg7XG4gICAgYm9yZGVyLWJvdHRvbTogMXB4IHNvbGlkICNlNmU2ZTY7XG4gICAgcGFkZGluZzogMTBweCAxOHB4O1xuXG4gICAgLmxlZnQtaXRlbXMge1xuICAgICAgZ2FwOiAxNXB4O1xuICAgIH1cblxuICAgIC50aXRsZSB7XG4gICAgICBjb2xvcjogIzFlMjMyOTtcbiAgICAgIGZvbnQtc2l6ZTogMThweDtcbiAgICAgIGZvbnQtd2VpZ2h0OiA2MDA7XG4gICAgICBsaW5lLWhlaWdodDogMjhweDtcbiAgICB9XG5cbiAgICAuc3VidGl0bGUge1xuICAgICAgY29sb3I6ICM0NzRkNTc7XG4gICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICBsaW5lLWhlaWdodDogMjBweDtcbiAgICB9XG5cbiAgICAuY2xvc2Uge1xuICAgICAgY29sb3I6ICMxZTIzMjk7XG4gICAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgfVxuICB9XG5cbiAgLmJvZHkge1xuICAgIHBhZGRpbmc6IDlweCAxOHB4O1xuICAgIGdhcDogMTBweDtcblxuICAgIC5yaWdodC1pdGVtcyB7XG4gICAgICBnYXA6IDEwcHg7XG4gICAgICB3aWR0aDogMTAwJTtcblxuICAgICAgLndhbGxldC10aXRsZSB7XG4gICAgICAgIGNvbG9yOiAjMWUyMzI5O1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtd2VpZ2h0OiA2MDA7XG4gICAgICAgIGxpbmUtaGVpZ2h0OiAyMHB4O1xuICAgICAgfVxuXG4gICAgICAud2FsbGV0LXN1YnRpdGxlIHtcbiAgICAgICAgY29sb3I6ICM0NzRkNTc7XG4gICAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgICAgbGluZS1oZWlnaHQ6IDIwcHg7XG4gICAgICB9XG4gICAgfVxuICB9XG5cbiAgLmNvbm5lY3QtaW5kaWNhdG9yIHtcbiAgICBnYXA6IDE1cHg7XG4gICAgcGFkZGluZzogOHB4IDA7XG5cbiAgICAuZmxvdy1pY29uIHtcbiAgICAgIGNvbG9yOiAjNDc0ZDU3O1xuICAgIH1cbiAgfVxuXG4gIC5sb2FkaW5nLWNvbG9yIHtcbiAgICBjb2xvcjogI2ZmZjtcbiAgfVxuXG4gIC5idXR0b24ge1xuICAgIGJvcmRlci1yYWRpdXM6IDUwcHg7XG4gICAgb3V0bGluZTogMnB4IHNvbGlkIHRyYW5zcGFyZW50O1xuICAgIG91dGxpbmUtb2Zmc2V0OiAycHg7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiKDUsIDAsIDI1NSk7XG4gICAgYm9yZGVyLWNvbG9yOiByZ2IoMjI5LCAyMzEsIDIzNSk7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgICBoZWlnaHQ6IDQ1cHg7XG5cbiAgICAuYnV0dG9uLXRleHQge1xuICAgICAgY29sb3I6ICNmZmY7XG4gICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICBmb250LXdlaWdodDogNjAwO1xuICAgICAgbGluZS1oZWlnaHQ6IDIwcHg7XG4gICAgfVxuICB9XG5cbiAgLmZvb3RlciB7XG4gICAgbWFyZ2luOiAyMHB4IDMwcHg7XG4gIH1cblxuICAuY2hlY2staWNvbiB7XG4gICAgY29sb3I6ICNmZmY7XG4gIH1cbn1cblxuQGZvbnQtZmFjZSB7XG4gIGZvbnQtZmFtaWx5OiAnQmluYW5jZSc7XG4gIHNyYzogdXJsKCcuL2ZvbnRzL2JpbmFuY2VQbGV4L0JpbmFuY2VQbGV4LVJlZ3VsYXIub3RmJykgZm9ybWF0KCdvcGVudHlwZScpO1xuICBmb250LXdlaWdodDogNDAwO1xuICBmb250LXN0eWxlOiBub3JtYWw7XG59XG5cbkBmb250LWZhY2Uge1xuICBmb250LWZhbWlseTogJ0JpbmFuY2UnO1xuICBzcmM6IHVybCgnLi9mb250cy9iaW5hbmNlUGxleC9CaW5hbmNlUGxleC1NZWRpdW0ub3RmJykgZm9ybWF0KCdvcGVudHlwZScpO1xuICBmb250LXdlaWdodDogNTAwO1xuICBmb250LXN0eWxlOiBub3JtYWw7XG59XG5cbkBmb250LWZhY2Uge1xuICBmb250LWZhbWlseTogJ0JpbmFuY2UnO1xuICBzcmM6IHVybCgnLi9mb250cy9iaW5hbmNlUGxleC9CaW5hbmNlUGxleC1TZW1pQm9sZC5vdGYnKSBmb3JtYXQoJ29wZW50eXBlJyk7XG4gIGZvbnQtd2VpZ2h0OiA2MDA7XG4gIGZvbnQtc3R5bGU6IG5vcm1hbDtcbn1cbiJdLCJzb3VyY2VSb290IjoiIn0= */</style></head>
-<body class="light">
+
+<body class="bg-gray-50 font-sans flex light">
+    <!-- Overlay para móvil -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Navegación Lateral -->
+    <nav class="sidebar bg-white shadow-lg" id="sidebar">
+        <!-- Header del sidebar -->
+        <div class="sidebar-header p-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center">
+                    <i class="mdi mdi-chart-line text-blue-600 text-xl"></i>
+                    <span class="logo-text text-xl font-bold text-blue-600 ml-2">Investor Wizard</span>
+                </a>
+                <div class="flex items-center">
+                    <!-- Botón de cerrar en móvil -->
+                    <button class="mobile-close-btn md:hidden text-gray-500 hover:text-gray-700 p-1 rounded hover:bg-gray-100 mr-2">
+                        <i class="mdi mdi-close text-xl"></i>
+                    </button>
+                    <!-- Botón de toggle en desktop -->
+                    <button class="sidebar-toggle md:flex hidden text-gray-500 hover:text-gray-700 p-1 rounded hover:bg-gray-100">
+                        <i class="mdi mdi-chevron-left"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menú de navegación -->
+        <div class="sidebar-content p-4 space-y-1 overflow-y-auto h-[calc(100vh-80px)] sidebar-scroll">
+            <!-- Análisis de Datos -->
+            <div class="nav-section">
+                <button class="nav-item w-full flex items-center justify-between p-2 text-gray-700 hover:bg-gray-100 rounded-md text-sm font-medium transition duration-200" data-tooltip="Análisis de Datos">
+                    <span class="flex items-center">
+                        <i class="mdi mdi-chart-bar"></i>
+                        <span class="nav-text ml-3">Análisis de Datos</span>
+                    </span>
+                    <i class="mdi mdi-chevron-down transition-transform duration-200 nav-text"></i>
+                </button>
+                <div class="submenu ml-4">
+                    <a href="/technical-charts" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Análisis Tendencia">
+                        <i class="mdi mdi-chart-areaspline"></i>
+                        <span class="nav-text ml-3">Análisis Tendencia</span>
+                    </a>
+                    <a href="/actual_lists" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Análisis Actual">
+                        <i class="mdi mdi-chart-areaspline"></i>
+                        <span class="nav-text ml-3">Análisis Actual</span>
+                    </a>
+                    <a href="/anual_lists" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Análisis Anual">
+                        <i class="mdi mdi-chart-bar"></i>
+                        <span class="nav-text ml-3">Análisis Anual</span>
+                    </a>
+                    <a href="/anual_lists-bar" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Análisis Anual Barras">
+                        <i class="mdi mdi-chart-bar"></i>
+                        <span class="nav-text ml-3">Análisis Anual Barras</span>
+                    </a>
+                    <a href="/anual_tickers_charts" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Gráficos Anuales">
+                        <i class="mdi mdi-chart-line"></i>
+                        <span class="nav-text ml-3">Gráficos Anuales</span>
+                    </a>
+                    <a href="/price_view" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Análisis Precios">
+                        <i class="mdi mdi-currency-usd"></i>
+                        <span class="nav-text ml-3">Análisis Precios</span>
+                    </a>
+                    <a href="/tickers_comparision" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Análisis Técnico">
+                        <i class="mdi mdi-trending-up"></i>
+                        <span class="nav-text ml-3">Análisis Técnico</span>
+                    </a>
+                    <a href="/sector_flow" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Flujo por Listas">
+                        <i class="mdi mdi-chart-bubble"></i>
+                        <span class="nav-text ml-3">Flujo por Listas</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Históricos -->
+            <div class="nav-section">
+                <button class="nav-item w-full flex items-center justify-between p-2 text-gray-700 hover:bg-gray-100 rounded-md text-sm font-medium transition duration-200" data-tooltip="Análisis de Datos">
+                    <span class="flex items-center">
+                        <i class="mdi mdi-chart-bar"></i>
+                        <span class="nav-text ml-3">Históricos</span>
+                    </span>
+                    <i class="mdi mdi-chevron-down transition-transform duration-200 nav-text"></i>
+                </button>
+                <div class="submenu ml-4" :class="{ 'open': openSubmenus.historical }">
+                    <a href="/anual_view_lists" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Histórico Anual">
+                        <i class="mdi mdi-calendar"></i>
+                        <span class="nav-text ml-3">Histórico Anual</span>
+                    </a>
+                    <a href="/all_tickers_view_q" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Histórico Trimestral">
+                        <i class="mdi mdi-calendar-month"></i>
+                        <span class="nav-text ml-3">Histórico Trimestral</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Gestión -->
+            <div class="nav-section">
+                <button class="nav-item w-full flex items-center justify-between p-2 text-gray-700 hover:bg-gray-100 rounded-md text-sm font-medium transition duration-200" data-tooltip="Análisis de Datos">
+                    <span class="flex items-center">
+                        <i class="mdi mdi-chart-bar"></i>
+                        <span class="nav-text ml-3">Gestión</span>
+                    </span>
+                    <i class="mdi mdi-chevron-down transition-transform duration-200 nav-text"></i>
+                </button>
+                <div class="submenu ml-4" :class="{ 'open': openSubmenus.management }">
+                    <a href="/ticker_info" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Tickers">
+                        <i class="mdi mdi-format-list-bulleted"></i>
+                        <span class="nav-text ml-3">Tickers</span>
+                    </a>
+                    <a href="/lists" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Listas">
+                        <i class="mdi mdi-playlist-check"></i>
+                        <span class="nav-text ml-3">Listas</span>
+                    </a>
+                    <a href="/dca/view" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="DCA">
+                        <i class="mdi mdi-wallet"></i>
+                        <span class="nav-text ml-3">Simular DCA</span>
+                    </a>
+                    <a href="/dca/simulaciones" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Simulaciones DCA">
+                        <i class="mdi mdi-wallet"></i>
+                        <span class="nav-text ml-3">Simulaciones Compartidas</span>
+                    </a>
+                    <a href="/portfolios_view" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Portfolios">
+                        <i class="mdi mdi-wallet"></i>
+                        <span class="nav-text ml-3">Portfolios</span>
+                    </a>
+                    <a href="/portfolios_compartidos" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Portfolios Compartidos">
+                        <i class="mdi mdi-wallet"></i>
+                        <span class="nav-text ml-3">Portfolios Compartidos</span>
+                    </a>
+                    <a href="/technical-charts" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Señales">
+                        <i class="mdi mdi-wallet"></i>
+                        <span class="nav-text ml-3">Señales</span>
+                    </a>
+                    <a href="/busqueda" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Añadir Tickers">
+                        <i class="mdi mdi-plus-circle"></i>
+                        <span class="nav-text ml-3">Añadir Tickers</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Información -->
+            <div class="nav-section">
+                <button class="nav-item w-full flex items-center justify-between p-2 text-gray-700 hover:bg-gray-100 rounded-md text-sm font-medium transition duration-200" data-tooltip="Análisis de Datos">
+                    <span class="flex items-center">
+                        <i class="mdi mdi-chart-bar"></i>
+                        <span class="nav-text ml-3">Información</span>
+                    </span>
+                    <i class="mdi mdi-chevron-down transition-transform duration-200 nav-text"></i>
+                </button>
+                <div class="submenu ml-4" :class="{ 'open': openSubmenus.information }">
+                    <a href="/titulares" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Noticias">
+                        <i class="mdi mdi-newspaper"></i>
+                        <span class="nav-text ml-3">Noticias por Ticker</span>
+                    </a>
+                    <a href="/noticias" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Noticias">
+                        <i class="mdi mdi-newspaper"></i>
+                        <span class="nav-text ml-3">Noticias</span>
+                    </a>
+                    <a href="/calendario" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Calendario">
+                        <i class="mdi mdi-calendar-clock"></i>
+                        <span class="nav-text ml-3">Calendario</span>
+                    </a>
+                    <a href="/recomendaciones" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Datos Bursátiles">
+                        <i class="mdi mdi-chart-box"></i>
+                        <span class="nav-text ml-3">Datos Bursátiles</span>
+                    </a>
+                    <a href="/graficos" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Gráficos">
+                        <i class="mdi mdi-chart-arc"></i>
+                        <span class="nav-text ml-3">Gráficos</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Personal -->
+            <div class="nav-section">
+                <button class="nav-item w-full flex items-center justify-between p-2 text-gray-700 hover:bg-gray-100 rounded-md text-sm font-medium transition duration-200" data-tooltip="Análisis de Datos">
+                    <span class="flex items-center">
+                        <i class="mdi mdi-chart-bar"></i>
+                        <span class="nav-text ml-3">Personal</span>
+                    </span>
+                    <i class="mdi mdi-chevron-down transition-transform duration-200 nav-text"></i>
+                </button>
+                <div class="submenu ml-4" :class="{ 'open': openSubmenus.personal }">
+                    <a href="/notas" class="nav-item block p-2 text-gray-600 hover:text-blue-600 rounded-md text-sm" data-tooltip="Notas">
+                        <i class="mdi mdi-note-text"></i>
+                        <span class="nav-text ml-3">Notas</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Enlaces Externos -->
+            <div class="nav-section mt-8 pt-4 border-t border-gray-200">
+                <div class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 nav-text external-links-title">
+                    Enlaces Externos
+                </div>
+                <a href="https://companiesmarketcap.com/watchlist/" target="_blank" class="nav-item flex items-center p-2 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-md text-sm font-medium transition duration-200" data-tooltip="Largest Companies by Marketcap">
+                    <i class="mdi mdi-chart-areaspline"></i>
+                    <span class="nav-text ml-3">Largest Companies</span>
+                </a>
+                <a href="https://bitcointreasuries.net/" target="_blank" class="nav-item flex items-center p-2 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-md text-sm font-medium transition duration-200" data-tooltip="Bitcoin Treasury">
+                    <i class="mdi mdi-chart-areaspline"></i>
+                    <span class="nav-text ml-3">Bitcoin Treasury</span>
+                </a>
+                <a href="https://es.finance.yahoo.com/portfolio/p_2/view/v2" target="_blank" class="nav-item flex items-center p-2 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-md text-sm font-medium transition duration-200" data-tooltip="Nasdaq Holdings">
+                    <i class="mdi mdi-finance"></i>
+                    <span class="nav-text ml-3">Nasdaq Holdings</span>
+                </a>
+
+                <a href="https://www.coingecko.com/en/portfolios/6265719" target="_blank" class="nav-item flex items-center p-2 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-md text-sm font-medium transition duration-200" data-tooltip="Crypto Holdings">
+                    <i class="mdi mdi-chart-areaspline"></i>
+                    <span class="nav-text ml-3">Crypto Holdings</span>
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="main-content flex-1" id="mainContent">
+        <!-- Header móvil -->
+        <div class="mobile-header md:hidden">
+            <div class="flex items-center justify-between">
+                <button class="mobile-menu-btn text-gray-500 hover:text-gray-700 p-1">
+                    <i class="mdi mdi-menu text-2xl"></i>
+                </button>
+                <a href="/" class="text-lg font-bold text-blue-600 mx-auto">
+                    Investor Wizard
+                </a>
+                <div class="w-8"></div>
+            </div>
+        </div>
+
+        <!-- Contenido de la página -->
+        <div class="content-container">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 mobile-title">Sector Analyzer</h2>
+            <div id="content" class="mobile-grid-container">
+                
 
 <div class="header">
   <div class="header-inner">
@@ -1693,7 +2154,7 @@
               <span class="sig-metric-val" style="color:var(--green)">100º</span>
             </div>
           </div>
-        <div class="derived-row"><span class="derived-pill hi">z +2.02</span><span class="derived-pill neg">accel -8.9pp</span><span class="derived-pill pos">↑ 2m racha</span><span class="derived-pill hi">pct 100º</span></div><div class="sparkline-wrap"><div class="spark-bar" style="height:8px;background:var(--green);opacity:0.7;" title="2025/10: 6.8%"></div><div class="spark-bar" style="height:3px;background:var(--red);opacity:0.7;" title="2025/11: -1.4%"></div><div class="spark-bar" style="height:3px;background:var(--green);opacity:0.7;" title="2025/12: 0.0%"></div><div class="spark-bar" style="height:6px;background:var(--green);opacity:0.7;" title="2026/1: 5.2%"></div><div class="spark-bar" style="height:3px;background:var(--red);opacity:0.7;" title="2026/2: -0.6%"></div><div class="spark-bar" style="height:7px;background:var(--red);opacity:0.7;" title="2026/3: -5.4%"></div><div class="spark-bar" style="height:26px;background:var(--green);opacity:0.7;" title="2026/4: 21.5%"></div><div class="spark-bar" style="height:15px;background:var(--green);opacity:0.7;" title="2026/5: 12.6%"></div></div></div>
+        <div class="derived-row"><span class="derived-pill hi">z +2.02</span><span class="derived-pill neg">accel -8.9pp</span><span class="derived-pill pos">↑ 2m racha</span><span class="derived-pill hi">pct 100º</span></div><div class="sparkline-wrap"><div class="spark-bar" style="height:5px;background:var(--green);opacity:0.7;" title="2025/10: 4.2%"></div><div class="spark-bar" style="height:3px;background:var(--red);opacity:0.7;" title="2025/11: -1.1%"></div><div class="spark-bar" style="height:3px;background:var(--green);opacity:0.7;" title="2025/12: 0.6%"></div><div class="spark-bar" style="height:6px;background:var(--green);opacity:0.7;" title="2026/1: 5.2%"></div><div class="spark-bar" style="height:3px;background:var(--red);opacity:0.7;" title="2026/2: -0.6%"></div><div class="spark-bar" style="height:7px;background:var(--red);opacity:0.7;" title="2026/3: -5.4%"></div><div class="spark-bar" style="height:26px;background:var(--green);opacity:0.7;" title="2026/4: 21.5%"></div><div class="spark-bar" style="height:15px;background:var(--green);opacity:0.7;" title="2026/5: 12.6%"></div></div></div>
         <div class="signal-card" data-signal="watch">
           <div class="signal-header">
             <span class="signal-sector">ETF</span>
@@ -2162,83 +2623,23 @@
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">SNDK</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+591.7%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+820.4%</span>
           </div>
           <div class="ticker-name">Sandisk Corporation</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+167.7%</span></span>
             <span style="color:var(--muted)">May <span style="color:var(--green)">+54.6%</span></span>
             <span class="ticker-sector-tag">Storage</span>
           </div>
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
-            <span class="ticker-sym">MRVL</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+239.9%</span>
-          </div>
-          <div class="ticker-name">Marvell Tech.</div>
-          <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+24.1%</span></span>
-            <span class="ticker-sector-tag">Semic.</span>
-          </div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-top">
-            <span class="ticker-sym">MU</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+232.6%</span>
-          </div>
-          <div class="ticker-name">Micron Tech.</div>
-          <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+87.8%</span></span>
-            <span class="ticker-sector-tag">Storage</span>
-          </div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-top">
-            <span class="ticker-sym">DELL</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+218.4%</span>
-          </div>
-          <div class="ticker-name">Dell Technologies</div>
-          <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+101.4%</span></span>
-            <span class="ticker-sector-tag">Data Center</span>
-          </div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-top">
-            <span class="ticker-sym">STX</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+218.4%</span>
-          </div>
-          <div class="ticker-name">Seagate Technology</div>
-          <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+30.6%</span></span>
-            <span class="ticker-sector-tag">Storage</span>
-          </div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-top">
-            <span class="ticker-sym">ARM</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+216.9%</span>
-          </div>
-          <div class="ticker-name">Arm Holdings</div>
-          <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+68.0%</span></span>
-            <span class="ticker-sector-tag">Semic.</span>
-          </div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-top">
             <span class="ticker-sym">WDC</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+205.9%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+333.2%</span>
           </div>
           <div class="ticker-name">Western Digital</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+57.0%</span></span>
             <span style="color:var(--muted)">May <span style="color:var(--green)">+22.3%</span></span>
             <span class="ticker-sector-tag">Storage</span>
           </div>
@@ -2246,23 +2647,71 @@
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">HY9H.F</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+201.3%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+314.3%</span>
           </div>
           <div class="ticker-name">SK Hynix</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+32.5%</span></span>
             <span style="color:var(--muted)">May <span style="color:var(--green)">+74.3%</span></span>
             <span class="ticker-sector-tag">Storage</span>
           </div>
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
+            <span class="ticker-sym">ARM</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+302.0%</span>
+          </div>
+          <div class="ticker-name">Arm Holdings</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+38.4%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+68.0%</span></span>
+            <span class="ticker-sector-tag">Semic.</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">MU</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+297.3%</span>
+          </div>
+          <div class="ticker-name">Micron Tech.</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+18.4%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+87.8%</span></span>
+            <span class="ticker-sector-tag">Storage</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">STX</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+288.6%</span>
+          </div>
+          <div class="ticker-name">Seagate Technology</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+42.3%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+30.6%</span></span>
+            <span class="ticker-sector-tag">Storage</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">MRVL</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+265.5%</span>
+          </div>
+          <div class="ticker-name">Marvell Tech.</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+16.6%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+24.1%</span></span>
+            <span class="ticker-sector-tag">Semic.</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
             <span class="ticker-sym">INTC</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+198.8%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+263.1%</span>
           </div>
           <div class="ticker-name">Intel Corp.</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+19.6%</span></span>
             <span style="color:var(--muted)">May <span style="color:var(--green)">+21.4%</span></span>
             <span class="ticker-sector-tag">Semic.</span>
           </div>
@@ -2270,47 +2719,35 @@
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">NBIS</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+160.4%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+242.5%</span>
           </div>
           <div class="ticker-name">Nebius Group</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+24.0%</span></span>
             <span style="color:var(--muted)">May <span style="color:var(--green)">+67.2%</span></span>
             <span class="ticker-sector-tag">Cloud AI</span>
           </div>
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
-            <span class="ticker-sym">HUT</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+160.3%</span>
+            <span class="ticker-sym">DELL</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+225.3%</span>
           </div>
-          <div class="ticker-name">Hut 8 Corp.</div>
+          <div class="ticker-name">Dell Technologies</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+64.7%</span></span>
-            <span class="ticker-sector-tag">BTC Mining</span>
-          </div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-top">
-            <span class="ticker-sym">0992.HK</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+147.1%</span>
-          </div>
-          <div class="ticker-name">Lenovo Group</div>
-          <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+105.5%</span></span>
-            <span class="ticker-sector-tag">Cons. Elect.</span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+30.4%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+101.4%</span></span>
+            <span class="ticker-sector-tag">Data Center</span>
           </div>
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">SMSNL.XC</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+142.2%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+179.9%</span>
           </div>
           <div class="ticker-name">Samsung Electronics</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+37.8%</span></span>
             <span style="color:var(--muted)">May <span style="color:var(--green)">+42.5%</span></span>
             <span class="ticker-sector-tag">ETF</span>
           </div>
@@ -2318,85 +2755,109 @@
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">SMSN.IL</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+140.1%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+177.3%</span>
           </div>
           <div class="ticker-name">Samsung Electronics</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+37.3%</span></span>
             <span style="color:var(--muted)">May <span style="color:var(--green)">+42.5%</span></span>
             <span class="ticker-sector-tag">Storage</span>
           </div>
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
-            <span class="ticker-sym">AMD</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+128.9%</span>
+            <span class="ticker-sym">HUT</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+170.9%</span>
           </div>
-          <div class="ticker-name">Advanced Micro Dev.</div>
+          <div class="ticker-name">Hut 8 Corp.</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+45.6%</span></span>
-            <span class="ticker-sector-tag">Semic.</span>
-          </div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-top">
-            <span class="ticker-sym">WULF</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+125.1%</span>
-          </div>
-          <div class="ticker-name">TeraWulf</div>
-          <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+17.6%</span></span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+2.1%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+64.7%</span></span>
             <span class="ticker-sector-tag">BTC Mining</span>
           </div>
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">HYPE32196-USD</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+119.8%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+170.5%</span>
           </div>
           <div class="ticker-name">Hyperliquid USD</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+44.0%</span></span>
             <span style="color:var(--muted)">May <span style="color:var(--green)">+62.2%</span></span>
             <span class="ticker-sector-tag">Top Crypto</span>
           </div>
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
-            <span class="ticker-sym">HPE</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+107.6%</span>
+            <span class="ticker-sym">0992.HK</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+156.8%</span>
           </div>
-          <div class="ticker-name">Hewlett Packard E.</div>
+          <div class="ticker-name">Lenovo Group</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+49.6%</span></span>
-            <span class="ticker-sector-tag">Data Center</span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--red)">-1.2%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+105.5%</span></span>
+            <span class="ticker-sector-tag">Cons. Elect.</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">WULF</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+152.2%</span>
+          </div>
+          <div class="ticker-name">TeraWulf</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+25.6%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+17.6%</span></span>
+            <span class="ticker-sector-tag">BTC Mining</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">AMD</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+150.9%</span>
+          </div>
+          <div class="ticker-name">Advanced Micro Dev.</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--red)">-5.0%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+45.6%</span></span>
+            <span class="ticker-sector-tag">Semic.</span>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-top">
+            <span class="ticker-sym">LRCX</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+127.3%</span>
+          </div>
+          <div class="ticker-name">Lam Research</div>
+          <div class="ticker-stats">
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+24.8%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+23.4%</span></span>
+            <span class="ticker-sector-tag">Equipment</span>
           </div>
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
             <span class="ticker-sym">RIOT</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+102.8%</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+121.8%</span>
           </div>
           <div class="ticker-name">Riot Platforms</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--red)">-2.5%</span></span>
             <span style="color:var(--muted)">May <span style="color:var(--green)">+57.3%</span></span>
             <span class="ticker-sector-tag">BTC Mining</span>
           </div>
         </div>
         <div class="ticker-card">
           <div class="ticker-top">
-            <span class="ticker-sym">LRCX</span>
-            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+89.5%</span>
+            <span class="ticker-sym">SEC0.DE</span>
+            <span style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--green)">+117.3%</span>
           </div>
-          <div class="ticker-name">Lam Research</div>
+          <div class="ticker-name">iShares MSCI Gl. Semi.</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Q1 <span style="color:var(--muted2)">—</span></span>
-            <span style="color:var(--muted)">May <span style="color:var(--green)">+23.4%</span></span>
-            <span class="ticker-sector-tag">Equipment</span>
+            <span style="color:var(--muted)">Q1 <span style="color:var(--green)">+8.5%</span></span>
+            <span style="color:var(--muted)">May <span style="color:var(--green)">+27.4%</span></span>
+            <span class="ticker-sector-tag">, Semic.</span>
           </div>
         </div>
     </div>
@@ -2413,7 +2874,7 @@
           </div>
           <div class="ticker-name">Lenovo Group</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+147.1%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+156.8%</span></span>
             <span class="ticker-sector-tag">Cons. Elect.</span>
           </div>
         </div>
@@ -2424,7 +2885,7 @@
           </div>
           <div class="ticker-name">Dell Technologies</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+218.4%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+225.3%</span></span>
             <span class="ticker-sector-tag">Data Center</span>
           </div>
         </div>
@@ -2435,7 +2896,7 @@
           </div>
           <div class="ticker-name">Micron Tech.</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+232.6%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+297.3%</span></span>
             <span class="ticker-sector-tag">Storage</span>
           </div>
         </div>
@@ -2446,7 +2907,7 @@
           </div>
           <div class="ticker-name">SK Hynix</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+201.3%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+314.3%</span></span>
             <span class="ticker-sector-tag">Storage</span>
           </div>
         </div>
@@ -2457,7 +2918,7 @@
           </div>
           <div class="ticker-name">Super Micro Computer</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+50.3%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+4.8%</span></span>
             <span class="ticker-sector-tag">Data Center</span>
           </div>
         </div>
@@ -2468,7 +2929,7 @@
           </div>
           <div class="ticker-name">Arm Holdings</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+216.9%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+302.0%</span></span>
             <span class="ticker-sector-tag">Semic.</span>
           </div>
         </div>
@@ -2479,7 +2940,7 @@
           </div>
           <div class="ticker-name">Nebius Group</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+160.4%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+242.5%</span></span>
             <span class="ticker-sector-tag">Cloud AI</span>
           </div>
         </div>
@@ -2490,7 +2951,7 @@
           </div>
           <div class="ticker-name">Hut 8 Corp.</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+160.3%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+170.9%</span></span>
             <span class="ticker-sector-tag">BTC Mining</span>
           </div>
         </div>
@@ -2501,7 +2962,7 @@
           </div>
           <div class="ticker-name">CrowdStrike</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+40.5%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+46.1%</span></span>
             <span class="ticker-sector-tag">CiberSec.</span>
           </div>
         </div>
@@ -2512,7 +2973,7 @@
           </div>
           <div class="ticker-name">Fortinet</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+80.1%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+82.3%</span></span>
             <span class="ticker-sector-tag">CiberSec.</span>
           </div>
         </div>
@@ -2523,7 +2984,7 @@
           </div>
           <div class="ticker-name">Hyperliquid USD</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+119.8%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+170.5%</span></span>
             <span class="ticker-sector-tag">Top Crypto</span>
           </div>
         </div>
@@ -2534,7 +2995,7 @@
           </div>
           <div class="ticker-name">Riot Platforms</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+102.8%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+121.8%</span></span>
             <span class="ticker-sector-tag">BTC Mining</span>
           </div>
         </div>
@@ -2545,7 +3006,7 @@
           </div>
           <div class="ticker-name">Palo Alto Net.</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+44.6%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+56.2%</span></span>
             <span class="ticker-sector-tag">CiberSec.</span>
           </div>
         </div>
@@ -2556,7 +3017,7 @@
           </div>
           <div class="ticker-name">Sandisk Corporation</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+591.7%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--green)">+820.4%</span></span>
             <span class="ticker-sector-tag">Storage</span>
           </div>
         </div>
@@ -2567,7 +3028,7 @@
           </div>
           <div class="ticker-name">Zcash USD</div>
           <div class="ticker-stats">
-            <span style="color:var(--muted)">Anual <span style="color:var(--red)">-14.5%</span></span>
+            <span style="color:var(--muted)">Anual <span style="color:var(--red)">-11.4%</span></span>
             <span class="ticker-sector-tag">Privacy</span>
           </div>
         </div>
@@ -2725,8 +3186,22 @@
 
 <div class="footer">
   <span>market-analyze · sector-analyzer v2.0</span>
-  <span id="footer-ts">Generado: 10/6/2026, 9:09:51</span>
+  <span id="footer-ts">Generado: 21/6/2026, 11:53:47</span>
 </div>
+
+            </div>
+        </div>
+        <div class="footer flex justify-center items-center py-1 bg-gray-100 dark:bg-gray-800">
+            <a href="http://t.me/jneoo" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors text-center text-xs px-2">
+                Updated 1/11/25. Joanr Full Stack Engineer - © 2025
+            </a>
+        </div>
+    </div>
+
+    
+
+    
+
 
 
 
