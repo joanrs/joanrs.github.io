@@ -1,6 +1,6 @@
 ---
 title: "Actual ROI Month To Date July 2026"
-date: 2026-07-1 6:00:00 +0100
+date: 2026-07-2 6:00:00 +0100
 categories: [Markets]
 tags: [ROI, Month]
 ---
