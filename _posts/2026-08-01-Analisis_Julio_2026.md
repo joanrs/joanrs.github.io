@@ -1,12 +1,12 @@
 ---
-title: "Actual ROI Month To Date July 2026"
-date: 2026-07-2 6:00:00 +0100
-categories: [Markets]
+title: "Analisis Julio 2026"
+date: 2026-08-1 5:00:00 +0100
+categories: [Analisis]
 tags: [ROI, Month]
----
 
+---
 <iframe
-  src="/actual_momentum.html?v=100726"
+  src="/Analysis_Julio.html?v=110626"
   width="100%"
   frameborder="0"
   scrolling="no"

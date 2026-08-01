@@ -1,0 +1,16 @@
+---
+title: "Actual ROI Month To Date August 2026"
+date: 2026-08-2 6:00:00 +0100
+categories: [Markets]
+tags: [ROI, Month]
+---
+
+<iframe
+  src="/actual_momentum.html?v=100726"
+  width="100%"
+  frameborder="0"
+  scrolling="no"
+  style="border: none; display: block;"
+  onload="this.style.height = this.contentWindow.document.documentElement.scrollHeight + 10 + 'px';"
+>
+</iframe>
