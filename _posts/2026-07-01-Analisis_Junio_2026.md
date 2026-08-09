@@ -2,7 +2,7 @@
 title: "Analisis Junio 2026"
 date: 2026-07-1 6:00:00 +0100
 categories: [Analisis]
-tags: [ROI, Month]
+tags: [Month]
 
 ---
 <iframe

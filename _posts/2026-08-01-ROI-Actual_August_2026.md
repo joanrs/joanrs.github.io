@@ -2,7 +2,7 @@
 title: "Actual ROI Month To Date August 2026"
 date: 2026-08-2 6:00:00 +0100
 categories: [Markets]
-tags: [ROI, Month]
+tags: [ROI]
 ---
 
 <iframe
