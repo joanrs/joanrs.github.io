@@ -1,7 +1,7 @@
 ---
 title: "ROI April 2026"
 date: 2026-04-22 7:30:00 +0100
-categories: [Markets]
+categories: [Estacionales]
 tags: [ROI, Month]
 image: /assets/img/posts/roi.jpg
 ---

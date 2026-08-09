@@ -1,7 +1,7 @@
 ---
 title: "ROI Historical Nasdaq 100"
 date: 2026-05-26 09:00:00 +0100
-categories: [Markets]
+categories: [Estacionales]
 tags: [ROI, Anual]
 image: /assets/img/posts/roi.jpg
 ---

@@ -1,7 +1,7 @@
 ---
 title: "ROI January 2026"
 date: 2026-02-02 09:00:00 +0100
-categories: [Markets]
+categories: [Estacionales]
 tags: [ROI]
 image: /assets/img/posts/roi.jpg
 ---
