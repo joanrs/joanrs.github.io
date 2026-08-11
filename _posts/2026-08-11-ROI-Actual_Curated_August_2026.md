@@ -5,8 +5,5 @@ categories: [Estacionales]
 tags: [ROI]
 ---
 
-<img
-  src="/agosto_curado_jr.jpg?v=14726"
-  alt="ROI curado de agosto de 2026"
-  style="display: block; width: 100%; height: auto;"
->
+![Tabla Curada Agosto 2026](/agosto_curado_jr.jpg)
+Tabla Curada Agosto 2026

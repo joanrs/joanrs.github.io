@@ -11394,14 +11394,14 @@
         });
       });
 
-      // Put the signal column first so the key decision remains visible.
+      // Put the signal column after Sector so the key decision remains visible.
       const sectorTable = document.querySelector(".table-wrap table");
       if (sectorTable) {
         const headerRow = sectorTable.querySelector("thead tr");
         const signalHeader = headerRow.lastElementChild;
-        headerRow.insertBefore(signalHeader, headerRow.firstElementChild);
+        headerRow.insertBefore(signalHeader, headerRow.children[1]);
         sectorTable.querySelectorAll("tbody tr").forEach((row) => {
-          row.insertBefore(row.lastElementChild, row.firstElementChild);
+          row.insertBefore(row.lastElementChild, row.children[1]);
         });
       }
 
