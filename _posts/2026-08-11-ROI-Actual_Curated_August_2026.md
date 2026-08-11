@@ -5,5 +5,12 @@ categories: [Estacionales]
 tags: [ROI]
 ---
 
-![Tabla Curada Agosto 2026](/agosto_curado_jr.jpg)
-Tabla Curada Agosto 2026
+<iframe
+  src="/cabecera.html?v=270626"
+  width="100%"
+  frameborder="0"
+  scrolling="no"
+  style="border: none; display: block;"
+  onload="this.style.height = this.contentWindow.document.documentElement.scrollHeight + 10 + 'px';"
+>
+</iframe>
