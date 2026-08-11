@@ -5,12 +5,8 @@ categories: [Estacionales]
 tags: [ROI]
 ---
 
-<iframe
-  src="/agosto_curado_jr.html?v=14726"
-  width="100%"
-  frameborder="0"
-  scrolling="no"
-  style="border: none; display: block;"
-  onload="this.style.height = this.contentWindow.document.documentElement.scrollHeight + 10 + 'px';"
+<img
+  src="/agosto_curado_jr.jpg?v=14726"
+  alt="ROI curado de agosto de 2026"
+  style="display: block; width: 100%; height: auto;"
 >
-</iframe>
