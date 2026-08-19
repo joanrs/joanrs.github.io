@@ -1,12 +1,12 @@
 ---
 title: "Actual ROI Month To Date August 2026"
-date: 2026-08-2 6:00:00 +0100
+date: 2026-08-19 12:00:00 +0100
 categories: [Estacionales]
 tags: [ROI]
 ---
 
 <iframe
-  src="/actual_momentum.html?v=21726"
+  src="/actual_momentum.html?v=22726"
   width="100%"
   frameborder="0"
   scrolling="no"
