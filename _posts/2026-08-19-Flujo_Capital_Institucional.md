@@ -14,3 +14,12 @@ tags: [Capital]
   onload="this.style.height = this.contentWindow.document.documentElement.scrollHeight + 10 + 'px';"
 >
 </iframe>
+<iframe
+  src="/Exportación de Listas de Tickers.html?v=21826"
+  width="100%"
+  frameborder="0"
+  scrolling="no"
+  style="border: none; display: block;"
+  onload="this.style.height = this.contentWindow.document.documentElement.scrollHeight + 10 + 'px';"
+>
+</iframe>
