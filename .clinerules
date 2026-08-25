@@ -1,0 +1,11 @@
+CRITICAL TERMINAL RULES:
+1. DO NOT execute inline Python code using `python3 -c` or `python3 << 'EOF'`.
+2. To run Python code, ALWAYS use the `write_to_file` tool first to save the code in a file (e.g., `tmp_query.py`), then execute `python3 tmp_query.py`.
+
+3. **Búsqueda y lectura de archivos:**
+   - NUNCA ejecutes comandos rápidos de búsqueda en la terminal como `grep`, `cat` o `find` si se puede usar la herramienta nativa `read_file`.
+   - Utiliza siempre las herramientas internas de Cline (`read_file`, `list_files`) para inspeccionar código o archivos HTML/Markdown.
+
+4. **Ejecución obligatoria en terminal:**
+   - Si es estrictamente necesario ejecutar un comando en la terminal que devuelva texto rápido (ej. `grep` o scripts cortos), DEBES añadir siempre `&& sleep 1` al final del comando.
+   - Ejemplo obligatorio: `grep -n "W1" archivo.html && sleep 1`
