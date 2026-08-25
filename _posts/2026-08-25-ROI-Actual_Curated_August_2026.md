@@ -1,12 +1,12 @@
 ---
 title: "Actual ROI Curated August 2026"
-date: 2026-08-11 6:00:00 +0100
+date: 2026-08-25 6:00:00 +0100
 categories: [Estacionales]
 tags: [ROI]
 ---
 
 <iframe
-  src="/cabecera.html?v=2726"
+  src="/curated_momentum.html?v=2726"
   width="100%"
   frameborder="0"
   scrolling="no"
