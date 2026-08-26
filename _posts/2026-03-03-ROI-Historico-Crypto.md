@@ -7,8 +7,11 @@ image: /assets/img/posts/roi.jpg
 ---
 
 ![Tabla Estacional Bitcoin](/assets/img/posts/btc-season.jpg)
-Tabla Estacional Bitcoin
+![Tabla Estacional Bitcoin](/assets/img/posts/btc-est.png)
+Tablas Estacionales Bitcoin
 ![Tabla Estacional Ethereum](/assets/img/posts/eth-season.jpg)
-Tabla Estacional Ethereum
+![Tabla Estacional Ethereum](/assets/img/posts/ethereum.png)
+Tablas Estacionales Ethereum
 ![Tabla Estacional Solana](/assets/img/posts/sol-season.jpg)
-Tabla Estacional Solana
+![Tabla Estacional Solana](/assets/img/posts/solana.png)
+Tablas Estacionales Solana
