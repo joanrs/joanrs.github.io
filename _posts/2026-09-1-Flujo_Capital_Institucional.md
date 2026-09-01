@@ -1,12 +1,12 @@
 ---
 title: "Flujo de Capital Institucional"
-date: 2026-08-19 6:00:00 +0100
+date: 2026-09-01 5:00:00 +0100
 categories: [Analisis]
 tags: [Capital]
 ---
 
 <iframe
-  src="/flujo_de_capital_institucional_(smart_money).html?v=21826"
+  src="/flujo_de_capital_institucional_(smart_money).html?v=22826"
   width="100%"
   frameborder="0"
   scrolling="no"
