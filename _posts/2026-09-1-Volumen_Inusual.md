@@ -6,7 +6,7 @@ tags: [Capital]
 ---
 
 <iframe
-  src="/flujo_de_capital_institucional_(smart_money).html?v=22826"
+  src="/flujo_de_capital_institucional_(smart_money).html?v=23826"
   width="100%"
   frameborder="0"
   scrolling="no"
